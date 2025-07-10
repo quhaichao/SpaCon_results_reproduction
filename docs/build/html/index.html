@@ -17,9 +17,12 @@
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ctx to th connection cluster" href="1_ctx_th_connection_and_gene_exp_cluster.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -41,11 +44,24 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">SpaCon_results_reproduction documentation</a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="1_ctx_th_connection_and_gene_exp_cluster.html">ctx to th connection cluster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_ctx_th_connection_and_gene_exp_cluster.html#gene-exp-umap">gene exp umap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_ctx_th_connection_and_th_gene_pc1.html">scanpy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_ctx_th_connection_and_gene_correlation.html">subregion th ctx correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_ctx_layer56_and_th_correlation.html">ctx layer56 th correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_ctx_th_gene_analysis.html">ctx layer56 th correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_ctx_cc_intracellular_extracellular_compare.html">gene exp plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_ctx_cc_intracellular_extracellular_compare.html#ctx-layer-maker-gene-in-cc">ctx layer maker gene in cc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_cc_mRNA_and_cell_plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_cc_mRNA_and_cell_plot.html#cell-seg-plot">cell seg plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_ctx_3region_DEGs_expression_in_cc.html">gene exp data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_ctx_cc_connection_and_correlation.html">conn data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_ctx_cc_connection_and_correlation.html#gene-exp-data">gene exp data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_PLS_find_metagene.html">PLS</a></li>
 </ul>
-</div>
+
         </div>
       </div>
     </nav>
@@ -72,17 +88,59 @@
              
   <section id="spacon-results-reproduction-documentation">
 <h1>SpaCon_results_reproduction documentation<a class="headerlink" href="#spacon-results-reproduction-documentation" title="Link to this heading"></a></h1>
-<p>Add your content using <code class="docutils literal notranslate"><span class="pre">reStructuredText</span></code> syntax. See the
-<a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html">reStructuredText</a>
-documentation for details.</p>
+<p>This tutorial contains detailed reproduction code for the main results in the article
+<strong>“SpaCon: Integrative Analysis of Spatial Transcriptome and Connectome</strong>.</p>
 <div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="1_ctx_th_connection_and_gene_exp_cluster.html">ctx to th connection cluster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="1_ctx_th_connection_and_gene_exp_cluster.html#gene-exp-umap">gene exp umap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_ctx_th_connection_and_th_gene_pc1.html">scanpy</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="2_ctx_th_connection_and_th_gene_pc1.html#gene-fit">gene fit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="3_ctx_th_connection_and_gene_correlation.html">subregion th ctx correlation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="3_ctx_th_connection_and_gene_correlation.html#connection">connection</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="4_ctx_layer56_and_th_correlation.html">ctx layer56 th correlation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="4_ctx_layer56_and_th_correlation.html#L5/L6-corr">L5/L6 corr</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="5_ctx_th_gene_analysis.html">ctx layer56 th correlation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="5_ctx_th_gene_analysis.html#L5/L6-corr">L5/L6 corr</a></li>
+<li class="toctree-l2"><a class="reference internal" href="5_ctx_th_gene_analysis.html#gene-anasys">gene anasys</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="6_ctx_cc_intracellular_extracellular_compare.html">gene exp plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_ctx_cc_intracellular_extracellular_compare.html#ctx-layer-maker-gene-in-cc">ctx layer maker gene in cc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_cc_mRNA_and_cell_plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_cc_mRNA_and_cell_plot.html#cell-seg-plot">cell seg plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_ctx_3region_DEGs_expression_in_cc.html">gene exp data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="9_ctx_3region_DEGs_expression_in_cc.html#DEG">DEG</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="10_ctx_cc_connection_and_correlation.html">conn data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="10_ctx_cc_connection_and_correlation.html#cluster-cc">cluster cc</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="10_ctx_cc_connection_and_correlation.html#gene-exp-data">gene exp data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_PLS_find_metagene.html">PLS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="11_PLS_find_metagene.html#th-gene">th gene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11_PLS_find_metagene.html#ctx-gene">ctx gene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11_PLS_find_metagene.html#other-regions">other regions</a></li>
+</ul>
+</li>
+</ul>
 </div>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="1_ctx_th_connection_and_gene_exp_cluster.html" class="btn btn-neutral float-right" title="ctx to th connection cluster" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
