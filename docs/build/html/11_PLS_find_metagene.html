@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PLS &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+  <title>11_PLS_find_metagene &mdash; SpaCon_results_reproduction 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
@@ -22,7 +22,8 @@
       <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="10_ctx_cc_connection_and_correlation" href="10_ctx_cc_connection_and_correlation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,16 +45,29 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">PLS</a><ul>
-<li><a class="reference internal" href="#th-gene">th gene</a></li>
-<li><a class="reference internal" href="#ctx-gene">ctx gene</a></li>
-<li><a class="reference internal" href="#other-regions">other regions</a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_ctx_th_connection_and_gene_exp_cluster.html">1_ctx_th_connection_and_gene_exp_cluster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_ctx_th_connection_and_th_gene_pc1.html">2_ctx_th_connection_and_th_gene_pc1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_ctx_th_connection_and_gene_correlation.html">3_ctx_th_connection_and_gene_correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_ctx_layer56_and_th_correlation.html">4_ctx_layer56_and_th_correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_ctx_th_gene_analysis.html">5_ctx_th_gene_analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_ctx_cc_intracellular_extracellular_compare.html">6_ctx_cc_intracellular_extracellular_compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_cc_mRNA_and_cell_plot.html">7_cc_mRNA_and_cell_plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_coronal_sagittal_cc_in_out_deg_compare.html">8_coronal_sagittal_cc_in_out_deg_compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_ctx_3region_DEGs_expression_in_cc.html">9_ctx_3region_DEGs_expression_in_cc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_ctx_cc_connection_and_correlation.html">10_ctx_cc_connection_and_correlation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">11_PLS_find_metagene</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#PLS">PLS</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#th-gene">th gene</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ctx-gene">ctx gene</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#other-regions">other regions</a></li>
 </ul>
 </li>
 </ul>
-</div>
+</li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -68,7 +82,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">PLS</li>
+      <li class="breadcrumb-item active">11_PLS_find_metagene</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/11_PLS_find_metagene.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -78,7 +92,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="nbinput nblast docutils container">
+  <section id="11_PLS_find_metagene">
+<h1>11_PLS_find_metagene<a class="headerlink" href="#11_PLS_find_metagene" title="Link to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -156,9 +172,9 @@ AnnData object with n_obs × n_vars = 250535 × 1122
 </div>
 </div>
 <section id="PLS">
-<h1>PLS<a class="headerlink" href="#PLS" title="Link to this heading"></a></h1>
+<h2>PLS<a class="headerlink" href="#PLS" title="Link to this heading"></a></h2>
 <section id="th-gene">
-<h2>th gene<a class="headerlink" href="#th-gene" title="Link to this heading"></a></h2>
+<h3>th gene<a class="headerlink" href="#th-gene" title="Link to this heading"></a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -480,7 +496,7 @@ plt.gca().invert_yaxis()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/11_PLS_find_metagene_11_0.png" src="_images/11_PLS_find_metagene_11_0.png" />
+<img alt="_images/11_PLS_find_metagene_12_0.png" src="_images/11_PLS_find_metagene_12_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -506,12 +522,12 @@ plt.gca().invert_yaxis()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/11_PLS_find_metagene_12_0.png" src="_images/11_PLS_find_metagene_12_0.png" />
+<img alt="_images/11_PLS_find_metagene_13_0.png" src="_images/11_PLS_find_metagene_13_0.png" />
 </div>
 </div>
 </section>
 <section id="ctx-gene">
-<h2>ctx gene<a class="headerlink" href="#ctx-gene" title="Link to this heading"></a></h2>
+<h3>ctx gene<a class="headerlink" href="#ctx-gene" title="Link to this heading"></a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[130]:
 </pre></div>
@@ -820,7 +836,7 @@ plt.gca().invert_yaxis()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/11_PLS_find_metagene_17_0.png" src="_images/11_PLS_find_metagene_17_0.png" />
+<img alt="_images/11_PLS_find_metagene_18_0.png" src="_images/11_PLS_find_metagene_18_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -846,7 +862,7 @@ plt.gca().invert_yaxis()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/11_PLS_find_metagene_18_0.png" src="_images/11_PLS_find_metagene_18_0.png" />
+<img alt="_images/11_PLS_find_metagene_19_0.png" src="_images/11_PLS_find_metagene_19_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -873,7 +889,7 @@ plt.gca().invert_yaxis()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/11_PLS_find_metagene_19_0.png" src="_images/11_PLS_find_metagene_19_0.png" />
+<img alt="_images/11_PLS_find_metagene_20_0.png" src="_images/11_PLS_find_metagene_20_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -896,12 +912,12 @@ plt.savefig(f&#39;./th_ctx_cluster_gene/cluster{cluster}.pdf&#39;, format = &#39
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/11_PLS_find_metagene_20_0.png" src="_images/11_PLS_find_metagene_20_0.png" />
+<img alt="_images/11_PLS_find_metagene_21_0.png" src="_images/11_PLS_find_metagene_21_0.png" />
 </div>
 </div>
 </section>
 <section id="other-regions">
-<h2>other regions<a class="headerlink" href="#other-regions" title="Link to this heading"></a></h2>
+<h3>other regions<a class="headerlink" href="#other-regions" title="Link to this heading"></a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[117]:
 </pre></div>
@@ -997,7 +1013,7 @@ plt.gca().invert_yaxis()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/11_PLS_find_metagene_25_0.png" src="_images/11_PLS_find_metagene_25_0.png" />
+<img alt="_images/11_PLS_find_metagene_26_0.png" src="_images/11_PLS_find_metagene_26_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1023,16 +1039,19 @@ plt.gca().invert_yaxis()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/11_PLS_find_metagene_26_0.png" src="_images/11_PLS_find_metagene_26_0.png" />
+<img alt="_images/11_PLS_find_metagene_27_0.png" src="_images/11_PLS_find_metagene_27_0.png" />
 </div>
 </div>
+</section>
 </section>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="10_ctx_cc_connection_and_correlation.html" class="btn btn-neutral float-left" title="10_ctx_cc_connection_and_correlation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 

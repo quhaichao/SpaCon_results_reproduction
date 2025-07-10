@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ctx layer56 th correlation &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+  <title>5_ctx_th_gene_analysis &mdash; SpaCon_results_reproduction 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
@@ -22,7 +22,9 @@
       <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="6_ctx_cc_intracellular_extracellular_compare" href="6_ctx_cc_intracellular_extracellular_compare.html" />
+    <link rel="prev" title="4_ctx_layer56_and_th_correlation" href="4_ctx_layer56_and_th_correlation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,19 +46,32 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">ctx layer56 th correlation</a><ul>
-<li><a class="reference internal" href="#L5/L6-corr">L5/L6 corr</a></li>
-<li><a class="reference internal" href="#gene-anasys">gene anasys</a><ul>
-<li><a class="reference internal" href="#25-ctx-area">25 ctx area</a></li>
-<li><a class="reference internal" href="#6-module">6 module</a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_ctx_th_connection_and_gene_exp_cluster.html">1_ctx_th_connection_and_gene_exp_cluster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_ctx_th_connection_and_th_gene_pc1.html">2_ctx_th_connection_and_th_gene_pc1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_ctx_th_connection_and_gene_correlation.html">3_ctx_th_connection_and_gene_correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_ctx_layer56_and_th_correlation.html">4_ctx_layer56_and_th_correlation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5_ctx_th_gene_analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#ctx-layer56-th-correlation">ctx layer56 th correlation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#L5/L6-corr">L5/L6 corr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gene-anasys">gene anasys</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#25-ctx-area">25 ctx area</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#6-module">6 module</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-</div>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="6_ctx_cc_intracellular_extracellular_compare.html">6_ctx_cc_intracellular_extracellular_compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_cc_mRNA_and_cell_plot.html">7_cc_mRNA_and_cell_plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_coronal_sagittal_cc_in_out_deg_compare.html">8_coronal_sagittal_cc_in_out_deg_compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_ctx_3region_DEGs_expression_in_cc.html">9_ctx_3region_DEGs_expression_in_cc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_ctx_cc_connection_and_correlation.html">10_ctx_cc_connection_and_correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_PLS_find_metagene.html">11_PLS_find_metagene</a></li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -71,7 +86,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">ctx layer56 th correlation</li>
+      <li class="breadcrumb-item active">5_ctx_th_gene_analysis</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/5_ctx_th_gene_analysis.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -81,7 +96,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="nbinput nblast docutils container">
+  <section id="5_ctx_th_gene_analysis">
+<h1>5_ctx_th_gene_analysis<a class="headerlink" href="#5_ctx_th_gene_analysis" title="Link to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
 </pre></div>
 </div>
@@ -729,9 +746,9 @@ AnnData object with n_obs × n_vars = 133403 × 1122
 </pre></div></div>
 </div>
 <section id="ctx-layer56-th-correlation">
-<h1>ctx layer56 th correlation<a class="headerlink" href="#ctx-layer56-th-correlation" title="Link to this heading"></a></h1>
+<h2>ctx layer56 th correlation<a class="headerlink" href="#ctx-layer56-th-correlation" title="Link to this heading"></a></h2>
 <section id="L5/L6-corr">
-<h2>L5/L6 corr<a class="headerlink" href="#L5/L6-corr" title="Link to this heading"></a></h2>
+<h3>L5/L6 corr<a class="headerlink" href="#L5/L6-corr" title="Link to this heading"></a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
@@ -837,7 +854,7 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/5_ctx_th_gene_analysis_11_0.png" src="_images/5_ctx_th_gene_analysis_11_0.png" />
+<img alt="_images/5_ctx_th_gene_analysis_12_0.png" src="_images/5_ctx_th_gene_analysis_12_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1568,14 +1585,14 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/5_ctx_th_gene_analysis_13_0.png" src="_images/5_ctx_th_gene_analysis_13_0.png" />
+<img alt="_images/5_ctx_th_gene_analysis_14_0.png" src="_images/5_ctx_th_gene_analysis_14_0.png" />
 </div>
 </div>
 </section>
 <section id="gene-anasys">
-<h2>gene anasys<a class="headerlink" href="#gene-anasys" title="Link to this heading"></a></h2>
+<h3>gene anasys<a class="headerlink" href="#gene-anasys" title="Link to this heading"></a></h3>
 <section id="25-ctx-area">
-<h3>25 ctx area<a class="headerlink" href="#25-ctx-area" title="Link to this heading"></a></h3>
+<h4>25 ctx area<a class="headerlink" href="#25-ctx-area" title="Link to this heading"></a></h4>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
 </pre></div>
@@ -1801,12 +1818,12 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/5_ctx_th_gene_analysis_22_0.png" src="_images/5_ctx_th_gene_analysis_22_0.png" />
+<img alt="_images/5_ctx_th_gene_analysis_23_0.png" src="_images/5_ctx_th_gene_analysis_23_0.png" />
 </div>
 </div>
 </section>
 <section id="6-module">
-<h3>6 module<a class="headerlink" href="#6-module" title="Link to this heading"></a></h3>
+<h4>6 module<a class="headerlink" href="#6-module" title="Link to this heading"></a></h4>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[63]:
 </pre></div>
@@ -2382,7 +2399,7 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/5_ctx_th_gene_analysis_30_0.png" src="_images/5_ctx_th_gene_analysis_30_0.png" />
+<img alt="_images/5_ctx_th_gene_analysis_31_0.png" src="_images/5_ctx_th_gene_analysis_31_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -2478,9 +2495,10 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/5_ctx_th_gene_analysis_32_0.png" src="_images/5_ctx_th_gene_analysis_32_0.png" />
+<img alt="_images/5_ctx_th_gene_analysis_33_0.png" src="_images/5_ctx_th_gene_analysis_33_0.png" />
 </div>
 </div>
+</section>
 </section>
 </section>
 </section>
@@ -2488,7 +2506,10 @@ plt.tight_layout()
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="4_ctx_layer56_and_th_correlation.html" class="btn btn-neutral float-left" title="4_ctx_layer56_and_th_correlation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="6_ctx_cc_intracellular_extracellular_compare.html" class="btn btn-neutral float-right" title="6_ctx_cc_intracellular_extracellular_compare" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

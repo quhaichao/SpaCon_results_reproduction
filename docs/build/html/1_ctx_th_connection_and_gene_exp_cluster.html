@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ctx to th connection cluster &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+  <title>1_ctx_th_connection_and_gene_exp_cluster &mdash; SpaCon_results_reproduction 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
@@ -22,7 +22,9 @@
       <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2_ctx_th_connection_and_th_gene_pc1" href="2_ctx_th_connection_and_th_gene_pc1.html" />
+    <link rel="prev" title="SpaCon_results_reproduction documentation" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,12 +46,27 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">ctx to th connection cluster</a></li>
-<li><a class="reference internal" href="#gene-exp-umap">gene exp umap</a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1_ctx_th_connection_and_gene_exp_cluster</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#ctx-to-th-connection-cluster">ctx to th connection cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gene-exp-umap">gene exp umap</a></li>
 </ul>
-</div>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="2_ctx_th_connection_and_th_gene_pc1.html">2_ctx_th_connection_and_th_gene_pc1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_ctx_th_connection_and_gene_correlation.html">subregion th ctx correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_ctx_layer56_and_th_correlation.html">ctx layer56 th correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_ctx_th_gene_analysis.html">ctx layer56 th correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_ctx_cc_intracellular_extracellular_compare.html">gene exp plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_ctx_cc_intracellular_extracellular_compare.html#ctx-layer-maker-gene-in-cc">ctx layer maker gene in cc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_cc_mRNA_and_cell_plot.html">plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_cc_mRNA_and_cell_plot.html#cell-seg-plot">cell seg plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_ctx_3region_DEGs_expression_in_cc.html">gene exp data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_ctx_cc_connection_and_correlation.html">conn data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_ctx_cc_connection_and_correlation.html#gene-exp-data">gene exp data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_PLS_find_metagene.html">PLS</a></li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -64,7 +81,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">ctx to th connection cluster</li>
+      <li class="breadcrumb-item active">1_ctx_th_connection_and_gene_exp_cluster</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/1_ctx_th_connection_and_gene_exp_cluster.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -74,7 +91,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="nbinput nblast docutils container">
+  <section id="1_ctx_th_connection_and_gene_exp_cluster">
+<h1>1_ctx_th_connection_and_gene_exp_cluster<a class="headerlink" href="#1_ctx_th_connection_and_gene_exp_cluster" title="Link to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
@@ -527,7 +546,7 @@ AnnData object with n_obs × n_vars = 11632 × 1122
 </pre></div></div>
 </div>
 <section id="ctx-to-th-connection-cluster">
-<h1>ctx to th connection cluster<a class="headerlink" href="#ctx-to-th-connection-cluster" title="Link to this heading"></a></h1>
+<h2>ctx to th connection cluster<a class="headerlink" href="#ctx-to-th-connection-cluster" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
@@ -1658,7 +1677,7 @@ conn
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_6_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_6_0.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_7_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_7_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1761,7 +1780,7 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_8_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_8_0.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_9_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_9_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1839,12 +1858,12 @@ for id, label in zip(th_cluster_order, cluster_labels):
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_10_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_10_0.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_11_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_11_0.png" />
 </div>
 </div>
 </section>
 <section id="gene-exp-umap">
-<h1>gene exp umap<a class="headerlink" href="#gene-exp-umap" title="Link to this heading"></a></h1>
+<h2>gene exp umap<a class="headerlink" href="#gene-exp-umap" title="Link to this heading"></a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
@@ -1888,7 +1907,7 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_14_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_14_0.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1909,56 +1928,56 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_0.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_16_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_16_0.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_1.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_1.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_16_1.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_16_1.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_2.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_2.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_16_2.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_16_2.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_3.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_3.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_16_3.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_16_3.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_4.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_4.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_16_4.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_16_4.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_5.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_5.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_16_5.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_16_5.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_6.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_6.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_16_6.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_16_6.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_7.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_7.png" />
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_16_7.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_16_7.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -1970,11 +1989,15 @@ plt.tight_layout()
 </div>
 </div>
 </section>
+</section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="SpaCon_results_reproduction documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="2_ctx_th_connection_and_th_gene_pc1.html" class="btn btn-neutral float-right" title="2_ctx_th_connection_and_th_gene_pc1" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

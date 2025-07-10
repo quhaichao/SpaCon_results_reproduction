@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>conn data &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+  <title>10_ctx_cc_connection_and_correlation &mdash; SpaCon_results_reproduction 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
@@ -22,7 +22,9 @@
       <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="11_PLS_find_metagene" href="11_PLS_find_metagene.html" />
+    <link rel="prev" title="9_ctx_3region_DEGs_expression_in_cc" href="9_ctx_3region_DEGs_expression_in_cc.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,15 +46,28 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">conn data</a><ul>
-<li><a class="reference internal" href="#cluster-cc">cluster cc</a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_ctx_th_connection_and_gene_exp_cluster.html">1_ctx_th_connection_and_gene_exp_cluster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_ctx_th_connection_and_th_gene_pc1.html">2_ctx_th_connection_and_th_gene_pc1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3_ctx_th_connection_and_gene_correlation.html">3_ctx_th_connection_and_gene_correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_ctx_layer56_and_th_correlation.html">4_ctx_layer56_and_th_correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_ctx_th_gene_analysis.html">5_ctx_th_gene_analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_ctx_cc_intracellular_extracellular_compare.html">6_ctx_cc_intracellular_extracellular_compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_cc_mRNA_and_cell_plot.html">7_cc_mRNA_and_cell_plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_coronal_sagittal_cc_in_out_deg_compare.html">8_coronal_sagittal_cc_in_out_deg_compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_ctx_3region_DEGs_expression_in_cc.html">9_ctx_3region_DEGs_expression_in_cc</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">10_ctx_cc_connection_and_correlation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#conn-data">conn data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cluster-cc">cluster cc</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#gene-exp-data">gene exp data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gene-exp-data">gene exp data</a></li>
 </ul>
-</div>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="11_PLS_find_metagene.html">11_PLS_find_metagene</a></li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -67,7 +82,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">conn data</li>
+      <li class="breadcrumb-item active">10_ctx_cc_connection_and_correlation</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/10_ctx_cc_connection_and_correlation.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -77,7 +92,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="nbinput docutils container">
+  <section id="10_ctx_cc_connection_and_correlation">
+<h1>10_ctx_cc_connection_and_correlation<a class="headerlink" href="#10_ctx_cc_connection_and_correlation" title="Link to this heading"></a></h1>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -127,7 +144,7 @@ warnings.filterwarnings(&#39;ignore&#39;)
 </div>
 </div>
 <section id="conn-data">
-<h1>conn data<a class="headerlink" href="#conn-data" title="Link to this heading"></a></h1>
+<h2>conn data<a class="headerlink" href="#conn-data" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -229,7 +246,7 @@ plt.savefig(&#39;./cc/cc_id_map.pdf&#39;, format=&#39;pdf&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/10_ctx_cc_connection_and_correlation_6_0.png" src="_images/10_ctx_cc_connection_and_correlation_6_0.png" />
+<img alt="_images/10_ctx_cc_connection_and_correlation_7_0.png" src="_images/10_ctx_cc_connection_and_correlation_7_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -254,7 +271,7 @@ plt.savefig(&#39;./cc/cc_raw_heatmap.pdf&#39;, format=&#39;pdf&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/10_ctx_cc_connection_and_correlation_8_0.png" src="_images/10_ctx_cc_connection_and_correlation_8_0.png" />
+<img alt="_images/10_ctx_cc_connection_and_correlation_9_0.png" src="_images/10_ctx_cc_connection_and_correlation_9_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -343,11 +360,11 @@ plt.savefig(&#39;./cc/cc_sel_heatmap.pdf&#39;, format=&#39;pdf&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/10_ctx_cc_connection_and_correlation_12_0.png" src="_images/10_ctx_cc_connection_and_correlation_12_0.png" />
+<img alt="_images/10_ctx_cc_connection_and_correlation_13_0.png" src="_images/10_ctx_cc_connection_and_correlation_13_0.png" />
 </div>
 </div>
 <section id="cluster-cc">
-<h2>cluster cc<a class="headerlink" href="#cluster-cc" title="Link to this heading"></a></h2>
+<h3>cluster cc<a class="headerlink" href="#cluster-cc" title="Link to this heading"></a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
@@ -441,7 +458,7 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/10_ctx_cc_connection_and_correlation_15_0.png" src="_images/10_ctx_cc_connection_and_correlation_15_0.png" />
+<img alt="_images/10_ctx_cc_connection_and_correlation_16_0.png" src="_images/10_ctx_cc_connection_and_correlation_16_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -925,7 +942,7 @@ plt.legend()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/10_ctx_cc_connection_and_correlation_20_1.png" src="_images/10_ctx_cc_connection_and_correlation_20_1.png" />
+<img alt="_images/10_ctx_cc_connection_and_correlation_21_1.png" src="_images/10_ctx_cc_connection_and_correlation_21_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1009,7 +1026,7 @@ sns.clustermap(ctx2cc_conn_cluster_mean, figsize=(10, 3))
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/10_ctx_cc_connection_and_correlation_22_1.png" src="_images/10_ctx_cc_connection_and_correlation_22_1.png" />
+<img alt="_images/10_ctx_cc_connection_and_correlation_23_1.png" src="_images/10_ctx_cc_connection_and_correlation_23_1.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -1023,7 +1040,7 @@ sns.clustermap(ctx2cc_conn_cluster_mean, figsize=(10, 3))
 </section>
 </section>
 <section id="gene-exp-data">
-<h1>gene exp data<a class="headerlink" href="#gene-exp-data" title="Link to this heading"></a></h1>
+<h2>gene exp data<a class="headerlink" href="#gene-exp-data" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
@@ -1543,7 +1560,7 @@ plt.gca().invert_yaxis()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/10_ctx_cc_connection_and_correlation_30_1.png" src="_images/10_ctx_cc_connection_and_correlation_30_1.png" />
+<img alt="_images/10_ctx_cc_connection_and_correlation_31_1.png" src="_images/10_ctx_cc_connection_and_correlation_31_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -2290,15 +2307,19 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/10_ctx_cc_connection_and_correlation_41_0.png" src="_images/10_ctx_cc_connection_and_correlation_41_0.png" />
+<img alt="_images/10_ctx_cc_connection_and_correlation_42_0.png" src="_images/10_ctx_cc_connection_and_correlation_42_0.png" />
 </div>
 </div>
+</section>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="9_ctx_3region_DEGs_expression_in_cc.html" class="btn btn-neutral float-left" title="9_ctx_3region_DEGs_expression_in_cc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="11_PLS_find_metagene.html" class="btn btn-neutral float-right" title="11_PLS_find_metagene" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

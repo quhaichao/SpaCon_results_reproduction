@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>subregion th ctx correlation &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+  <title>3_ctx_th_connection_and_gene_correlation &mdash; SpaCon_results_reproduction 1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
@@ -22,7 +22,9 @@
       <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4_ctx_layer56_and_th_correlation" href="4_ctx_layer56_and_th_correlation.html" />
+    <link rel="prev" title="2_ctx_th_connection_and_th_gene_pc1" href="2_ctx_th_connection_and_th_gene_pc1.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,17 +46,30 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">subregion th ctx correlation</a><ul>
-<li><a class="reference internal" href="#connection">connection</a><ul>
-<li><a class="reference internal" href="#ctx2th-conn">ctx2th conn</a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="1_ctx_th_connection_and_gene_exp_cluster.html">1_ctx_th_connection_and_gene_exp_cluster</a></li>
+<li class="toctree-l1"><a class="reference internal" href="2_ctx_th_connection_and_th_gene_pc1.html">2_ctx_th_connection_and_th_gene_pc1</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3_ctx_th_connection_and_gene_correlation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subregion-th-ctx-correlation">subregion th ctx correlation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#connection">connection</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ctx2th-conn">ctx2th conn</a></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-</div>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="4_ctx_layer56_and_th_correlation.html">4_ctx_layer56_and_th_correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_ctx_th_gene_analysis.html">5_ctx_th_gene_analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_ctx_cc_intracellular_extracellular_compare.html">6_ctx_cc_intracellular_extracellular_compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_cc_mRNA_and_cell_plot.html">7_cc_mRNA_and_cell_plot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_coronal_sagittal_cc_in_out_deg_compare.html">8_coronal_sagittal_cc_in_out_deg_compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_ctx_3region_DEGs_expression_in_cc.html">9_ctx_3region_DEGs_expression_in_cc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_ctx_cc_connection_and_correlation.html">10_ctx_cc_connection_and_correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="11_PLS_find_metagene.html">11_PLS_find_metagene</a></li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -69,7 +84,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">subregion th ctx correlation</li>
+      <li class="breadcrumb-item active">3_ctx_th_connection_and_gene_correlation</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/3_ctx_th_connection_and_gene_correlation.ipynb.txt" rel="nofollow"> View page source</a>
       </li>
@@ -79,7 +94,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="nbinput nblast docutils container">
+  <section id="3_ctx_th_connection_and_gene_correlation">
+<h1>3_ctx_th_connection_and_gene_correlation<a class="headerlink" href="#3_ctx_th_connection_and_gene_correlation" title="Link to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -138,7 +155,7 @@ AnnData object with n_obs × n_vars = 107909 × 1122
 </pre></div></div>
 </div>
 <section id="subregion-th-ctx-correlation">
-<h1>subregion th ctx correlation<a class="headerlink" href="#subregion-th-ctx-correlation" title="Link to this heading"></a></h1>
+<h2>subregion th ctx correlation<a class="headerlink" href="#subregion-th-ctx-correlation" title="Link to this heading"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -1008,9 +1025,9 @@ corr_df
 </div></div>
 </div>
 <section id="connection">
-<h2>connection<a class="headerlink" href="#connection" title="Link to this heading"></a></h2>
+<h3>connection<a class="headerlink" href="#connection" title="Link to this heading"></a></h3>
 <section id="ctx2th-conn">
-<h3>ctx2th conn<a class="headerlink" href="#ctx2th-conn" title="Link to this heading"></a></h3>
+<h4>ctx2th conn<a class="headerlink" href="#ctx2th-conn" title="Link to this heading"></a></h4>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
@@ -1101,7 +1118,7 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/3_ctx_th_connection_and_gene_correlation_15_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_15_0.png" />
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_16_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_16_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1148,7 +1165,7 @@ plt.savefig(&#39;./th_ctx_corr_conn_scatter_line.pdf&#39;, format=&#39;pdf&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/3_ctx_th_connection_and_gene_correlation_16_1.png" src="_images/3_ctx_th_connection_and_gene_correlation_16_1.png" />
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_17_1.png" src="_images/3_ctx_th_connection_and_gene_correlation_17_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1182,7 +1199,7 @@ plt.show()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/3_ctx_th_connection_and_gene_correlation_17_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_17_0.png" />
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_18_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_18_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1222,7 +1239,7 @@ Locator attempting to generate 8165 ticks ([0.0, ..., 32656.0]), which exceeds L
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/3_ctx_th_connection_and_gene_correlation_18_1.png" src="_images/3_ctx_th_connection_and_gene_correlation_18_1.png" />
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_19_1.png" src="_images/3_ctx_th_connection_and_gene_correlation_19_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1263,7 +1280,7 @@ for i, coeff in enumerate(coeffs):
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/3_ctx_th_connection_and_gene_correlation_19_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_19_0.png" />
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_20_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_20_0.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1301,7 +1318,7 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/3_ctx_th_connection_and_gene_correlation_20_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_20_0.png" />
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_21_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_21_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -1363,9 +1380,10 @@ plt.tight_layout()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="_images/3_ctx_th_connection_and_gene_correlation_22_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_22_0.png" />
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_23_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_23_0.png" />
 </div>
 </div>
+</section>
 </section>
 </section>
 </section>
@@ -1373,7 +1391,10 @@ plt.tight_layout()
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="2_ctx_th_connection_and_th_gene_pc1.html" class="btn btn-neutral float-left" title="2_ctx_th_connection_and_th_gene_pc1" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="4_ctx_layer56_and_th_correlation.html" class="btn btn-neutral float-right" title="4_ctx_layer56_and_th_correlation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

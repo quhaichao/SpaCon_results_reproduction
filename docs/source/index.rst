@@ -7,7 +7,7 @@ SpaCon_results_reproduction documentation
 =========================================
 
 This tutorial contains detailed reproduction code for the main results in the article
-**"SpaCon: Integrative Analysis of Spatial Transcriptome and Connectome**.
+**"SpaCon: Integrative Analysis of Spatial Transcriptome and Connectome"**.
 
 
 .. toctree::
