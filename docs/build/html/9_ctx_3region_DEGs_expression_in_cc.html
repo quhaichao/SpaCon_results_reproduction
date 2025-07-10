@@ -1,0 +1,678 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gene exp data &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SpaCon_results_reproduction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">gene exp data</a><ul>
+<li><a class="reference internal" href="#DEG">DEG</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpaCon_results_reproduction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">gene exp data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/9_ctx_3region_DEGs_expression_in_cc.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+import scanpy as sc
+from scipy.spatial import cKDTree
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+
+import warnings
+import seaborn as sns
+import matplotlib as mpl
+mpl.rcParams[&#39;pdf.fonttype&#39;] = 42
+mpl.rcParams[&#39;ps.fonttype&#39;] = 42
+
+warnings.filterwarnings(&#39;ignore&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/mnt/Data16Tc/home/haichao/anaconda3/envs/SpaCon_test/lib/python3.8/site-packages/tqdm/auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm
+</pre></div></div>
+</div>
+<section id="gene-exp-data">
+<h1>gene exp data<a class="headerlink" href="#gene-exp-data" title="Link to this heading"></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_in = sc.read_h5ad(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/adata_processed.h5ad&#39;)
+allen_region = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/allen_region.csv&#39;)
+adata_in.obs[&#39;region&#39;] = allen_region[&#39;region&#39;].values
+meta = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/cell_metadata_with_cluster_annotation.csv&#39;)
+meta = meta.set_index(&#39;cell_label&#39;)
+meta = meta.loc[adata_in.obs.index.to_list()]
+adata_in.obs[&#39;cell_type&#39;] = meta[&#39;class&#39;].to_list()
+
+adata_out = sc.read_h5ad(&#39;/mnt/Data18Td/Data/haichao/merfish_raw_data_zxw3/out_cell_adata/adata_out_cell_distance_q0.3/after_qc/Zhuang-ABCA-3.001.h5ad&#39;)
+adata_out.obs[&#39;region&#39;] = adata_in.obs.loc[adata_out.obs_names][&#39;region&#39;].values
+
+adata_in = adata_in[adata_in.obs[&#39;cell_type&#39;].str.contains(&#39;Glut&#39;)]
+adata_out.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>totalRNA</th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>n_genes_by_counts</th>
+      <th>total_counts</th>
+      <th>region</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>100008170567769574864159172860058606533</th>
+      <td>175</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>19.063883</td>
+      <td>33.423346</td>
+      <td>54.106801</td>
+      <td>100</td>
+      <td>175</td>
+      <td>MOB</td>
+    </tr>
+    <tr>
+      <th>100019036144713180485707288452329906643</th>
+      <td>373</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>44.290637</td>
+      <td>63.872748</td>
+      <td>53.902462</td>
+      <td>189</td>
+      <td>373</td>
+      <td>NDB</td>
+    </tr>
+    <tr>
+      <th>10002377904544842423531242460024745973</th>
+      <td>277</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>63.860525</td>
+      <td>7.998013</td>
+      <td>54.043841</td>
+      <td>126</td>
+      <td>277</td>
+      <td>RSPd2/3</td>
+    </tr>
+    <tr>
+      <th>100027648052649525810014127621472143070</th>
+      <td>435</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>113.480480</td>
+      <td>41.056674</td>
+      <td>54.349928</td>
+      <td>165</td>
+      <td>435</td>
+      <td>arb</td>
+    </tr>
+    <tr>
+      <th>100029875144524072265954931895494067096</th>
+      <td>60</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>11.572676</td>
+      <td>37.921554</td>
+      <td>54.370336</td>
+      <td>39</td>
+      <td>60</td>
+      <td>MOB</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>99961718914838042706216314325649765172</th>
+      <td>627</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>113.199100</td>
+      <td>23.661374</td>
+      <td>54.096322</td>
+      <td>157</td>
+      <td>627</td>
+      <td>CENT3</td>
+    </tr>
+    <tr>
+      <th>9996242280180655885872867452807576494</th>
+      <td>157</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>86.896566</td>
+      <td>18.326938</td>
+      <td>54.027272</td>
+      <td>100</td>
+      <td>157</td>
+      <td>SCop</td>
+    </tr>
+    <tr>
+      <th>999921392501518309214993564089572563</th>
+      <td>97</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>21.082878</td>
+      <td>31.635078</td>
+      <td>54.090905</td>
+      <td>67</td>
+      <td>97</td>
+      <td>ORBm1</td>
+    </tr>
+    <tr>
+      <th>99995909784199304193294645747252265238</th>
+      <td>154</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>111.605478</td>
+      <td>22.417974</td>
+      <td>54.070819</td>
+      <td>93</td>
+      <td>154</td>
+      <td>CENT3</td>
+    </tr>
+    <tr>
+      <th>99996568769251334694329666788053033728</th>
+      <td>200</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>112.945756</td>
+      <td>31.433985</td>
+      <td>54.093405</td>
+      <td>95</td>
+      <td>200</td>
+      <td>CENT3</td>
+    </tr>
+  </tbody>
+</table>
+<p>83602 rows × 8 columns</p>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>gene_com = list(set(adata_in.var_names) &amp; set(adata_out.var_names))
+adata_in = adata_in[:, gene_com]
+adata_out = adata_out[:, gene_com]
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx2cc_conn_cluster_mean = pd.read_csv(&#39;./ctx_cc_conn_filtered.csv&#39;, index_col=0)
+sns.clustermap(ctx2cc_conn_cluster_mean, cmap=&#39;coolwarm&#39;, center=0, figsize=(10, 3), linewidths=0.05, linecolor=&#39;white&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;seaborn.matrix.ClusterGrid at 0x7f887404b310&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/9_ctx_3region_DEGs_expression_in_cc_4_1.png" src="_images/9_ctx_3region_DEGs_expression_in_cc_4_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_ctx = adata_in[adata_in.obs[&#39;region&#39;].str.startswith(tuple(ctx2cc_conn_cluster_mean.columns))]
+adata_ctx
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+View of AnnData object with n_obs × n_vars = 67823 × 1111
+    obs: &#39;brain_section_label&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;x_ccf&#39;, &#39;y_ccf&#39;, &#39;z_ccf&#39;, &#39;region&#39;, &#39;cell_type&#39;
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span>ctx1 = [&#39;FRP&#39;, &#39;ORBl&#39;, &#39;ORBvl&#39;, &#39;ORBm&#39;, &#39;PL&#39;, &#39;ILA&#39;]
+ctx2 = [&#39;SSp-m&#39;, &#39;ACAd&#39;, &#39;ACAv&#39;]
+ctx3=[&#39;RSPv&#39;,&#39;RSPd&#39;, &#39;VISpm&#39;, &#39;VISa&#39;, &#39;VISam&#39;, &#39;SSp-bfd&#39;, &#39;VISpor&#39;, &#39;VISli&#39;, &#39;TEa&#39;, &#39;VISpl&#39;, &#39;VISl&#39;, &#39;AUDv&#39;, &#39;VISal&#39;, &#39;AUDpo&#39;, &#39;AUDp&#39;, &#39;AUDd&#39;]
+adata_ctx.obs[&#39;cc_ctx&#39;] = None
+adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.startswith(tuple(ctx1)), &#39;cc_ctx&#39;] = &#39;ctx1&#39;
+adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.startswith(tuple(ctx2)), &#39;cc_ctx&#39;] = &#39;ctx2&#39;
+adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.startswith(tuple(ctx3)), &#39;cc_ctx&#39;] = &#39;ctx3&#39;
+adata_ctx = adata_ctx[adata_ctx.obs[&#39;cc_ctx&#39;].notna()]
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_cc = adata_out[adata_out.obs[&#39;region&#39;].str.startswith(&#39;cc&#39;)]
+tmp = adata_cc.copy()
+idx = []
+cc_cluster_by_conn = pd.read_csv(&#39;./cc_cluster_by_conn.csv&#39;, index_col=0)
+coordinate = cc_cluster_by_conn[[&#39;x&#39;, &#39;y&#39;]].values
+kdtree = cKDTree(coordinate)
+for coord in tqdm(adata_cc.obs[[&#39;x&#39;, &#39;y&#39;]].values):
+    # 查询最近邻索引
+    _, nearest_index = kdtree.query(coord)
+    idx.append(nearest_index)
+plt.figure(figsize=(9,5))
+### match the cc cluster
+adata_cc.obs[&#39;NT_index&#39;] = idx
+adata_cc.obs[&#39;cc&#39;] = cc_cluster_by_conn.loc[adata_cc.obs[&#39;NT_index&#39;]][&#39;c&#39;].values
+adata_cc = adata_cc[adata_cc.obs[&#39;cc&#39;].notna()]
+adata_cc.obs[&#39;cc&#39;] = &#39;cc&#39;+((adata_cc.obs[&#39;cc&#39;]).astype(int)+1).astype(str)
+#### plot
+categories = adata_cc.obs[&#39;cc&#39;].unique()
+# plt.scatter(adata_out.obs[&#39;x&#39;], adata_out.obs[&#39;y&#39;], s=1, c=&#39;#d3d3d3&#39;)
+plt.scatter(tmp.obs[&#39;x&#39;], tmp.obs[&#39;y&#39;], s=20, c=&#39;#8f8f8f&#39;)
+# plt.scatter(tmp.obs[&#39;x&#39;], tmp.obs[&#39;y&#39;], s=20, c=&#39;#d3d3d3&#39;)
+
+# 为每个类别绘制散点
+cm = [&#39;#ff7f0e&#39;, &#39;#2ca02c&#39;, &#39;#2377b4&#39;]
+# cm = [&#39;#6597b9&#39;, &#39;#6bad6b&#39;, &#39;#e9a161&#39;]
+i=0
+for category in categories:
+    subset = adata_cc[adata_cc.obs[&#39;cc&#39;] == category]
+    plt.scatter(subset.obs[&#39;x&#39;], subset.obs[&#39;y&#39;], label=category, s=20, c=cm[i])
+    # print(f&#39;cc_{int(category)}&#39;)
+    i=i+1
+plt.legend()
+plt.gca().invert_yaxis()
+# plt.savefig(&#39;cc_area.png&#39;, dpi=600)
+# plt.savefig(&#39;./cc/cc1_cc2_cc3.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<section id="DEG">
+<h2>DEG<a class="headerlink" href="#DEG" title="Link to this heading"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.pp.normalize_total(adata_ctx, target_sum=1e4)
+sc.pp.log1p(adata_ctx)
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.pp.normalize_total(adata_cc, target_sum=1e4)
+sc.pp.log1p(adata_cc)
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.tl.rank_genes_groups(adata_ctx, groupby=&quot;cc_ctx&quot;, reference=&quot;rest&quot;, n_genes=adata_ctx.shape[1], method=&#39;wilcoxon&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>regions = adata_ctx.obs[&#39;cc_ctx&#39;].unique()
+top_genes_df = pd.DataFrame(columns=[&#39;region&#39;, &#39;gene&#39;, &#39;score&#39;, &#39;logfoldchanges&#39;, &#39;pvals&#39;, &#39;pvals_adj&#39;])
+# 遍历每个区域，提取排名前3的基因
+for region in regions:
+    # 提取特定区域的marker基因
+    markers_df = sc.get.rank_genes_groups_df(adata_ctx, group=region)
+    markers_df = markers_df.sort_values(by=&#39;logfoldchanges&#39;, ascending=False)
+    # 获取排名前3的基因
+    top_genes = markers_df.head(5)
+    # if top_genes[&#39;names&#39;].values == &#39;Ttr&#39;:
+    #     top_genes = markers_df.head(2)
+    # 添加区域信息
+    top_genes[&#39;region&#39;] = region
+    # 选择需要的列
+    top_genes = top_genes[[&#39;region&#39;, &#39;names&#39;, &#39;scores&#39;, &#39;logfoldchanges&#39;, &#39;pvals&#39;, &#39;pvals_adj&#39;]]
+    # 重命名列
+    top_genes.columns = [&#39;region&#39;, &#39;gene&#39;, &#39;score&#39;, &#39;logfoldchanges&#39;, &#39;pvals&#39;, &#39;pvals_adj&#39;]
+    # 将结果添加到汇总的DataFrame中
+    top_genes_df = pd.concat([top_genes_df, top_genes], ignore_index=True)
+top_genes_df = top_genes_df.set_index(&#39;region&#39;)
+top_genes_df
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>gene</th>
+      <th>score</th>
+      <th>logfoldchanges</th>
+      <th>pvals</th>
+      <th>pvals_adj</th>
+    </tr>
+    <tr>
+      <th>region</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>ctx3</th>
+      <td>Nr2f2</td>
+      <td>10.998008</td>
+      <td>2.251740</td>
+      <td>3.906658e-28</td>
+      <td>2.346106e-27</td>
+    </tr>
+    <tr>
+      <th>ctx3</th>
+      <td>Tshz2</td>
+      <td>42.789413</td>
+      <td>1.908488</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+    </tr>
+    <tr>
+      <th>ctx3</th>
+      <td>Met</td>
+      <td>15.654150</td>
+      <td>1.551293</td>
+      <td>3.112418e-55</td>
+      <td>2.659920e-54</td>
+    </tr>
+    <tr>
+      <th>ctx3</th>
+      <td>Ctxn3</td>
+      <td>5.829773</td>
+      <td>1.497417</td>
+      <td>5.550263e-09</td>
+      <td>1.995580e-08</td>
+    </tr>
+    <tr>
+      <th>ctx3</th>
+      <td>C1ql2</td>
+      <td>4.970668</td>
+      <td>1.410147</td>
+      <td>6.672248e-07</td>
+      <td>2.193156e-06</td>
+    </tr>
+    <tr>
+      <th>ctx2</th>
+      <td>Scn4b</td>
+      <td>33.871655</td>
+      <td>1.264914</td>
+      <td>1.742216e-251</td>
+      <td>6.452006e-249</td>
+    </tr>
+    <tr>
+      <th>ctx2</th>
+      <td>Bmpr1b</td>
+      <td>13.590011</td>
+      <td>1.168321</td>
+      <td>4.590144e-42</td>
+      <td>8.792501e-41</td>
+    </tr>
+    <tr>
+      <th>ctx2</th>
+      <td>Adgrl2</td>
+      <td>57.814980</td>
+      <td>1.156904</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+    </tr>
+    <tr>
+      <th>ctx2</th>
+      <td>Blnk</td>
+      <td>15.697517</td>
+      <td>1.049282</td>
+      <td>1.572777e-55</td>
+      <td>5.139282e-54</td>
+    </tr>
+    <tr>
+      <th>ctx2</th>
+      <td>Plekha2</td>
+      <td>13.359410</td>
+      <td>1.018079</td>
+      <td>1.043885e-40</td>
+      <td>1.840883e-39</td>
+    </tr>
+    <tr>
+      <th>ctx1</th>
+      <td>Crym</td>
+      <td>70.281998</td>
+      <td>3.123753</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+    </tr>
+    <tr>
+      <th>ctx1</th>
+      <td>Col6a1</td>
+      <td>49.039230</td>
+      <td>2.726512</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+    </tr>
+    <tr>
+      <th>ctx1</th>
+      <td>Col12a1</td>
+      <td>45.270657</td>
+      <td>2.506889</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+    </tr>
+    <tr>
+      <th>ctx1</th>
+      <td>Tnfrsf8</td>
+      <td>15.637980</td>
+      <td>2.191909</td>
+      <td>4.012542e-55</td>
+      <td>3.277893e-54</td>
+    </tr>
+    <tr>
+      <th>ctx1</th>
+      <td>Prss12</td>
+      <td>57.639507</td>
+      <td>2.105650</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(16, 4))
+# top_genes_df_filt = top_genes_df[top_genes_df[&#39;logfoldchanges&#39;] &gt; 1]
+cc = [&#39;ctx1&#39;, &#39;ctx2&#39;, &#39;ctx3&#39;]
+for i, cc_area in enumerate(cc):
+    gene_data = adata_cc[:, top_genes_df.loc[cc_area][&#39;gene&#39;]].X.A.mean(axis=1)
+    group_data = adata_cc.obs[&#39;cc&#39;]
+    # 创建一个DataFrame来存储这些数据
+    df = pd.DataFrame({
+        &#39;Expression&#39;: gene_data,
+        &#39;subregion&#39;: group_data
+    })
+    ax = axes[i]
+    sns.barplot(x=&#39;subregion&#39;, y=&#39;Expression&#39;, data=df, ax = ax, palette=[&#39;#3a923a&#39;, &#39;#3274a1&#39;, &#39;#e1812c&#39;], order=[&#39;cc3&#39;, &#39;cc1&#39;, &#39;cc2&#39;])
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/9_ctx_3region_DEGs_expression_in_cc_13_0.png" src="_images/9_ctx_3region_DEGs_expression_in_cc_13_0.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, quhaichao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

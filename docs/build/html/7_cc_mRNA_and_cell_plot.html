@@ -1,0 +1,1365 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>plot &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SpaCon_results_reproduction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">plot</a></li>
+<li><a class="reference internal" href="#cell-seg-plot">cell seg plot</a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpaCon_results_reproduction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">plot</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/7_cc_mRNA_and_cell_plot.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+import scanpy as sc
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.spatial import ConvexHull
+
+import warnings
+warnings.filterwarnings(&#39;ignore&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_in = sc.read_h5ad(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/adata_processed.h5ad&#39;)
+adata_in.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>198904341065180396762707397604803217407</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>49.206853</td>
+      <td>44.877634</td>
+      <td>12.168155</td>
+      <td>4.920685</td>
+      <td>4.487763</td>
+      <td>1.216815</td>
+    </tr>
+    <tr>
+      <th>252199681526991424029643077826220097990</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.973992</td>
+      <td>44.813761</td>
+      <td>12.179006</td>
+      <td>4.897399</td>
+      <td>4.481376</td>
+      <td>1.217901</td>
+    </tr>
+    <tr>
+      <th>277720971126854564514249564750701518375</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.791066</td>
+      <td>44.577722</td>
+      <td>12.192707</td>
+      <td>4.879107</td>
+      <td>4.457772</td>
+      <td>1.219271</td>
+    </tr>
+    <tr>
+      <th>31551867344111790264292067056219852271</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.830489</td>
+      <td>44.426120</td>
+      <td>12.195078</td>
+      <td>4.883049</td>
+      <td>4.442612</td>
+      <td>1.219508</td>
+    </tr>
+    <tr>
+      <th>131102494428104399865219008178262036485</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.308843</td>
+      <td>43.028156</td>
+      <td>12.267879</td>
+      <td>4.830884</td>
+      <td>4.302816</td>
+      <td>1.226788</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>318102106429791409781741726367984532777</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.090716</td>
+      <td>69.334275</td>
+      <td>41.436743</td>
+      <td>13.109072</td>
+      <td>6.933427</td>
+      <td>4.143674</td>
+    </tr>
+    <tr>
+      <th>35262847161560382172299767067854387528</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.216032</td>
+      <td>69.494070</td>
+      <td>41.351034</td>
+      <td>13.121603</td>
+      <td>6.949407</td>
+      <td>4.135103</td>
+    </tr>
+    <tr>
+      <th>75415866509570969932943497000463821106</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.415152</td>
+      <td>70.764504</td>
+      <td>40.800403</td>
+      <td>13.141515</td>
+      <td>7.076450</td>
+      <td>4.080040</td>
+    </tr>
+    <tr>
+      <th>12350978322417280063239916106423065862</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.646167</td>
+      <td>71.182557</td>
+      <td>40.595995</td>
+      <td>13.164617</td>
+      <td>7.118256</td>
+      <td>4.059599</td>
+    </tr>
+    <tr>
+      <th>327554758863546024460748891922509519354</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.658892</td>
+      <td>71.414675</td>
+      <td>40.501356</td>
+      <td>13.165889</td>
+      <td>7.141468</td>
+      <td>4.050136</td>
+    </tr>
+  </tbody>
+</table>
+<p>1566842 rows × 7 columns</p>
+</div></div>
+</div>
+<section id="plot">
+<h1>plot<a class="headerlink" href="#plot" title="Link to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>section = &#39;Zhuang-ABCA-3.001&#39;
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_out = sc.read_h5ad(f&#39;/mnt/Data18Td/Data/haichao/merfish_raw_data_zxw3/out_cell_adata/adata_out_cell_distance_q0.3/after_qc/{section}.h5ad&#39;)
+adata_out
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AnnData object with n_obs × n_vars = 83602 × 1147
+    obs: &#39;totalRNA&#39;, &#39;brain_section_label&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;n_genes_by_counts&#39;, &#39;total_counts&#39;
+    var: &#39;n_cells_by_counts&#39;, &#39;mean_counts&#39;, &#39;pct_dropout_by_counts&#39;, &#39;total_counts&#39;
+    obsm: &#39;spatial&#39;
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_in_s = adata_in[adata_in.obs[&#39;brain_section_label&#39;] == section]
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_in_s.obs[&#39;totalRNA&#39;] = adata_in_s.X.sum(1)
+plt.figure(figsize=(9,4))
+plt.scatter(adata_in_s.obs[&#39;x&#39;], adata_in_s.obs[&#39;y&#39;], s=1, c=adata_in_s.obs[&#39;totalRNA&#39;])
+plt.colorbar()
+plt.gca().invert_yaxis()
+# plt.savefig(&#39;./zxw_section001.png&#39;, dpi=600)
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/7_cc_mRNA_and_cell_plot_6_0.png" src="_images/7_cc_mRNA_and_cell_plot_6_0.png" />
+</div>
+</div>
+</section>
+<section id="cell-seg-plot">
+<h1>cell seg plot<a class="headerlink" href="#cell-seg-plot" title="Link to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>k = &#39;spots_220609_wb3_sa1_1_5z18R_merfish5.csv&#39;
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>path = &#39;/mnt/Data18Td/Data/haichao/merfish_raw_data_zxw3/&#39;
+decode = pd.read_csv(path + f&#39;decode/{k}&#39;)
+decode
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>barcode_id</th>
+      <th>global_x</th>
+      <th>global_y</th>
+      <th>global_z</th>
+      <th>x</th>
+      <th>y</th>
+      <th>fov</th>
+      <th>target_gene</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>6</td>
+      <td>7431.1514</td>
+      <td>-993.20215</td>
+      <td>0.0</td>
+      <td>728.81970</td>
+      <td>1755.30190</td>
+      <td>0</td>
+      <td>Blnk</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>9</td>
+      <td>7449.9080</td>
+      <td>-1056.03990</td>
+      <td>0.0</td>
+      <td>900.89960</td>
+      <td>1178.80870</td>
+      <td>0</td>
+      <td>Osr1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10</td>
+      <td>7443.4214</td>
+      <td>-1027.75560</td>
+      <td>0.0</td>
+      <td>841.38873</td>
+      <td>1438.29750</td>
+      <td>0</td>
+      <td>Abca8a</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>15</td>
+      <td>7437.5923</td>
+      <td>-1014.19040</td>
+      <td>0.0</td>
+      <td>787.91034</td>
+      <td>1562.74840</td>
+      <td>0</td>
+      <td>Ndnf</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>15</td>
+      <td>7436.9700</td>
+      <td>-1010.00200</td>
+      <td>0.0</td>
+      <td>782.20540</td>
+      <td>1601.17430</td>
+      <td>0</td>
+      <td>Ndnf</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>118888150</th>
+      <td>1223</td>
+      <td>-5469.6436</td>
+      <td>-721.12604</td>
+      <td>4.0</td>
+      <td>1638.96030</td>
+      <td>581.68787</td>
+      <td>1459</td>
+      <td>Slc6a13</td>
+    </tr>
+    <tr>
+      <th>118888151</th>
+      <td>1227</td>
+      <td>-5488.3384</td>
+      <td>-749.95166</td>
+      <td>4.0</td>
+      <td>1467.44690</td>
+      <td>317.23276</td>
+      <td>1459</td>
+      <td>Ntng1</td>
+    </tr>
+    <tr>
+      <th>118888152</th>
+      <td>1236</td>
+      <td>-5468.1800</td>
+      <td>-724.55023</td>
+      <td>4.0</td>
+      <td>1652.38230</td>
+      <td>550.27356</td>
+      <td>1459</td>
+      <td>Itih5</td>
+    </tr>
+    <tr>
+      <th>118888153</th>
+      <td>1236</td>
+      <td>-5464.9087</td>
+      <td>-720.48570</td>
+      <td>4.0</td>
+      <td>1682.39610</td>
+      <td>587.56226</td>
+      <td>1459</td>
+      <td>Itih5</td>
+    </tr>
+    <tr>
+      <th>118888154</th>
+      <td>1236</td>
+      <td>-5464.0776</td>
+      <td>-718.31824</td>
+      <td>4.0</td>
+      <td>1690.02310</td>
+      <td>607.44790</td>
+      <td>1459</td>
+      <td>Itih5</td>
+    </tr>
+  </tbody>
+</table>
+<p>118888155 rows × 8 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>decode_list = []
+for z in range(5):
+    decode_list.append(decode[decode[&#39;global_z&#39;] == z])
+decode = pd.concat(decode_list)
+decode
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>barcode_id</th>
+      <th>global_x</th>
+      <th>global_y</th>
+      <th>global_z</th>
+      <th>x</th>
+      <th>y</th>
+      <th>fov</th>
+      <th>target_gene</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>6</td>
+      <td>7431.1514</td>
+      <td>-993.20215</td>
+      <td>0.0</td>
+      <td>728.81970</td>
+      <td>1755.30190</td>
+      <td>0</td>
+      <td>Blnk</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>9</td>
+      <td>7449.9080</td>
+      <td>-1056.03990</td>
+      <td>0.0</td>
+      <td>900.89960</td>
+      <td>1178.80870</td>
+      <td>0</td>
+      <td>Osr1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10</td>
+      <td>7443.4214</td>
+      <td>-1027.75560</td>
+      <td>0.0</td>
+      <td>841.38873</td>
+      <td>1438.29750</td>
+      <td>0</td>
+      <td>Abca8a</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>15</td>
+      <td>7437.5923</td>
+      <td>-1014.19040</td>
+      <td>0.0</td>
+      <td>787.91034</td>
+      <td>1562.74840</td>
+      <td>0</td>
+      <td>Ndnf</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>15</td>
+      <td>7436.9700</td>
+      <td>-1010.00200</td>
+      <td>0.0</td>
+      <td>782.20540</td>
+      <td>1601.17430</td>
+      <td>0</td>
+      <td>Ndnf</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>118888150</th>
+      <td>1223</td>
+      <td>-5469.6436</td>
+      <td>-721.12604</td>
+      <td>4.0</td>
+      <td>1638.96030</td>
+      <td>581.68787</td>
+      <td>1459</td>
+      <td>Slc6a13</td>
+    </tr>
+    <tr>
+      <th>118888151</th>
+      <td>1227</td>
+      <td>-5488.3384</td>
+      <td>-749.95166</td>
+      <td>4.0</td>
+      <td>1467.44690</td>
+      <td>317.23276</td>
+      <td>1459</td>
+      <td>Ntng1</td>
+    </tr>
+    <tr>
+      <th>118888152</th>
+      <td>1236</td>
+      <td>-5468.1800</td>
+      <td>-724.55023</td>
+      <td>4.0</td>
+      <td>1652.38230</td>
+      <td>550.27356</td>
+      <td>1459</td>
+      <td>Itih5</td>
+    </tr>
+    <tr>
+      <th>118888153</th>
+      <td>1236</td>
+      <td>-5464.9087</td>
+      <td>-720.48570</td>
+      <td>4.0</td>
+      <td>1682.39610</td>
+      <td>587.56226</td>
+      <td>1459</td>
+      <td>Itih5</td>
+    </tr>
+    <tr>
+      <th>118888154</th>
+      <td>1236</td>
+      <td>-5464.0776</td>
+      <td>-718.31824</td>
+      <td>4.0</td>
+      <td>1690.02310</td>
+      <td>607.44790</td>
+      <td>1459</td>
+      <td>Itih5</td>
+    </tr>
+  </tbody>
+</table>
+<p>118888155 rows × 8 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>label_list = []
+for z in range(5):
+    label_tmp = pd.read_csv(f&#39;/mnt/Data16Tc/home/haichao/zhk_cellpose/zxw_mouse3/RNA_assign_result/z{z}_{k}&#39;)
+    label_list.append(label_tmp)
+label = pd.concat(label_list)
+label
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>cell_id</th>
+      <th>rna_x</th>
+      <th>rna_y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>-1</td>
+      <td>7431.1514</td>
+      <td>-993.20215</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>-1</td>
+      <td>7449.9080</td>
+      <td>-1056.03990</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>249036588031381669888723946641009679607</td>
+      <td>7443.4214</td>
+      <td>-1027.75560</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>218848290644972372188932481708465309936</td>
+      <td>7437.5923</td>
+      <td>-1014.19040</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>218848290644972372188932481708465309936</td>
+      <td>7436.9700</td>
+      <td>-1010.00200</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>20701713</th>
+      <td>20701713</td>
+      <td>146425405968477909049602431369064593908</td>
+      <td>-5469.6436</td>
+      <td>-721.12604</td>
+    </tr>
+    <tr>
+      <th>20701714</th>
+      <td>20701714</td>
+      <td>156289121112150876752838252195691077770</td>
+      <td>-5488.3384</td>
+      <td>-749.95166</td>
+    </tr>
+    <tr>
+      <th>20701715</th>
+      <td>20701715</td>
+      <td>146425405968477909049602431369064593908</td>
+      <td>-5468.1800</td>
+      <td>-724.55023</td>
+    </tr>
+    <tr>
+      <th>20701716</th>
+      <td>20701716</td>
+      <td>146425405968477909049602431369064593908</td>
+      <td>-5464.9087</td>
+      <td>-720.48570</td>
+    </tr>
+    <tr>
+      <th>20701717</th>
+      <td>20701717</td>
+      <td>146425405968477909049602431369064593908</td>
+      <td>-5464.0776</td>
+      <td>-718.31824</td>
+    </tr>
+  </tbody>
+</table>
+<p>118888155 rows × 4 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>decode[&#39;cell_id&#39;] = label[&#39;cell_id&#39;].values
+decode
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>barcode_id</th>
+      <th>global_x</th>
+      <th>global_y</th>
+      <th>global_z</th>
+      <th>x</th>
+      <th>y</th>
+      <th>fov</th>
+      <th>target_gene</th>
+      <th>cell_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>6</td>
+      <td>7431.1514</td>
+      <td>-993.20215</td>
+      <td>0.0</td>
+      <td>728.81970</td>
+      <td>1755.30190</td>
+      <td>0</td>
+      <td>Blnk</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>9</td>
+      <td>7449.9080</td>
+      <td>-1056.03990</td>
+      <td>0.0</td>
+      <td>900.89960</td>
+      <td>1178.80870</td>
+      <td>0</td>
+      <td>Osr1</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>10</td>
+      <td>7443.4214</td>
+      <td>-1027.75560</td>
+      <td>0.0</td>
+      <td>841.38873</td>
+      <td>1438.29750</td>
+      <td>0</td>
+      <td>Abca8a</td>
+      <td>249036588031381669888723946641009679607</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>15</td>
+      <td>7437.5923</td>
+      <td>-1014.19040</td>
+      <td>0.0</td>
+      <td>787.91034</td>
+      <td>1562.74840</td>
+      <td>0</td>
+      <td>Ndnf</td>
+      <td>218848290644972372188932481708465309936</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>15</td>
+      <td>7436.9700</td>
+      <td>-1010.00200</td>
+      <td>0.0</td>
+      <td>782.20540</td>
+      <td>1601.17430</td>
+      <td>0</td>
+      <td>Ndnf</td>
+      <td>218848290644972372188932481708465309936</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>118888150</th>
+      <td>1223</td>
+      <td>-5469.6436</td>
+      <td>-721.12604</td>
+      <td>4.0</td>
+      <td>1638.96030</td>
+      <td>581.68787</td>
+      <td>1459</td>
+      <td>Slc6a13</td>
+      <td>146425405968477909049602431369064593908</td>
+    </tr>
+    <tr>
+      <th>118888151</th>
+      <td>1227</td>
+      <td>-5488.3384</td>
+      <td>-749.95166</td>
+      <td>4.0</td>
+      <td>1467.44690</td>
+      <td>317.23276</td>
+      <td>1459</td>
+      <td>Ntng1</td>
+      <td>156289121112150876752838252195691077770</td>
+    </tr>
+    <tr>
+      <th>118888152</th>
+      <td>1236</td>
+      <td>-5468.1800</td>
+      <td>-724.55023</td>
+      <td>4.0</td>
+      <td>1652.38230</td>
+      <td>550.27356</td>
+      <td>1459</td>
+      <td>Itih5</td>
+      <td>146425405968477909049602431369064593908</td>
+    </tr>
+    <tr>
+      <th>118888153</th>
+      <td>1236</td>
+      <td>-5464.9087</td>
+      <td>-720.48570</td>
+      <td>4.0</td>
+      <td>1682.39610</td>
+      <td>587.56226</td>
+      <td>1459</td>
+      <td>Itih5</td>
+      <td>146425405968477909049602431369064593908</td>
+    </tr>
+    <tr>
+      <th>118888154</th>
+      <td>1236</td>
+      <td>-5464.0776</td>
+      <td>-718.31824</td>
+      <td>4.0</td>
+      <td>1690.02310</td>
+      <td>607.44790</td>
+      <td>1459</td>
+      <td>Itih5</td>
+      <td>146425405968477909049602431369064593908</td>
+    </tr>
+  </tbody>
+</table>
+<p>118888155 rows × 9 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[118]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>decode1 = decode[decode[&#39;global_z&#39;] == 0]
+plt.figure(figsize=(10,5))
+plt.scatter(decode1[&#39;global_x&#39;], decode1[&#39;global_y&#39;], s=0.1)
+# Define the boundary of the rectangle
+# x_min, x_max = 0, 2100
+# y_min, y_max = 1200, 1900
+
+x_min, x_max = 0, 1400
+y_min, y_max = 1200, 2000
+
+# x_min, x_max = 1000, 1300
+# y_min, y_max = 1400, 1600
+# x_min, x_max = 1000, 1400
+# y_min, y_max = 1350, 1550
+# Four vertices of rectangular
+rect_x = [x_min, x_max, x_max, x_min, x_min]
+rect_y = [y_min, y_min, y_max, y_max, y_min]
+# Draw the rectangular boundary
+plt.plot(rect_x, rect_y, color=&#39;red&#39;, linewidth=2)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[118]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;matplotlib.lines.Line2D at 0x7f3c8efc4100&gt;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/7_cc_mRNA_and_cell_plot_13_1.png" src="_images/7_cc_mRNA_and_cell_plot_13_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[119]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>th = decode[(decode[&#39;global_x&#39;] &gt;x_min) &amp;((decode[&#39;global_x&#39;] &lt;x_max)) &amp; (decode[&#39;global_y&#39;] &gt;y_min) &amp;((decode[&#39;global_y&#39;] &lt;y_max))]
+th_out = th[th[&#39;cell_id&#39;] == &#39;-1&#39;]
+th_in = th[th[&#39;cell_id&#39;] != &#39;-1&#39;]
+th_out
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[119]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>barcode_id</th>
+      <th>global_x</th>
+      <th>global_y</th>
+      <th>global_z</th>
+      <th>x</th>
+      <th>y</th>
+      <th>fov</th>
+      <th>target_gene</th>
+      <th>cell_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>53389403</th>
+      <td>13</td>
+      <td>1389.816000</td>
+      <td>1826.8329</td>
+      <td>0.0</td>
+      <td>349.59702</td>
+      <td>104.246605</td>
+      <td>610</td>
+      <td>Lamp5</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>53389409</th>
+      <td>13</td>
+      <td>1377.533300</td>
+      <td>1835.3567</td>
+      <td>0.0</td>
+      <td>236.91116</td>
+      <td>182.447480</td>
+      <td>610</td>
+      <td>Lamp5</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>53389414</th>
+      <td>13</td>
+      <td>1384.640400</td>
+      <td>1855.5872</td>
+      <td>0.0</td>
+      <td>302.11380</td>
+      <td>368.047300</td>
+      <td>610</td>
+      <td>Lamp5</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>53389421</th>
+      <td>13</td>
+      <td>1371.650600</td>
+      <td>1863.4064</td>
+      <td>0.0</td>
+      <td>182.94237</td>
+      <td>439.783450</td>
+      <td>610</td>
+      <td>Lamp5</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>53389431</th>
+      <td>13</td>
+      <td>1382.553200</td>
+      <td>1883.7363</td>
+      <td>0.0</td>
+      <td>282.96545</td>
+      <td>626.296630</td>
+      <td>610</td>
+      <td>Lamp5</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>74074183</th>
+      <td>1236</td>
+      <td>92.978540</td>
+      <td>1863.2688</td>
+      <td>4.0</td>
+      <td>1296.04160</td>
+      <td>438.521670</td>
+      <td>837</td>
+      <td>Itih5</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>74074185</th>
+      <td>1236</td>
+      <td>105.203530</td>
+      <td>1954.1355</td>
+      <td>4.0</td>
+      <td>1408.19750</td>
+      <td>1272.160500</td>
+      <td>837</td>
+      <td>Itih5</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>74074187</th>
+      <td>1236</td>
+      <td>103.284550</td>
+      <td>1969.9293</td>
+      <td>4.0</td>
+      <td>1390.59230</td>
+      <td>1417.058100</td>
+      <td>837</td>
+      <td>Itih5</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>74074190</th>
+      <td>1237</td>
+      <td>24.977634</td>
+      <td>1992.4144</td>
+      <td>4.0</td>
+      <td>672.18020</td>
+      <td>1623.344200</td>
+      <td>837</td>
+      <td>blank-167</td>
+      <td>-1</td>
+    </tr>
+    <tr>
+      <th>74074191</th>
+      <td>1239</td>
+      <td>144.565660</td>
+      <td>1886.0315</td>
+      <td>4.0</td>
+      <td>1769.31810</td>
+      <td>647.353450</td>
+      <td>837</td>
+      <td>blank-169</td>
+      <td>-1</td>
+    </tr>
+  </tbody>
+</table>
+<p>1637702 rows × 9 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[121]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import random
+
+xy = th_in[[&#39;global_x&#39;, &#39;global_y&#39;]].values
+groups = th_in[&#39;cell_id&#39;].values
+# Get the unique group
+unique_groups = np.unique(groups)
+# Set color
+# colors = [&#39;#43978F&#39;, &#39;#9EC4BE&#39;, &#39;#ABD0F1&#39;, &#39;#DCE9F4&#39;, &#39;#E56F5E&#39;, &#39;#F19685&#39;, &#39;#F6C957&#39;, &#39;#FFB77F&#39;, &#39;#FBE8D5&#39;]
+# colors = [&#39;#427AB2&#39;, &#39;#F09148&#39;, &#39;#FF9896&#39;,  &#39;#DBDB8D&#39;, &#39;#C59D94&#39;, &#39;#AFC7E8&#39;]
+# colors = [&quot;#6bad6b&quot;]
+
+
+# Set drawing
+fig, ax = plt.subplots(figsize=(15,7.5))
+
+fig.patch.set_facecolor(&#39;black&#39;)  # Set graphical background color
+ax.set_facecolor(&#39;black&#39;)         # Set the background color of the coordinate axis
+
+# Calculate the convex bag of each group and draw
+for group in tqdm(unique_groups):
+    # Extraction belongs to this group
+    points = xy[groups == group]
+
+    # Remove the duplication point
+    points = np.unique(points, axis=0)
+
+    # The number of points in the inspection group requires at least 3 points to calculate the convex bag
+    if points.shape[0] &lt; 3:
+        print(f&quot;Skipping group {group} due to insufficient points ({points.shape[0]} points)&quot;)
+        continue
+
+    # Convert points to floating -point type
+    points = points.astype(float)
+
+    # Calculating convex bag
+    hull = ConvexHull(points)
+
+    # Get the apex of convex bag
+    hull_points = points[hull.vertices]
+
+
+    # Draw the folding and filling of the convex bag
+    plt.plot(np.append(hull_points[:, 0], hull_points[0, 0]),
+                np.append(hull_points[:, 1], hull_points[0, 1]), color=&#39;blue&#39;, linestyle=&#39;-&#39;)
+
+    # Fill the inside of the convex bag
+    plt.fill(hull_points[:, 0], hull_points[:, 1], color=&#39;blue&#39;, alpha=0.5)
+
+x = th[[&#39;global_x&#39;, &#39;global_y&#39;]].values[:, 0]
+y = th[[&#39;global_x&#39;, &#39;global_y&#39;]].values[:, 1]
+labels = th[&#39;target_gene&#39;].values
+# genes=[&#39;Sv2b&#39;, &#39;Satb2&#39;, &#39;Neurod2&#39;, &#39;Neurod6&#39;]
+genes = [&#39;Slc17a7&#39;, &#39;Fgf13&#39;, &#39;Calb1&#39;]
+
+for gene in genes:
+    x_a = [x[i] for i in range(len(labels)) if labels[i] in gene]
+    y_a = [y[i] for i in range(len(labels)) if labels[i] in gene]
+
+    # Draw a scattered point map
+    plt.scatter(x_a, y_a, color=&#39;#FF4500&#39;, s=0.08, label=&#39;a&#39;, zorder=10, marker=&#39;o&#39;) # Tags a point of A
+
+# plt.savefig(&#39;cell_seg_mrna.png&#39;, dpi=600)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+ 40%|████      | 765/1905 [00:09&lt;00:14, 78.26it/s]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Skipping group 221281312322036888133953509642918615095 due to insufficient points (2 points)
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+ 91%|█████████ | 1735/1905 [00:22&lt;00:01, 86.31it/s]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Skipping group 69904789184529410098916752207953295576 due to insufficient points (1 points)
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+ 96%|█████████▋| 1835/1905 [00:23&lt;00:00, 87.43it/s]
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Skipping group 85597928504424692559439686832524183758 due to insufficient points (1 points)
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 1905/1905 [00:24&lt;00:00, 76.94it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/7_cc_mRNA_and_cell_plot_15_7.png" src="_images/7_cc_mRNA_and_cell_plot_15_7.png" />
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, quhaichao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

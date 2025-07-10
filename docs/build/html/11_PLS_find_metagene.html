@@ -1,0 +1,1060 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PLS &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SpaCon_results_reproduction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">PLS</a><ul>
+<li><a class="reference internal" href="#th-gene">th gene</a></li>
+<li><a class="reference internal" href="#ctx-gene">ctx gene</a></li>
+<li><a class="reference internal" href="#other-regions">other regions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpaCon_results_reproduction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">PLS</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/11_PLS_find_metagene.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import os
+import scanpy as sc
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.preprocessing import StandardScaler
+import matplotlib.colors as clr
+color_self = clr.LinearSegmentedColormap.from_list(&#39;pink_green&#39;, [&#39;#3AB370&#39;,&quot;#EAE7CC&quot;,&quot;#FD1593&quot;], N=256)
+import matplotlib as mpl
+mpl.rcParams[&#39;pdf.fonttype&#39;] = 42
+mpl.rcParams[&#39;ps.fonttype&#39;] = 42
+from sklearn.cross_decomposition import PLSRegression
+import numpy as np
+
+import warnings
+warnings.filterwarnings(&quot;ignore&quot;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cluster_colors=[&#39;#4b6aa8&#39;,&#39;#3ca0cf&#39;,&#39;#c376a7&#39;,&#39;#ad98c3&#39;,&#39;#408444&#39;,
+                &#39;#53738c&#39;,&#39;#a25087&#39;,&#39;#a78982&#39;,&#39;#a9c2cb&#39;,&#39;#92699e&#39;,
+                &#39;#d69971&#39;,&#39;#df5734&#39;,&#39;#6c408e&#39;,&#39;#ac6894&#39;,&#39;#d4c2db&#39;,
+                &#39;#537eb7&#39;,&#39;#83ab8e&#39;,&#39;#ece399&#39;,&#39;#405993&#39;,&#39;#cc7f73&#39;,
+                &#39;#b95055&#39;,&#39;#d5bb72&#39;,&#39;#bc9a7f&#39;,&#39;#e0cfda&#39;,&#39;#d8a0c0&#39;,
+                &#39;#e6b884&#39;,&#39;#b05545&#39;,&#39;#d69a55&#39;,&#39;#64a776&#39;,&#39;#cbdaa9&#39;,
+                &#39;#efd2c9&#39;,&#39;#da6f6d&#39;,&#39;#ebb1a4&#39;,&#39;#a44e89&#39;,&#39;#8c564b&#39;,
+                &#39;#b85292&#39;,&#39;#6d6fa0&#39;,&#39;#8d689d&#39;,&#39;#c8c7e1&#39;,&#39;#d25774&#39;,
+                &#39;#c49abc&#39;,&#39;#a5a9b0&#39;,&#39;#927c9a&#39;,&#39;#9f8d89&#39;,&#39;#72567a&#39;,
+                &#39;#63a3b8&#39;,&#39;#c4daec&#39;,&#39;#61bada&#39;,&#39;#b7deea&#39;,&#39;#e29eaf&#39;,
+                &#39;#4490c4&#39;,&#39;#e6e2a3&#39;,&#39;#de8b36&#39;,&#39;#c4612f&#39;,&#39;#9a70a8&#39;,
+                &#39;#76a2be&#39;,&#39;#cea5c7&#39;,&#39;#c6adb0&#39;,&#39;#9d3b62&#39;,&#39;#2d3462&#39;,
+                &#39;#FF420E&#39;,&#39;#FFBB00&#39;]
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>path = &#39;./results/mouse_1/2024_04_08_20_10_00GATE_2encoder_cat_feature_decoder_skip_connect_bn/&#39;
+adata = sc.read_h5ad(path + &#39;feature_add_weight1/Clusters_res0.75/adata_cluster_feature.h5ad&#39;)
+allen_region = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/ST_NT_cluster/SpaCon_apply_zxw/data/mouse_1/allen_region.csv&#39;)
+adata.obs[&#39;region&#39;] = allen_region[&#39;region&#39;].to_list()
+adata
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AnnData object with n_obs × n_vars = 250535 × 1122
+    obs: &#39;x_section_mean&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;section&#39;, &#39;NT_index&#39;, &#39;Cells_id&#39;, &#39;clusters&#39;, &#39;region&#39;
+    var: &#39;gene_identifier&#39;, &#39;name&#39;, &#39;mapped_ncbi_identifier&#39;
+    uns: &#39;clusters_colors&#39;, &#39;log1p&#39;, &#39;louvain&#39;, &#39;neighbors&#39;, &#39;umap&#39;
+    obsm: &#39;GATE_feature_add&#39;, &#39;GATE_feature_con&#39;, &#39;GATE_feature_spa&#39;, &#39;X_umap&#39;
+    obsp: &#39;connectivities&#39;, &#39;distances&#39;
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata.obsm[&#39;spatial&#39;] = adata.obs[[&#39;z&#39;, &#39;y&#39;]].values
+</pre></div>
+</div>
+</div>
+<section id="PLS">
+<h1>PLS<a class="headerlink" href="#PLS" title="Link to this heading"></a></h1>
+<section id="th-gene">
+<h2>th gene<a class="headerlink" href="#th-gene" title="Link to this heading"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata = adata[adata.obs[&#39;z&#39;] &lt; 56]
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[126]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cluster = &#39;11&#39;
+sec = &#39;Zhuang-ABCA-1.093&#39;
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[127]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>th_regions = [&#39;AD&#39;, &#39;AMd&#39;, &#39;AMv&#39;, &#39;AV&#39;, &#39;CL&#39;, &#39;CM&#39;, &#39;IAD&#39;, &#39;IAM&#39;, &#39;IGL&#39;, &#39;IMD&#39;, &#39;LD&#39;, &#39;LGv&#39;, &#39;LH&#39;, &#39;LP&#39;, &#39;MD&#39;, &#39;MGd&#39;, &#39;MGm&#39;, &#39;MGv&#39;, &#39;MH&#39;, &#39;PCN&#39;, &#39;PF&#39;, &#39;PIL&#39;, &#39;PO&#39;, &#39;POL&#39;,
+                &#39;PP&#39;, &#39;PR&#39;, &#39;PT&#39;, &#39;PVT&#39;, &#39;PoT&#39;, &#39;RE&#39;, &#39;RH&#39;, &#39;RT&#39;, &#39;SGN&#39;, &#39;SMT&#39;, &#39;SPA&#39;, &#39;SPFm&#39;, &#39;SPFp&#39;, &#39;VAL&#39;, &#39;VM&#39;, &#39;VPL&#39;, &#39;VPLpc&#39;, &#39;VPM&#39;, &#39;VPMpc&#39;, &#39;Xi&#39;]
+adata.obs[&#39;th_cluster&#39;] = adata.obs[&#39;clusters&#39;].astype(str)
+adata.obs.loc[~(adata.obs[&#39;region&#39;].isin(th_regions)), &#39;th_cluster&#39;] = &#39;-1&#39;
+# adata.obs
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[128]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># 2. Prepare data
+X = adata.X.A  # Gene expression matrix
+y = adata.obs[&#39;th_cluster&#39;].values  # Category
+
+# Convert the category label to a dual classification problem.
+y_binary = np.where(y == cluster, 1, 0)
+
+# 4. Create a PLS model
+pls = PLSRegression(n_components=10)
+pls.fit(X, y_binary)
+
+# 5. Analytical results
+coefficients = pls.coef_.flatten()
+# coefficients = np.abs(pls.coef_.ravel())
+
+gene_names = adata.var_names
+th_gene_importance = pd.DataFrame({
+    &#39;Gene&#39;: gene_names,
+    &#39;Coefficient&#39;: coefficients,
+    &#39;Importance&#39;: np.abs(coefficients)
+})
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[129]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># The average value and standard deviation of the importance of calculation
+importance_mean = th_gene_importance[&#39;Importance&#39;].mean()
+importance_std = th_gene_importance[&#39;Importance&#39;].std()
+
+# Selection importance is higher than the genetic gene
+th_genes = th_gene_importance.sort_values(by=&#39;Importance&#39;, ascending=False).head(30)
+# Sort by the importance of importance
+th_genes = th_genes.sort_values(&#39;Importance&#39;, ascending=False)
+# Only using the selected genes to re -calculate the weighted expression
+X_selected = X[:, [list(gene_names).index(gene) for gene in th_genes[&#39;Gene&#39;]]]
+coefficients_selected = th_genes[&#39;Coefficient&#39;].values
+weighted_expression = np.dot(X_selected, coefficients_selected)
+# Add the weighted expression vector to the original data
+scaler = StandardScaler()
+adata.obs[&#39;th_Expression&#39;] = scaler.fit_transform(weighted_expression.reshape(-1, 1))
+# th_genes.to_csv(f&#39;./th_ctx_cluster_gene/cluster{cluster}_th_gene.csv&#39;)
+th_genes
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[129]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Gene</th>
+      <th>Coefficient</th>
+      <th>Importance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>566</th>
+      <td>Gbx2</td>
+      <td>0.003416</td>
+      <td>0.003416</td>
+    </tr>
+    <tr>
+      <th>1002</th>
+      <td>Tnnt1</td>
+      <td>0.002547</td>
+      <td>0.002547</td>
+    </tr>
+    <tr>
+      <th>316</th>
+      <td>Rgs16</td>
+      <td>0.002258</td>
+      <td>0.002258</td>
+    </tr>
+    <tr>
+      <th>72</th>
+      <td>Grid2ip</td>
+      <td>0.002062</td>
+      <td>0.002062</td>
+    </tr>
+    <tr>
+      <th>318</th>
+      <td>Cnih3</td>
+      <td>-0.001923</td>
+      <td>0.001923</td>
+    </tr>
+    <tr>
+      <th>1079</th>
+      <td>Abhd12b</td>
+      <td>-0.001762</td>
+      <td>0.001762</td>
+    </tr>
+    <tr>
+      <th>73</th>
+      <td>Vipr2</td>
+      <td>0.001742</td>
+      <td>0.001742</td>
+    </tr>
+    <tr>
+      <th>1007</th>
+      <td>Plekhd1</td>
+      <td>0.001628</td>
+      <td>0.001628</td>
+    </tr>
+    <tr>
+      <th>199</th>
+      <td>Prkcd</td>
+      <td>0.001527</td>
+      <td>0.001527</td>
+    </tr>
+    <tr>
+      <th>495</th>
+      <td>Cbln1</td>
+      <td>-0.001472</td>
+      <td>0.001472</td>
+    </tr>
+    <tr>
+      <th>699</th>
+      <td>Tox</td>
+      <td>0.001430</td>
+      <td>0.001430</td>
+    </tr>
+    <tr>
+      <th>720</th>
+      <td>Pkp2</td>
+      <td>0.001408</td>
+      <td>0.001408</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>Calb2</td>
+      <td>0.001397</td>
+      <td>0.001397</td>
+    </tr>
+    <tr>
+      <th>388</th>
+      <td>Calb1</td>
+      <td>0.001376</td>
+      <td>0.001376</td>
+    </tr>
+    <tr>
+      <th>694</th>
+      <td>Ramp3</td>
+      <td>0.001354</td>
+      <td>0.001354</td>
+    </tr>
+    <tr>
+      <th>1016</th>
+      <td>Sp9</td>
+      <td>0.001315</td>
+      <td>0.001315</td>
+    </tr>
+    <tr>
+      <th>459</th>
+      <td>Rab38</td>
+      <td>0.001273</td>
+      <td>0.001273</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Glra1</td>
+      <td>-0.001234</td>
+      <td>0.001234</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>Grik3</td>
+      <td>0.001228</td>
+      <td>0.001228</td>
+    </tr>
+    <tr>
+      <th>800</th>
+      <td>Arsj</td>
+      <td>0.001199</td>
+      <td>0.001199</td>
+    </tr>
+    <tr>
+      <th>922</th>
+      <td>Nell1</td>
+      <td>0.001121</td>
+      <td>0.001121</td>
+    </tr>
+    <tr>
+      <th>220</th>
+      <td>Endou</td>
+      <td>0.001112</td>
+      <td>0.001112</td>
+    </tr>
+    <tr>
+      <th>252</th>
+      <td>Galnt14</td>
+      <td>-0.001100</td>
+      <td>0.001100</td>
+    </tr>
+    <tr>
+      <th>1084</th>
+      <td>Tcerg1l</td>
+      <td>0.001084</td>
+      <td>0.001084</td>
+    </tr>
+    <tr>
+      <th>727</th>
+      <td>Adora1</td>
+      <td>0.001072</td>
+      <td>0.001072</td>
+    </tr>
+    <tr>
+      <th>414</th>
+      <td>Ptpru</td>
+      <td>0.001062</td>
+      <td>0.001062</td>
+    </tr>
+    <tr>
+      <th>676</th>
+      <td>Ldb2</td>
+      <td>0.001031</td>
+      <td>0.001031</td>
+    </tr>
+    <tr>
+      <th>60</th>
+      <td>Itih3</td>
+      <td>0.001020</td>
+      <td>0.001020</td>
+    </tr>
+    <tr>
+      <th>505</th>
+      <td>Agt</td>
+      <td>0.001004</td>
+      <td>0.001004</td>
+    </tr>
+    <tr>
+      <th>871</th>
+      <td>Trhde</td>
+      <td>0.000991</td>
+      <td>0.000991</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[109]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># sec = &#39;Zhuang-ABCA-1.089&#39;
+adata_s = adata[adata.obs[&#39;section&#39;] == sec]
+# fig, ax = plt.subplots(figsize=(4, 5))
+# sc.pl.spatial(adata_s, color=[&#39;th_Expression&#39;], spot_size=1, cmap=color_self, ax=ax)
+
+df = pd.DataFrame({
+    &#39;x&#39;: adata_s.obs[&#39;z&#39;],
+    &#39;y&#39;: adata_s.obs[&#39;y&#39;],
+    # &#39;expression&#39;: adata_s[:, &#39;Zfhx4&#39;].layers[&#39;adj_gene&#39;].A.flatten()  # Showping is a one -dimensional array
+    &#39;expression&#39;: adata_s.obs[&#39;th_Expression&#39;]
+})
+# Create a scattered point picture
+plt.figure(figsize=(4, 5))  # Adjust to the required image size
+scatter_plot = sns.scatterplot(data=df, x=&#39;x&#39;, y=&#39;y&#39;, hue=&#39;expression&#39;, palette=color_self, s=20, legend=False)
+plt.gca().invert_yaxis()
+# scatter_plot.set_title(&#39;Gene Expression Spatial Plot&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/11_PLS_find_metagene_11_0.png" src="_images/11_PLS_find_metagene_11_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Class_i = &#39;34&#39;
+# section = &#39;Zhuang-ABCA-1.087&#39;
+cluster_i_section_i_adata = adata[(adata.obs[&#39;clusters&#39;] == cluster) &amp; (adata.obs[&#39;section&#39;] == sec)]
+cluster_i_section_i_adata = cluster_i_section_i_adata[cluster_i_section_i_adata.obs[&#39;z&#39;] &lt; 56]
+
+back = adata[adata.obs[&#39;section&#39;] == sec]
+# back = back[back.obs[&#39;z&#39;] &lt; 56]
+
+fig = plt.figure(figsize=(4, 5))
+plt.scatter(back.obs[&#39;z&#39;], back.obs[&#39;y&#39;], s=10, c=&#39;#D3D3D3&#39;)
+plt.scatter(cluster_i_section_i_adata.obs[&#39;z&#39;], cluster_i_section_i_adata.obs[&#39;y&#39;], s=10, c=cluster_colors[int(cluster)])
+plt.gca().invert_yaxis()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/11_PLS_find_metagene_12_0.png" src="_images/11_PLS_find_metagene_12_0.png" />
+</div>
+</div>
+</section>
+<section id="ctx-gene">
+<h2>ctx gene<a class="headerlink" href="#ctx-gene" title="Link to this heading"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[130]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx_regions = [&#39;ACAd&#39;, &#39;ACAv&#39;, &#39;AId&#39;, &#39;AIp&#39;, &#39;AIv&#39;, &#39;AUDd&#39;, &#39;AUDp&#39;, &#39;AUDpo&#39;,
+                &#39;AUDv&#39;, &#39;ECT&#39;, &#39;FRP&#39;, &#39;GU&#39;, &#39;ILA&#39;, &#39;MOp&#39;, &#39;MOs&#39;, &#39;ORBl&#39;, &#39;ORBm&#39;,
+                &#39;ORBvl&#39;, &#39;PERI&#39;, &#39;PL&#39;, &#39;RSPagl&#39;, &#39;RSPd&#39;, &#39;RSPv&#39;, &#39;SSp-bfd&#39;,
+                &#39;SSp-ll&#39;, &#39;SSp-m&#39;, &#39;SSp-n&#39;, &#39;SSp-tr&#39;, &#39;SSp-ul&#39;, &#39;SSp-un&#39;, &#39;SSs&#39;,
+                &#39;TEa&#39;, &#39;VISC&#39;, &#39;VISa&#39;, &#39;VISal&#39;, &#39;VISam&#39;, &#39;VISl&#39;, &#39;VISli&#39;, &#39;VISp&#39;,
+                &#39;VISpl&#39;, &#39;VISpm&#39;, &#39;VISpor&#39;, &#39;VISrl&#39;]
+adata.obs[&#39;ctx_cluster&#39;] = adata.obs[&#39;clusters&#39;].astype(str)
+adata.obs.loc[~(adata.obs[&#39;region&#39;].str.startswith(tuple(ctx_regions))), &#39;ctx_cluster&#39;] = &#39;-1&#39;
+# adata.obs
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[131]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># 2. Prepare data
+X = adata.X.A  # Gene expression matrix
+y = adata.obs[&#39;ctx_cluster&#39;].values  # Category
+
+# Convert the category label to a dual classification problem.
+y_binary = np.where(y == cluster, 1, 0)
+
+# 4. Create a PLS model
+pls = PLSRegression(n_components=10)
+
+# 5. Analytical results
+coefficients = pls.coef_.flatten()
+# coefficients = np.abs(pls.coef_.ravel())
+
+gene_names = adata.var_names
+ctx_gene_importance = pd.DataFrame({
+    &#39;Gene&#39;: gene_names,
+    &#39;Coefficient&#39;: coefficients,
+    &#39;Importance&#39;: np.abs(coefficients)
+})
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[132]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># The average value and standard deviation of calculation importance
+importance_mean = ctx_gene_importance[&#39;Importance&#39;].mean()
+importance_std = ctx_gene_importance[&#39;Importance&#39;].std()
+# Set the threshold to the average value plus a standard deviation
+
+# Selection importance is higher than the genetic gene
+ctx_genes =  ctx_gene_importance.sort_values(by=&#39;Importance&#39;, ascending=False).head(30)
+# Sort by importance
+ctx_genes = ctx_genes.sort_values(&#39;Importance&#39;, ascending=False)
+
+# Use the selected genes to re -calculate the weighted expression
+X_selected = X[:, [list(gene_names).index(gene) for gene in ctx_genes[&#39;Gene&#39;]]]
+coefficients_selected = ctx_genes[&#39;Coefficient&#39;].values
+weighted_expression = np.dot(X_selected, coefficients_selected)
+# Add the weighted expression vector to the original data
+scaler = StandardScaler()
+adata.obs[&#39;ctx_Expression&#39;] = X_scaled = scaler.fit_transform(weighted_expression.reshape(-1, 1))
+# ctx_genes.to_csv(f&#39;./th_ctx_cluster_gene/cluster{cluster}_ctx_gene.csv&#39;)
+ctx_genes
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[132]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Gene</th>
+      <th>Coefficient</th>
+      <th>Importance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>334</th>
+      <td>Nr4a2</td>
+      <td>0.009431</td>
+      <td>0.009431</td>
+    </tr>
+    <tr>
+      <th>886</th>
+      <td>Igfn1</td>
+      <td>-0.007870</td>
+      <td>0.007870</td>
+    </tr>
+    <tr>
+      <th>1053</th>
+      <td>Rprm</td>
+      <td>0.006268</td>
+      <td>0.006268</td>
+    </tr>
+    <tr>
+      <th>929</th>
+      <td>Synpr</td>
+      <td>0.006225</td>
+      <td>0.006225</td>
+    </tr>
+    <tr>
+      <th>1015</th>
+      <td>Gpr88</td>
+      <td>0.005867</td>
+      <td>0.005867</td>
+    </tr>
+    <tr>
+      <th>1040</th>
+      <td>Kcng1</td>
+      <td>-0.005755</td>
+      <td>0.005755</td>
+    </tr>
+    <tr>
+      <th>818</th>
+      <td>Ankfn1</td>
+      <td>0.005611</td>
+      <td>0.005611</td>
+    </tr>
+    <tr>
+      <th>308</th>
+      <td>Lypd1</td>
+      <td>0.005590</td>
+      <td>0.005590</td>
+    </tr>
+    <tr>
+      <th>385</th>
+      <td>Adgrl2</td>
+      <td>-0.005482</td>
+      <td>0.005482</td>
+    </tr>
+    <tr>
+      <th>63</th>
+      <td>Tcap</td>
+      <td>0.005284</td>
+      <td>0.005284</td>
+    </tr>
+    <tr>
+      <th>66</th>
+      <td>Met</td>
+      <td>0.005279</td>
+      <td>0.005279</td>
+    </tr>
+    <tr>
+      <th>673</th>
+      <td>Cdh6</td>
+      <td>0.005004</td>
+      <td>0.005004</td>
+    </tr>
+    <tr>
+      <th>775</th>
+      <td>Penk</td>
+      <td>-0.004897</td>
+      <td>0.004897</td>
+    </tr>
+    <tr>
+      <th>347</th>
+      <td>Meis2</td>
+      <td>-0.004787</td>
+      <td>0.004787</td>
+    </tr>
+    <tr>
+      <th>182</th>
+      <td>Cartpt</td>
+      <td>0.004753</td>
+      <td>0.004753</td>
+    </tr>
+    <tr>
+      <th>156</th>
+      <td>Coch</td>
+      <td>0.004689</td>
+      <td>0.004689</td>
+    </tr>
+    <tr>
+      <th>649</th>
+      <td>Satb2</td>
+      <td>0.004687</td>
+      <td>0.004687</td>
+    </tr>
+    <tr>
+      <th>352</th>
+      <td>Adam33</td>
+      <td>-0.004262</td>
+      <td>0.004262</td>
+    </tr>
+    <tr>
+      <th>996</th>
+      <td>Egfem1</td>
+      <td>0.004241</td>
+      <td>0.004241</td>
+    </tr>
+    <tr>
+      <th>626</th>
+      <td>Ccn3</td>
+      <td>0.004161</td>
+      <td>0.004161</td>
+    </tr>
+    <tr>
+      <th>268</th>
+      <td>Cbln2</td>
+      <td>-0.004144</td>
+      <td>0.004144</td>
+    </tr>
+    <tr>
+      <th>761</th>
+      <td>Zbtb7c</td>
+      <td>0.004122</td>
+      <td>0.004122</td>
+    </tr>
+    <tr>
+      <th>261</th>
+      <td>Grp</td>
+      <td>0.004041</td>
+      <td>0.004041</td>
+    </tr>
+    <tr>
+      <th>942</th>
+      <td>Lepr</td>
+      <td>0.004033</td>
+      <td>0.004033</td>
+    </tr>
+    <tr>
+      <th>507</th>
+      <td>Trpc6</td>
+      <td>-0.004007</td>
+      <td>0.004007</td>
+    </tr>
+    <tr>
+      <th>840</th>
+      <td>Efna5</td>
+      <td>0.003998</td>
+      <td>0.003998</td>
+    </tr>
+    <tr>
+      <th>280</th>
+      <td>Bhlhe22</td>
+      <td>0.003956</td>
+      <td>0.003956</td>
+    </tr>
+    <tr>
+      <th>386</th>
+      <td>Col24a1</td>
+      <td>0.003950</td>
+      <td>0.003950</td>
+    </tr>
+    <tr>
+      <th>292</th>
+      <td>Oprk1</td>
+      <td>0.003938</td>
+      <td>0.003938</td>
+    </tr>
+    <tr>
+      <th>744</th>
+      <td>Mdga1</td>
+      <td>0.003865</td>
+      <td>0.003865</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[113]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># sec =  &#39;Zhuang-ABCA-1.089&#39;
+adata_s = adata[adata.obs[&#39;section&#39;] == sec]
+# fig, ax = plt.subplots(figsize=(4, 5))
+# sc.pl.spatial(adata_s, color=[&#39;ctx_Expression&#39;], spot_size=1, cmap=color_self, ax=ax)
+
+df = pd.DataFrame({
+    &#39;x&#39;: adata_s.obs[&#39;z&#39;],
+    &#39;y&#39;: adata_s.obs[&#39;y&#39;],
+    # &#39;expression&#39;: adata_s[:, &#39;Zfhx4&#39;].layers[&#39;adj_gene&#39;].A.flatten()
+    &#39;expression&#39;: adata_s.obs[&#39;ctx_Expression&#39;]
+})
+plt.figure(figsize=(4, 5))
+scatter_plot = sns.scatterplot(data=df, x=&#39;x&#39;, y=&#39;y&#39;, hue=&#39;expression&#39;, palette=color_self, s=20, legend=False)
+plt.gca().invert_yaxis()
+# scatter_plot.set_title(&#39;Gene Expression Spatial Plot&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/11_PLS_find_metagene_17_0.png" src="_images/11_PLS_find_metagene_17_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[204]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Class_i = &#39;34&#39;
+# section = &#39;Zhuang-ABCA-1.087&#39;
+cluster_i_section_i_adata = adata[(adata.obs[&#39;clusters&#39;] == cluster) &amp; (adata.obs[&#39;section&#39;] == sec)]
+cluster_i_section_i_adata = cluster_i_section_i_adata[cluster_i_section_i_adata.obs[&#39;z&#39;] &lt; 56]
+
+back = adata[adata.obs[&#39;section&#39;] == sec]
+back = back[back.obs[&#39;z&#39;] &lt; 56]
+
+fig = plt.figure(figsize=(4, 5))
+plt.scatter(back.obs[&#39;z&#39;], back.obs[&#39;y&#39;], s=15, c=&#39;#D3D3D3&#39;)
+plt.scatter(cluster_i_section_i_adata.obs[&#39;z&#39;], cluster_i_section_i_adata.obs[&#39;y&#39;], s=15, c=cluster_colors[int(cluster)])
+plt.gca().invert_yaxis()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/11_PLS_find_metagene_18_0.png" src="_images/11_PLS_find_metagene_18_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[136]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata.obs[&#39;ctx_th_Expression&#39;] = adata.obs[&#39;ctx_Expression&#39;] + adata.obs[&#39;th_Expression&#39;]
+adata_s = adata[adata.obs[&#39;section&#39;] == sec]
+df = pd.DataFrame({
+    &#39;x&#39;: adata_s.obs[&#39;z&#39;],
+    &#39;y&#39;: adata_s.obs[&#39;y&#39;],
+    &#39;expression&#39;: adata_s[:, &#39;Trhde&#39;].X.A.flatten()
+    # &#39;expression&#39;: adata_s[:, &#39;Zfhx4&#39;].layers[&#39;adj_gene&#39;].A.flatten()
+    # &#39;expression&#39;: adata_s.obs[&#39;ctx_th_Expression&#39;]
+})
+
+plt.figure(figsize=(4, 5))
+scatter_plot = sns.scatterplot(data=df, x=&#39;x&#39;, y=&#39;y&#39;, hue=&#39;expression&#39;, palette=color_self, s=20, legend=False)
+plt.gca().invert_yaxis()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/11_PLS_find_metagene_19_0.png" src="_images/11_PLS_find_metagene_19_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[115]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tmp_df = adata.obs[[&#39;ctx_th_Expression&#39;, &#39;clusters&#39;]]
+tmp_df[&#39;plot&#39;] = &#39;not in cluster&#39;
+tmp_df.loc[tmp_df[&#39;clusters&#39;] == cluster, &#39;plot&#39;] = &#39;in cluster&#39;
+
+means = tmp_df.groupby(&#39;plot&#39;)[&#39;ctx_th_Expression&#39;].mean()
+plt.figure(figsize=(6, 4))
+sns.violinplot(data=tmp_df, x=&#39;plot&#39;, y=&#39;ctx_th_Expression&#39;,
+               palette=[cluster_colors[int(cluster)], &#39;#d3d3d3&#39;],order=[&#39;in cluster&#39;, &#39;not in cluster&#39;])
+plt.savefig(f&#39;./th_ctx_cluster_gene/cluster{cluster}.pdf&#39;, format = &#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/11_PLS_find_metagene_20_0.png" src="_images/11_PLS_find_metagene_20_0.png" />
+</div>
+</div>
+</section>
+<section id="other-regions">
+<h2>other regions<a class="headerlink" href="#other-regions" title="Link to this heading"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[117]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cluster = &#39;13&#39;
+sec = &#39;Zhuang-ABCA-1.099&#39;
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[118]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># 2. Prepare data
+X = adata.X.A  # Gene expression matrix
+y = adata.obs[&#39;clusters&#39;].values  # Category
+
+# Convert the category label to a dual classification problem.
+y_binary = np.where(y == cluster, 1, 0)
+
+# 4. Create a PLS model
+pls = PLSRegression(n_components=10)
+pls.fit(X, y_binary)
+
+coefficients = pls.coef_.flatten()
+
+gene_names = adata.var_names
+ctx_gene_importance = pd.DataFrame({
+    &#39;Gene&#39;: gene_names,
+    &#39;Coefficient&#39;: coefficients,
+    &#39;Importance&#39;: np.abs(coefficients)
+})
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[119]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># The average value and standard deviation of calculation importance
+importance_mean = ctx_gene_importance[&#39;Importance&#39;].mean()
+importance_std = ctx_gene_importance[&#39;Importance&#39;].std()
+
+# Selection importance is higher than the genetic gene
+ctx_genes =  ctx_gene_importance.sort_values(by=&#39;Importance&#39;, ascending=False).head(30)
+# Sort by importance
+ctx_genes = ctx_genes.sort_values(&#39;Importance&#39;, ascending=False)
+
+# Use the selected genes to re -calculate the weighted expression
+X_selected = X[:, [list(gene_names).index(gene) for gene in ctx_genes[&#39;Gene&#39;]]]
+coefficients_selected = ctx_genes[&#39;Coefficient&#39;].values
+weighted_expression = np.dot(X_selected, coefficients_selected)
+# Add the weighted expression vector to the original data
+scaler = StandardScaler()
+adata.obs[&#39;other_Expression&#39;] = X_scaled = scaler.fit_transform(weighted_expression.reshape(-1, 1))
+len(ctx_genes)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[119]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+30
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[120]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># sec =  &#39;Zhuang-ABCA-1.113&#39;
+adata_s = adata[adata.obs[&#39;section&#39;] == sec]
+# fig, ax = plt.subplots(figsize=(4, 5))
+# sc.pl.spatial(adata_s, color=[&#39;other_Expression&#39;], spot_size=1, cmap=color_self, ax=ax)
+
+df = pd.DataFrame({
+    &#39;x&#39;: adata_s.obs[&#39;z&#39;],
+    &#39;y&#39;: adata_s.obs[&#39;y&#39;],
+    # &#39;expression&#39;: adata_s[:, &#39;Zfhx4&#39;].layers[&#39;adj_gene&#39;].A.flatten()
+    &#39;expression&#39;: adata_s.obs[&#39;other_Expression&#39;]
+})
+# 创建散点图
+plt.figure(figsize=(4, 5))  # 调整为所需的图像大小
+scatter_plot = sns.scatterplot(data=df, x=&#39;x&#39;, y=&#39;y&#39;, hue=&#39;expression&#39;, palette=color_self, s=20, legend=False)
+plt.gca().invert_yaxis()
+# scatter_plot.set_title(&#39;Gene Expression Spatial Plot&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/11_PLS_find_metagene_25_0.png" src="_images/11_PLS_find_metagene_25_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[127]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Class_i = &#39;34&#39;
+# section = &#39;Zhuang-ABCA-1.087&#39;
+cluster_i_section_i_adata = adata[(adata.obs[&#39;clusters&#39;] == cluster) &amp; (adata.obs[&#39;section&#39;] == sec)]
+cluster_i_section_i_adata = cluster_i_section_i_adata[cluster_i_section_i_adata.obs[&#39;z&#39;] &lt; 56]
+
+back = adata[adata.obs[&#39;section&#39;] == sec]
+back = back[back.obs[&#39;z&#39;] &lt; 56]
+
+fig = plt.figure(figsize=(4, 5))
+plt.scatter(back.obs[&#39;z&#39;], back.obs[&#39;y&#39;], s=10, c=&#39;#D3D3D3&#39;)
+plt.scatter(cluster_i_section_i_adata.obs[&#39;z&#39;], cluster_i_section_i_adata.obs[&#39;y&#39;], s=10, c=cluster_colors[int(cluster)+13])
+plt.gca().invert_yaxis()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/11_PLS_find_metagene_26_0.png" src="_images/11_PLS_find_metagene_26_0.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, quhaichao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

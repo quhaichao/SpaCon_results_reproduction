@@ -1,0 +1,1195 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SpaCon_results_reproduction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul class="simple">
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpaCon_results_reproduction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/8_coronal_sagittal_cc_in_out_deg_compare.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib as mpl
+mpl.rcParams[&#39;pdf.fonttype&#39;] = 42
+mpl.rcParams[&#39;ps.fonttype&#39;] = 42
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>zxw1_deg = pd.read_csv(&#39;..data/coronal_all_cc_out_vs_in_gene.csv&#39;)
+zxw1_deg
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>names</th>
+      <th>scores</th>
+      <th>logfoldchanges</th>
+      <th>pvals</th>
+      <th>pvals_adj</th>
+      <th>log_pval</th>
+      <th>comparison</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>Gfap</td>
+      <td>119.552864</td>
+      <td>2.961014</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>Fam107a</td>
+      <td>101.277850</td>
+      <td>2.966981</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>Acsbg1</td>
+      <td>78.532550</td>
+      <td>2.523039</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>Slc17a7</td>
+      <td>74.491930</td>
+      <td>3.045114</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>Id4</td>
+      <td>73.924090</td>
+      <td>2.437699</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1106</th>
+      <td>1106</td>
+      <td>Grm3</td>
+      <td>-59.469433</td>
+      <td>-1.069267</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1107</th>
+      <td>1107</td>
+      <td>Gprc5b</td>
+      <td>-61.270737</td>
+      <td>-0.411187</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1108</th>
+      <td>1108</td>
+      <td>Mog</td>
+      <td>-64.613570</td>
+      <td>-0.375698</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1109</th>
+      <td>1109</td>
+      <td>Sec14l5</td>
+      <td>-80.332520</td>
+      <td>-1.933895</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1110</th>
+      <td>1110</td>
+      <td>Cldn11</td>
+      <td>-81.602516</td>
+      <td>0.002031</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+  </tbody>
+</table>
+<p>1111 rows × 8 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>zxw3_deg = pd.read_csv(&#39;../data/sagittal_all_cc_out_vs_in_gene.csv&#39;)
+zxw3_deg
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>names</th>
+      <th>scores</th>
+      <th>logfoldchanges</th>
+      <th>pvals</th>
+      <th>pvals_adj</th>
+      <th>log_pval</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>Gfap</td>
+      <td>86.087240</td>
+      <td>3.226564</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>Sstr1</td>
+      <td>66.189080</td>
+      <td>4.045555</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>Fam107a</td>
+      <td>63.092552</td>
+      <td>3.008477</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>Slc17a7</td>
+      <td>54.659230</td>
+      <td>3.349460</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>Acsbg1</td>
+      <td>43.139275</td>
+      <td>2.211851</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1106</th>
+      <td>1106</td>
+      <td>Grm3</td>
+      <td>-42.883160</td>
+      <td>-1.661856</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+    </tr>
+    <tr>
+      <th>1107</th>
+      <td>1107</td>
+      <td>Dscaml1</td>
+      <td>-45.509216</td>
+      <td>-2.303302</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+    </tr>
+    <tr>
+      <th>1108</th>
+      <td>1108</td>
+      <td>Cldn11</td>
+      <td>-49.790493</td>
+      <td>-0.007955</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+    </tr>
+    <tr>
+      <th>1109</th>
+      <td>1109</td>
+      <td>Sema6a</td>
+      <td>-50.425950</td>
+      <td>-2.009346</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+    </tr>
+    <tr>
+      <th>1110</th>
+      <td>1110</td>
+      <td>Sec14l5</td>
+      <td>-62.888046</td>
+      <td>-2.653704</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>inf</td>
+    </tr>
+  </tbody>
+</table>
+<p>1111 rows × 7 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># 设置参数
+plt.rcParams.update({
+    # &#39;font.family&#39;: &#39;sans-serif&#39;,
+    # &#39;font.sans-serif&#39;: [&#39;Arial&#39;],
+    &#39;font.size&#39;: 9,
+    &#39;axes.titlesize&#39;: 11,
+    &#39;axes.labelsize&#39;: 10,
+    &#39;xtick.labelsize&#39;: 9,
+    &#39;ytick.labelsize&#39;: 9,
+    &#39;axes.facecolor&#39;: &#39;white&#39;,
+    &#39;figure.facecolor&#39;: &#39;white&#39;,
+    &#39;savefig.dpi&#39;: 300
+})
+
+# 使用相同的数据准备流程
+common_genes = zxw1_deg[&#39;names&#39;].tolist()
+
+df1_aligned = zxw1_deg[zxw1_deg[&#39;names&#39;].isin(common_genes)].set_index(&#39;names&#39;).sort_index()
+df2_aligned = zxw3_deg[zxw3_deg[&#39;names&#39;].isin(common_genes)].set_index(&#39;names&#39;).sort_index()
+
+correlation = df1_aligned[&#39;logfoldchanges&#39;].corr(df2_aligned[&#39;logfoldchanges&#39;])
+
+merged_df = pd.DataFrame({
+    &#39;Expression_1&#39;: df1_aligned[&#39;logfoldchanges&#39;],
+    &#39;Expression_2&#39;: df2_aligned[&#39;logfoldchanges&#39;]
+})
+
+# 创建图形
+plt.figure(figsize=(3.3, 3.3))
+ax = plt.gca()
+
+# 绘制散点图（使用更学术的颜色和透明度）
+scatter = sns.regplot(
+    x=&#39;Expression_1&#39;,
+    y=&#39;Expression_2&#39;,
+    data=merged_df,
+    scatter_kws={
+        &#39;s&#39;: 20,
+        &#39;color&#39;: &#39;#1f77b4&#39;,  # 更柔和的蓝色
+        &#39;alpha&#39;: 0.6,
+        &#39;edgecolor&#39;: &#39;w&#39;,
+        &#39;linewidth&#39;: 0.3
+    },
+    line_kws={
+        &#39;color&#39;: &#39;#d62728&#39;,  # 更醒目的红色
+        &#39;linewidth&#39;: 1.2
+    },
+    ci=95  # 显示95%置信区间
+)
+
+# 设置坐标轴风格
+ax.spines[&#39;bottom&#39;].set_color(&#39;black&#39;)
+ax.spines[&#39;left&#39;].set_color(&#39;black&#39;)
+ax.spines[&#39;bottom&#39;].set_linewidth(0.5)
+ax.spines[&#39;left&#39;].set_linewidth(0.5)
+sns.despine(trim=True, offset=2)  # 移除上、右边框
+
+# 设置标签和标题
+plt.title(f&#39;r = {correlation:.2f}&#39;, pad=10, fontweight=&#39;medium&#39;)
+plt.xlabel(&#39;Dataset 1 (log$_2$FC)&#39;, labelpad=5)
+plt.ylabel(&#39;Dataset 2 (log$_2$FC)&#39;, labelpad=5)
+
+# 调整刻度线
+ax.tick_params(width=0.5, length=3, which=&#39;both&#39;)
+
+# 添加半透明网格（可选）
+# ax.grid(True, linestyle=&#39;--&#39;, alpha=0.3, linewidth=0.5)
+
+# 紧凑布局
+plt.tight_layout(pad=1.5)
+
+# plt.show()
+# plt.savefig(&#39;/mnt/Data16Tc/home/haichao/code/sainsc-study-main/cluster_result/paper_fig2/cc_in_out_deg_compare.pdf&#39;, bbox_inches=&#39;tight&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+findfont: Generic family &#39;sans-serif&#39; not found because none of the following families were found: Arial
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/8_coronal_sagittal_cc_in_out_deg_compare_3_1.png" src="_images/8_coronal_sagittal_cc_in_out_deg_compare_3_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>zxw1_deg_top100 = zxw1_deg.nlargest(100, &#39;logfoldchanges&#39;)
+zxw3_deg_top100 = zxw3_deg.nlargest(100, &#39;logfoldchanges&#39;)
+zxw1_deg_top100
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>names</th>
+      <th>scores</th>
+      <th>logfoldchanges</th>
+      <th>pvals</th>
+      <th>pvals_adj</th>
+      <th>log_pval</th>
+      <th>comparison</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>Slc17a7</td>
+      <td>74.491930</td>
+      <td>3.045114</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>Fam107a</td>
+      <td>101.277850</td>
+      <td>2.966981</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>Gfap</td>
+      <td>119.552864</td>
+      <td>2.961014</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>24</td>
+      <td>Stac2</td>
+      <td>43.515114</td>
+      <td>2.741199</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>57</th>
+      <td>57</td>
+      <td>Kcnh3</td>
+      <td>28.302246</td>
+      <td>2.647537</td>
+      <td>3.242797e-176</td>
+      <td>4.740457e-175</td>
+      <td>175.489080</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>145</th>
+      <td>145</td>
+      <td>Syndig1</td>
+      <td>12.873200</td>
+      <td>1.738300</td>
+      <td>6.370649e-38</td>
+      <td>3.867645e-37</td>
+      <td>37.195816</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>398</th>
+      <td>398</td>
+      <td>Fibcd1</td>
+      <td>3.639619</td>
+      <td>1.737264</td>
+      <td>2.730421e-04</td>
+      <td>6.594559e-04</td>
+      <td>3.563770</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>371</th>
+      <td>371</td>
+      <td>Acvr1c</td>
+      <td>4.170446</td>
+      <td>1.735889</td>
+      <td>3.040033e-05</td>
+      <td>7.872906e-05</td>
+      <td>4.517122</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>135</th>
+      <td>135</td>
+      <td>Calb1</td>
+      <td>14.095745</td>
+      <td>1.733454</td>
+      <td>4.033682e-45</td>
+      <td>2.605477e-44</td>
+      <td>44.394298</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>46</td>
+      <td>Coro1a</td>
+      <td>31.388968</td>
+      <td>1.731327</td>
+      <td>2.861894e-216</td>
+      <td>5.046928e-215</td>
+      <td>215.543346</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+  </tbody>
+</table>
+<p>100 rows × 8 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>zxw1_deg_small100 = zxw1_deg.nsmallest(100, &#39;logfoldchanges&#39;)
+zxw3_deg_small100 = zxw3_deg.nsmallest(100, &#39;logfoldchanges&#39;)
+zxw1_deg_small100
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>names</th>
+      <th>scores</th>
+      <th>logfoldchanges</th>
+      <th>pvals</th>
+      <th>pvals_adj</th>
+      <th>log_pval</th>
+      <th>comparison</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1109</th>
+      <td>1109</td>
+      <td>Sec14l5</td>
+      <td>-80.332520</td>
+      <td>-1.933895</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1100</th>
+      <td>1100</td>
+      <td>Adamtsl1</td>
+      <td>-38.866173</td>
+      <td>-1.699647</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1103</th>
+      <td>1103</td>
+      <td>Dscaml1</td>
+      <td>-50.880287</td>
+      <td>-1.499207</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1101</th>
+      <td>1101</td>
+      <td>Tnfaip6</td>
+      <td>-46.938343</td>
+      <td>-1.410299</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1105</th>
+      <td>1105</td>
+      <td>Sema6a</td>
+      <td>-58.445510</td>
+      <td>-1.381543</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>inf</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>989</th>
+      <td>989</td>
+      <td>Kcnh8</td>
+      <td>-0.429622</td>
+      <td>-0.261252</td>
+      <td>0.667471</td>
+      <td>0.747636</td>
+      <td>0.175568</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>985</th>
+      <td>985</td>
+      <td>Ptprc</td>
+      <td>-0.355616</td>
+      <td>-0.259794</td>
+      <td>0.722128</td>
+      <td>0.786554</td>
+      <td>0.141386</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1014</th>
+      <td>1014</td>
+      <td>Lama3</td>
+      <td>-1.007572</td>
+      <td>-0.249090</td>
+      <td>0.313660</td>
+      <td>0.436978</td>
+      <td>0.503541</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1017</th>
+      <td>1017</td>
+      <td>Gpr4</td>
+      <td>-1.041164</td>
+      <td>-0.246525</td>
+      <td>0.297799</td>
+      <td>0.422803</td>
+      <td>0.526076</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+    <tr>
+      <th>1016</th>
+      <td>1016</td>
+      <td>Fat4</td>
+      <td>-1.024630</td>
+      <td>-0.246279</td>
+      <td>0.305538</td>
+      <td>0.429965</td>
+      <td>0.514935</td>
+      <td>cc-out_vs_cc_in</td>
+    </tr>
+  </tbody>
+</table>
+<p>100 rows × 8 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>len(set(zxw3_deg_small100[&#39;names&#39;].tolist()) &amp; set(zxw1_deg_small100[&#39;names&#39;].tolist()))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+83
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>len(set(zxw3_deg_top100[&#39;names&#39;].tolist()) &amp; set(zxw1_deg_top100[&#39;names&#39;].tolist()))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+78
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+from adjustText import adjust_text
+
+# 数据准备
+zxw1_deg[&#39;comparison&#39;] = &#39;coronal&#39;
+zxw3_deg[&#39;comparison&#39;] = &#39;sagittal&#39;
+df = pd.concat([zxw1_deg, zxw3_deg])
+
+df[&#39;regulation&#39;] = df[&#39;logfoldchanges&#39;].apply(lambda x: &#39;Up&#39; if x &gt; 0 else &#39;Down&#39;)
+
+# 针对coronal数据（zxw1_deg）挑选logfoldchanges最大的100个和最小的100个基因
+coronal_top = zxw1_deg.nlargest(100, &#39;logfoldchanges&#39;)[&#39;names&#39;]
+coronal_bottom = zxw1_deg.nsmallest(100, &#39;logfoldchanges&#39;)[&#39;names&#39;]
+coronal_highlight = set(coronal_top).union(set(coronal_bottom))
+
+# 针对sagittal数据（zxw3_deg）挑选logfoldchanges最大的100个和最小的100个基因
+sagittal_top = zxw3_deg.nlargest(100, &#39;logfoldchanges&#39;)[&#39;names&#39;]
+sagittal_bottom = zxw3_deg.nsmallest(100, &#39;logfoldchanges&#39;)[&#39;names&#39;]
+sagittal_highlight = set(sagittal_top).union(set(sagittal_bottom))
+
+# 根据comparison分别设置highlight列
+def highlight_flag(row):
+    if row[&#39;comparison&#39;] == &#39;coronal&#39;:
+        return row[&#39;names&#39;] in coronal_highlight
+    else:
+        return row[&#39;names&#39;] in sagittal_highlight
+
+df[&#39;highlight&#39;] = df.apply(highlight_flag, axis=1)
+
+# 使用具有唯一索引的数据框
+df = df.reset_index(drop=True)
+
+# 指定标注的基因 - 为每组分别标记top和bottom 5个基因
+# 为coronal数据标记
+coronal_data = df[df[&#39;comparison&#39;] == &#39;coronal&#39;].copy()
+coronal_top_indices = coronal_data.nlargest(5, &#39;logfoldchanges&#39;).index
+coronal_bottom_indices = coronal_data.nsmallest(5, &#39;logfoldchanges&#39;).index
+
+# 为sagittal数据标记
+sagittal_data = df[df[&#39;comparison&#39;] == &#39;sagittal&#39;].copy()
+sagittal_top_indices = sagittal_data.nlargest(5, &#39;logfoldchanges&#39;).index
+sagittal_bottom_indices = sagittal_data.nsmallest(5, &#39;logfoldchanges&#39;).index
+
+# 初始化标记列
+df[&#39;to_label&#39;] = False
+df.loc[coronal_top_indices, &#39;to_label&#39;] = True
+df.loc[coronal_bottom_indices, &#39;to_label&#39;] = True
+df.loc[sagittal_top_indices, &#39;to_label&#39;] = True
+df.loc[sagittal_bottom_indices, &#39;to_label&#39;] = True
+
+# 验证每组标记的基因数
+coronal_labeled = df[df[&#39;to_label&#39;] &amp; (df[&#39;comparison&#39;] == &#39;coronal&#39;)]
+sagittal_labeled = df[df[&#39;to_label&#39;] &amp; (df[&#39;comparison&#39;] == &#39;sagittal&#39;)]
+
+# 将图改为左右排列：coronal在左，sagittal在右，x轴为组别，y轴为logfoldchanges
+df[&#39;jitter_x&#39;] = df[&#39;comparison&#39;].map({&#39;coronal&#39;: 0, &#39;sagittal&#39;: 1})
+np.random.seed(39)
+df[&#39;jitter_x&#39;] = df[&#39;jitter_x&#39;] + np.random.uniform(-0.2, 0.2, len(df))
+
+df_label = df[df[&#39;to_label&#39;]].copy()
+df_nonlabel = df[~df[&#39;to_label&#39;]].copy()
+
+# 绘图
+plt.figure(figsize=(9, 5))
+
+# 绘制非标注基因点（普通圆点，颜色根据regulation，且不在highlight内）
+ax = sns.scatterplot(
+    x=&#39;jitter_x&#39;,
+    y=&#39;logfoldchanges&#39;,
+    hue=&#39;regulation&#39;,
+    data=df_nonlabel[~df_nonlabel[&#39;highlight&#39;]],
+    palette={&#39;Up&#39;: &#39;#E64B35&#39;, &#39;Down&#39;: &#39;#3182BD&#39;},
+    s=20,
+    alpha=0.3,
+    edgecolor=&#39;none&#39;,
+    marker=&#39;o&#39;
+)
+
+# 绘制高亮基因点（使用更深的颜色），只对非标注数据
+sns.scatterplot(
+    x=&#39;jitter_x&#39;,
+    y=&#39;logfoldchanges&#39;,
+    hue=&#39;regulation&#39;,
+    data=df_nonlabel[df_nonlabel[&#39;highlight&#39;]],
+    palette={&#39;Up&#39;: &#39;#8B0000&#39;, &#39;Down&#39;: &#39;#00008B&#39;},
+    s=40,
+    alpha=0.6,
+    marker=&#39;o&#39;,
+    edgecolor=&#39;black&#39;,
+    linewidth=0.5,
+    ax=ax,
+    legend=False
+)
+
+# 绘制需要标注的点（使用菱形标记）
+for idx, row in df_label.iterrows():
+    is_up = row[&#39;logfoldchanges&#39;] &gt; 0
+    is_highlight = row[&#39;highlight&#39;]
+    # 根据是否高亮确定颜色
+    color = &#39;#8B0000&#39; if is_up and is_highlight else &#39;#00008B&#39; if (not is_up and is_highlight) else &#39;#E64B35&#39; if is_up else &#39;#3182BD&#39;
+    marker = &#39;D&#39;
+    size = 55
+    ax.scatter(
+        row[&#39;jitter_x&#39;],
+        row[&#39;logfoldchanges&#39;],
+        s=size,
+        color=color,
+        marker=marker,
+        alpha=0.8,
+        linewidth=0.5,
+        zorder=10
+    )
+
+# 添加文本标注
+texts = []
+for idx, row in df_label.iterrows():
+    gene_name = row[&#39;names&#39;]
+    offset_x = 0.1 if row[&#39;logfoldchanges&#39;] &gt; 0 else -0.1
+    ha = &#39;left&#39; if row[&#39;logfoldchanges&#39;] &gt; 0 else &#39;right&#39;
+    text = ax.text(
+        row[&#39;jitter_x&#39;] + offset_x,
+        row[&#39;logfoldchanges&#39;],
+        gene_name,
+        fontsize=8,
+        color=&#39;black&#39;,
+        fontweight=&#39;bold&#39;,
+        ha=ha,
+        va=&#39;center&#39;,
+        bbox=dict(boxstyle=&#39;round,pad=0.2&#39;, facecolor=&#39;white&#39;, edgecolor=&#39;gray&#39;, alpha=0.7)
+    )
+    texts.append(text)
+
+# 使用adjustText避免文本重叠
+adjust_text(
+    texts,
+    arrowprops=dict(arrowstyle=&#39;-&gt;&#39;, color=&#39;gray&#39;, lw=0.5, alpha=0.7),
+    expand_points=(0.5, 0.5),
+    expand_text=(0.5, 0.5),
+    force_text=(0.4, 1.3)
+)
+
+# 辅助线：y轴=0的水平线
+ax.axhline(0, color=&#39;black&#39;, linestyle=&#39;--&#39;, linewidth=1, alpha=0.5, zorder=0)
+
+# 坐标轴优化
+ax.set_xticks([0, 1])
+ax.set_xticklabels([&#39;Coronal&#39;, &#39;Sagittal&#39;])
+ax.set_xlabel(&#39;Comparison&#39;, labelpad=10)
+ax.set_ylabel(&#39;log$_2$ Fold Change&#39;, labelpad=10)
+sns.despine(trim=True)
+
+# 图例定制
+legend_elements = [
+    plt.Line2D([0], [0], marker=&#39;o&#39;, color=&#39;w&#39;, label=&#39;Up-regulated&#39;,
+               markerfacecolor=&#39;#E64B35&#39;, markersize=8, alpha=0.6),
+    plt.Line2D([0], [0], marker=&#39;o&#39;, color=&#39;w&#39;, label=&#39;Down-regulated&#39;,
+               markerfacecolor=&#39;#3182BD&#39;, markersize=8, alpha=0.6),
+    plt.Line2D([0], [0], marker=&#39;o&#39;, color=&#39;w&#39;, label=&#39;Common up-regulated&#39;,
+               markerfacecolor=&#39;#8B0000&#39;, markersize=8, alpha=0.8),
+    plt.Line2D([0], [0], marker=&#39;o&#39;, color=&#39;w&#39;, label=&#39;Common down-regulated&#39;,
+               markerfacecolor=&#39;#00008B&#39;, markersize=8, alpha=0.8),
+    plt.Line2D([0], [0], marker=&#39;D&#39;, color=&#39;w&#39;, label=&#39;Top/bottom 5 genes&#39;,
+               markerfacecolor=&#39;gray&#39;, markersize=8, alpha=0.8)
+]
+
+ax.legend(handles=legend_elements,
+          bbox_to_anchor=(1.05, 1),
+          frameon=False,
+          title=&#39;Gene Types&#39;)
+
+# 自动调整布局
+plt.tight_layout()
+# plt.show()
+# plt.savefig(&#39;/mnt/Data16Tc/home/haichao/code/sainsc-study-main/cluster_result/paper_fig2/cc_in_out_deg.pdf&#39;, bbox_inches=&#39;tight&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/8_coronal_sagittal_cc_in_out_deg_compare_8_0.png" src="_images/8_coronal_sagittal_cc_in_out_deg_compare_8_0.png" />
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, quhaichao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

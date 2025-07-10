@@ -1,0 +1,1597 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ctx layer56 th correlation &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SpaCon_results_reproduction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">ctx layer56 th correlation</a><ul>
+<li><a class="reference internal" href="#L5/L6-corr">L5/L6 corr</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpaCon_results_reproduction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">ctx layer56 th correlation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/4_ctx_layer56_and_th_correlation.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+import anndata
+import scanpy as sc
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import numpy as np
+import warnings
+import seaborn as sns
+from scipy.cluster.hierarchy import fcluster, linkage
+import matplotlib as mpl
+mpl.rcParams[&#39;pdf.fonttype&#39;] = 42
+mpl.rcParams[&#39;ps.fonttype&#39;] = 42
+warnings.filterwarnings(&#39;ignore&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx_regions = [&#39;ACAd&#39;, &#39;ACAv&#39;, &#39;PL&#39;, &#39;ILA&#39;, &#39;ORBl&#39;, &#39;ORBvl&#39;, &#39;AId&#39;, &#39;SSs&#39;, &#39;SSp-bfd&#39;, &#39;SSp-ll&#39;, &#39;SSp-ul&#39;, &#39;SSp-n&#39;, &#39;SSp-m&#39;, &#39;MOp&#39;,
+               &#39;MOs&#39;, &#39;VISal&#39;, &#39;VISl&#39;, &#39;VISp&#39;, &#39;VISpor&#39;, &#39;VISrl&#39;, &#39;VISam&#39;, &#39;VISpm&#39;, &#39;RSPd&#39;, &#39;RSPv&#39;, &#39;AUDp&#39;]
+th_regions = [&#39;VPL&#39;, &#39;VPM&#39;, &#39;PO&#39;, &#39;PoT&#39;, &#39;VPMpc&#39;, &#39;VPLpc&#39;, &#39;SPFp&#39;,
+              &#39;MG&#39;, &#39;PIL&#39;, &#39;PP&#39;, &#39;SGN&#39;, &#39;AD&#39;, &#39;AV&#39;, &#39;LD&#39;, &#39;LP&#39;, &#39;VAL&#39;, &#39;PF&#39;, &#39;CL&#39;,
+              &#39;SubG&#39;, &#39;LGv&#39;, &#39;IGL&#39;, &#39;POL&#39;, &#39;MD&#39;, &#39;IMD&#39;, &#39;CM&#39;, &#39;SMT&#39;,
+              &#39;SPA&#39;, &#39;VM&#39;, &#39;PCN&#39;, &#39;PVT&#39;, &#39;PT&#39;, &#39;RE&#39;, &#39;SPFm&#39;, &#39;Xi&#39;, &#39;RH&#39;, &#39;IAM&#39;, &#39;PR&#39;,
+              &#39;LH&#39;, &#39;MH&#39;, &#39;IAD&#39;, &#39;RT&#39;]
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_raw = sc.read_h5ad(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/adata_processed.h5ad&#39;)
+allen_region = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/allen_region.csv&#39;)
+adata_raw.obs[&#39;region&#39;] = allen_region[&#39;region&#39;].values
+# add cell type
+meta = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/cell_metadata_with_cluster_annotation.csv&#39;)
+meta = meta.set_index(&#39;cell_label&#39;)
+meta = meta.loc[adata_raw.obs.index.to_list()]
+adata_raw.obs[&#39;cell_type&#39;] = meta[&#39;class&#39;].to_list()
+adata_raw.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+      <th>region</th>
+      <th>cell_type</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>198904341065180396762707397604803217407</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>49.206853</td>
+      <td>44.877634</td>
+      <td>12.168155</td>
+      <td>4.920685</td>
+      <td>4.487763</td>
+      <td>1.216815</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>252199681526991424029643077826220097990</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.973992</td>
+      <td>44.813761</td>
+      <td>12.179006</td>
+      <td>4.897399</td>
+      <td>4.481376</td>
+      <td>1.217901</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>277720971126854564514249564750701518375</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.791066</td>
+      <td>44.577722</td>
+      <td>12.192707</td>
+      <td>4.879107</td>
+      <td>4.457772</td>
+      <td>1.219271</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>31551867344111790264292067056219852271</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.830489</td>
+      <td>44.426120</td>
+      <td>12.195078</td>
+      <td>4.883049</td>
+      <td>4.442612</td>
+      <td>1.219508</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>131102494428104399865219008178262036485</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.308843</td>
+      <td>43.028156</td>
+      <td>12.267879</td>
+      <td>4.830884</td>
+      <td>4.302816</td>
+      <td>1.226788</td>
+      <td>SSs1</td>
+      <td>34 Immune</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>318102106429791409781741726367984532777</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.090716</td>
+      <td>69.334275</td>
+      <td>41.436743</td>
+      <td>13.109072</td>
+      <td>6.933427</td>
+      <td>4.143674</td>
+      <td>MDRNd</td>
+      <td>30 Astro-Epen</td>
+    </tr>
+    <tr>
+      <th>35262847161560382172299767067854387528</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.216032</td>
+      <td>69.494070</td>
+      <td>41.351034</td>
+      <td>13.121603</td>
+      <td>6.949407</td>
+      <td>4.135103</td>
+      <td>MDRNd</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>75415866509570969932943497000463821106</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.415152</td>
+      <td>70.764504</td>
+      <td>40.800403</td>
+      <td>13.141515</td>
+      <td>7.076450</td>
+      <td>4.080040</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+    <tr>
+      <th>12350978322417280063239916106423065862</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.646167</td>
+      <td>71.182557</td>
+      <td>40.595995</td>
+      <td>13.164617</td>
+      <td>7.118256</td>
+      <td>4.059599</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+    <tr>
+      <th>327554758863546024460748891922509519354</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.658892</td>
+      <td>71.414675</td>
+      <td>40.501356</td>
+      <td>13.165889</td>
+      <td>7.141468</td>
+      <td>4.050136</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+  </tbody>
+</table>
+<p>1566842 rows × 9 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_th = adata_raw[adata_raw.obs[&#39;region&#39;].isin(th_regions)]
+adata_th = adata_th[adata_th.obs[&#39;cell_type&#39;].str.contains(&#39;Glut&#39;)]
+
+adata_ctx = adata_raw[(adata_raw.obs[&#39;region&#39;].str.startswith(tuple(ctx_regions))) &amp; (adata_raw.obs[&#39;region&#39;].str.contains(&#39;5|6&#39;))]
+adata_ctx = adata_ctx[adata_ctx.obs[&#39;cell_type&#39;].str.contains(&#39;Glut&#39;)]
+adata_ctx.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+      <th>region</th>
+      <th>cell_type</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>29162871883387929795006067736640436040</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>61.666898</td>
+      <td>42.255912</td>
+      <td>12.232613</td>
+      <td>6.166690</td>
+      <td>4.225591</td>
+      <td>1.223261</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>293032136699589827732370249746624703959</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>62.396840</td>
+      <td>41.838307</td>
+      <td>12.216430</td>
+      <td>6.239684</td>
+      <td>4.183831</td>
+      <td>1.221643</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>169008133492981499504077797165914124518</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>64.994841</td>
+      <td>40.394608</td>
+      <td>12.161029</td>
+      <td>6.499484</td>
+      <td>4.039461</td>
+      <td>1.216103</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>227494694293280194589855295428860091482</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>64.498586</td>
+      <td>40.611089</td>
+      <td>12.175537</td>
+      <td>6.449859</td>
+      <td>4.061109</td>
+      <td>1.217554</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>33873656525375865261837620890496116573</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>64.282103</td>
+      <td>41.059249</td>
+      <td>12.175800</td>
+      <td>6.428210</td>
+      <td>4.105925</td>
+      <td>1.217580</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>229580843941555951333299912014571135110</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>97.429638</td>
+      <td>10.575478</td>
+      <td>38.381706</td>
+      <td>9.742964</td>
+      <td>1.057548</td>
+      <td>3.838171</td>
+      <td>VISp5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>248292745152448671917314233790662445907</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>97.150793</td>
+      <td>11.549455</td>
+      <td>38.284627</td>
+      <td>9.715079</td>
+      <td>1.154945</td>
+      <td>3.828463</td>
+      <td>VISp5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>329636896424947842904418891891676096227</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>97.098822</td>
+      <td>10.816952</td>
+      <td>38.350628</td>
+      <td>9.709882</td>
+      <td>1.081695</td>
+      <td>3.835063</td>
+      <td>VISp5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>210578552686403511812793479380810073674</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>98.298868</td>
+      <td>11.674211</td>
+      <td>38.311367</td>
+      <td>9.829887</td>
+      <td>1.167421</td>
+      <td>3.831137</td>
+      <td>VISp5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>5967642066674772504918301827478668961</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>98.354235</td>
+      <td>12.399570</td>
+      <td>38.259130</td>
+      <td>9.835423</td>
+      <td>1.239957</td>
+      <td>3.825913</td>
+      <td>VISp5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+  </tbody>
+</table>
+<p>60861 rows × 9 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata = anndata.concat([adata_ctx, adata_th])
+adata.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+      <th>region</th>
+      <th>cell_type</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>29162871883387929795006067736640436040</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>61.666898</td>
+      <td>42.255912</td>
+      <td>12.232613</td>
+      <td>6.166690</td>
+      <td>4.225591</td>
+      <td>1.223261</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>293032136699589827732370249746624703959</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>62.396840</td>
+      <td>41.838307</td>
+      <td>12.216430</td>
+      <td>6.239684</td>
+      <td>4.183831</td>
+      <td>1.221643</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>169008133492981499504077797165914124518</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>64.994841</td>
+      <td>40.394608</td>
+      <td>12.161029</td>
+      <td>6.499484</td>
+      <td>4.039461</td>
+      <td>1.216103</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>227494694293280194589855295428860091482</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>64.498586</td>
+      <td>40.611089</td>
+      <td>12.175537</td>
+      <td>6.449859</td>
+      <td>4.061109</td>
+      <td>1.217554</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>33873656525375865261837620890496116573</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>64.282103</td>
+      <td>41.059249</td>
+      <td>12.175800</td>
+      <td>6.428210</td>
+      <td>4.105925</td>
+      <td>1.217580</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>137125155786416424728071422508382942054</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.480430</td>
+      <td>34.094203</td>
+      <td>37.248728</td>
+      <td>8.648043</td>
+      <td>3.409420</td>
+      <td>3.724873</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+    </tr>
+    <tr>
+      <th>186321231466624970722021094909324401885</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.443977</td>
+      <td>35.015822</td>
+      <td>37.291043</td>
+      <td>8.644398</td>
+      <td>3.501582</td>
+      <td>3.729104</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+    </tr>
+    <tr>
+      <th>262284519603134366801326445274337827961</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.388989</td>
+      <td>32.866518</td>
+      <td>37.212756</td>
+      <td>8.638899</td>
+      <td>3.286652</td>
+      <td>3.721276</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+    </tr>
+    <tr>
+      <th>33608739852097367198466784523454261485</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.904204</td>
+      <td>34.752896</td>
+      <td>37.268567</td>
+      <td>8.690420</td>
+      <td>3.475290</td>
+      <td>3.726857</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+    </tr>
+    <tr>
+      <th>303385550649730012456703013017610179856</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>88.389510</td>
+      <td>37.024369</td>
+      <td>37.400811</td>
+      <td>8.838951</td>
+      <td>3.702437</td>
+      <td>3.740081</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+    </tr>
+  </tbody>
+</table>
+<p>71462 rows × 9 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.pp.normalize_total(adata, target_sum=1e4)
+sc.pp.log1p(adata)
+adata
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AnnData object with n_obs × n_vars = 71462 × 1122
+    obs: &#39;brain_section_label&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;x_ccf&#39;, &#39;y_ccf&#39;, &#39;z_ccf&#39;, &#39;region&#39;, &#39;cell_type&#39;
+    uns: &#39;log1p&#39;
+</pre></div></div>
+</div>
+<section id="ctx-layer56-th-correlation">
+<h1>ctx layer56 th correlation<a class="headerlink" href="#ctx-layer56-th-correlation" title="Link to this heading"></a></h1>
+<section id="L5/L6-corr">
+<h2>L5/L6 corr<a class="headerlink" href="#L5/L6-corr" title="Link to this heading"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>mergecell_num = 80
+def cluster_region(df_region, num_points=mergecell_num):
+    # Perform hierarchical cluster
+    Z = linkage(df_region[[&#39;x&#39;, &#39;y&#39;, &#39;z&#39;]], method=&#39;ward&#39;)
+    # Divided into clusters according to the results of the cluster, each cluster has about NUM_POINTS individual points
+    cluster_labels = fcluster(Z, t=len(df_region) / num_points, criterion=&#39;maxclust&#39;)
+    return cluster_labels
+
+# Initialize a empty cluster label
+adata.obs[&#39;subregion&#39;] = 0
+# Perform clusters separately for each area
+for region in adata.obs[&#39;region&#39;].unique():
+    mask = adata.obs[&#39;region&#39;] == region
+    if adata[adata.obs[&#39;region&#39;] == region].shape[0] &lt; 80:
+        adata.obs.loc[mask, &#39;subregion&#39;] = adata.obs.loc[mask, &#39;region&#39;].apply(lambda x: x + &#39;_1&#39;)
+        continue
+    clu_list = cluster_region(adata.obs[mask])
+    cl_list = [f&#39;{region}_{i}&#39; for i in clu_list]
+    adata.obs.loc[mask, &#39;subregion&#39;] = cl_list
+adata.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+      <th>region</th>
+      <th>cell_type</th>
+      <th>subregion</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>29162871883387929795006067736640436040</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>61.666898</td>
+      <td>42.255912</td>
+      <td>12.232613</td>
+      <td>6.166690</td>
+      <td>4.225591</td>
+      <td>1.223261</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+      <td>SSs5_16</td>
+    </tr>
+    <tr>
+      <th>293032136699589827732370249746624703959</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>62.396840</td>
+      <td>41.838307</td>
+      <td>12.216430</td>
+      <td>6.239684</td>
+      <td>4.183831</td>
+      <td>1.221643</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+      <td>SSs5_16</td>
+    </tr>
+    <tr>
+      <th>169008133492981499504077797165914124518</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>64.994841</td>
+      <td>40.394608</td>
+      <td>12.161029</td>
+      <td>6.499484</td>
+      <td>4.039461</td>
+      <td>1.216103</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+      <td>SSs5_15</td>
+    </tr>
+    <tr>
+      <th>227494694293280194589855295428860091482</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>64.498586</td>
+      <td>40.611089</td>
+      <td>12.175537</td>
+      <td>6.449859</td>
+      <td>4.061109</td>
+      <td>1.217554</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+      <td>SSs5_15</td>
+    </tr>
+    <tr>
+      <th>33873656525375865261837620890496116573</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>64.282103</td>
+      <td>41.059249</td>
+      <td>12.175800</td>
+      <td>6.428210</td>
+      <td>4.105925</td>
+      <td>1.217580</td>
+      <td>SSs5</td>
+      <td>01 IT-ET Glut</td>
+      <td>SSs5_15</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>137125155786416424728071422508382942054</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.480430</td>
+      <td>34.094203</td>
+      <td>37.248728</td>
+      <td>8.648043</td>
+      <td>3.409420</td>
+      <td>3.724873</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+      <td>SGN_1</td>
+    </tr>
+    <tr>
+      <th>186321231466624970722021094909324401885</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.443977</td>
+      <td>35.015822</td>
+      <td>37.291043</td>
+      <td>8.644398</td>
+      <td>3.501582</td>
+      <td>3.729104</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+      <td>POL_1</td>
+    </tr>
+    <tr>
+      <th>262284519603134366801326445274337827961</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.388989</td>
+      <td>32.866518</td>
+      <td>37.212756</td>
+      <td>8.638899</td>
+      <td>3.286652</td>
+      <td>3.721276</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+      <td>SGN_1</td>
+    </tr>
+    <tr>
+      <th>33608739852097367198466784523454261485</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.904204</td>
+      <td>34.752896</td>
+      <td>37.268567</td>
+      <td>8.690420</td>
+      <td>3.475290</td>
+      <td>3.726857</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+      <td>POL_1</td>
+    </tr>
+    <tr>
+      <th>303385550649730012456703013017610179856</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>88.389510</td>
+      <td>37.024369</td>
+      <td>37.400811</td>
+      <td>8.838951</td>
+      <td>3.702437</td>
+      <td>3.740081</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+      <td>POL_1</td>
+    </tr>
+  </tbody>
+</table>
+<p>71462 rows × 10 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>regions = adata.obs[&#39;subregion&#39;].values
+gene_expression = adata.X.A
+
+# Create a DataFrame to integrate regional information and gene expression matrix together
+df = pd.DataFrame(gene_expression, columns=adata.var_names)
+df[&#39;subregion&#39;] = regions
+
+# Calculate the average gene expression by regional grouping and calculate the average gene
+region_mean_expression = df.groupby(&#39;subregion&#39;).mean()
+# Convert the result to the matrix format of the regional*gene
+region_gene_matrix = region_mean_expression.values
+region_gene_matrix.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(867, 1122)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>corr_all = np.corrcoef(region_gene_matrix)
+corr_all.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(867, 867)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_th = adata[adata.obs[&#39;region&#39;].isin(th_regions)]
+th_subregions = adata_th.obs[&#39;subregion&#39;].unique()
+th_subregions.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(124,)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_ctx = adata[adata.obs[&#39;region&#39;].str.startswith(tuple(ctx_regions))]
+ctx_subregions = adata_ctx.obs[&#39;subregion&#39;].unique()
+ctx_subregions.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(743,)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>region_labels = region_mean_expression.index
+ctx_indices = [i for i, label in enumerate(region_labels) if label in ctx_subregions]
+th_indices = [i for i, label in enumerate(region_labels) if label in th_subregions]
+corr = corr_all[np.ix_(ctx_indices, th_indices)]
+corr.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(743, 124)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx_regions_df = [region_labels[i] for i in ctx_indices]
+th_regions_df = [region_labels[i] for i in th_indices]
+corr_df = pd.DataFrame(corr, index=ctx_regions_df, columns=th_regions_df)
+corr_df
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AD_1</th>
+      <th>AD_2</th>
+      <th>AD_3</th>
+      <th>AV_1</th>
+      <th>AV_2</th>
+      <th>AV_3</th>
+      <th>AV_4</th>
+      <th>CL_1</th>
+      <th>CL_2</th>
+      <th>CM_1</th>
+      <th>...</th>
+      <th>VPM_2</th>
+      <th>VPM_3</th>
+      <th>VPM_4</th>
+      <th>VPM_5</th>
+      <th>VPM_6</th>
+      <th>VPM_7</th>
+      <th>VPM_8</th>
+      <th>VPM_9</th>
+      <th>VPMpc_1</th>
+      <th>VPMpc_2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>ACAd5_1</th>
+      <td>0.410782</td>
+      <td>0.399958</td>
+      <td>0.429878</td>
+      <td>0.389128</td>
+      <td>0.399872</td>
+      <td>0.379626</td>
+      <td>0.385972</td>
+      <td>0.433726</td>
+      <td>0.448486</td>
+      <td>0.418421</td>
+      <td>...</td>
+      <td>0.349622</td>
+      <td>0.392964</td>
+      <td>0.367910</td>
+      <td>0.383102</td>
+      <td>0.396261</td>
+      <td>0.393593</td>
+      <td>0.400477</td>
+      <td>0.395913</td>
+      <td>0.471805</td>
+      <td>0.461550</td>
+    </tr>
+    <tr>
+      <th>ACAd5_10</th>
+      <td>0.393125</td>
+      <td>0.382621</td>
+      <td>0.415251</td>
+      <td>0.376264</td>
+      <td>0.384030</td>
+      <td>0.365063</td>
+      <td>0.373579</td>
+      <td>0.424826</td>
+      <td>0.446542</td>
+      <td>0.411051</td>
+      <td>...</td>
+      <td>0.326493</td>
+      <td>0.371632</td>
+      <td>0.347403</td>
+      <td>0.361314</td>
+      <td>0.376664</td>
+      <td>0.377090</td>
+      <td>0.379626</td>
+      <td>0.376344</td>
+      <td>0.458214</td>
+      <td>0.458316</td>
+    </tr>
+    <tr>
+      <th>ACAd5_11</th>
+      <td>0.398234</td>
+      <td>0.380920</td>
+      <td>0.420792</td>
+      <td>0.413818</td>
+      <td>0.409845</td>
+      <td>0.394324</td>
+      <td>0.400633</td>
+      <td>0.455472</td>
+      <td>0.467039</td>
+      <td>0.445792</td>
+      <td>...</td>
+      <td>0.374350</td>
+      <td>0.416192</td>
+      <td>0.391017</td>
+      <td>0.403894</td>
+      <td>0.426616</td>
+      <td>0.423503</td>
+      <td>0.427803</td>
+      <td>0.423335</td>
+      <td>0.489865</td>
+      <td>0.486841</td>
+    </tr>
+    <tr>
+      <th>ACAd5_12</th>
+      <td>0.410527</td>
+      <td>0.393434</td>
+      <td>0.435584</td>
+      <td>0.420335</td>
+      <td>0.419085</td>
+      <td>0.401034</td>
+      <td>0.407594</td>
+      <td>0.460431</td>
+      <td>0.469367</td>
+      <td>0.445620</td>
+      <td>...</td>
+      <td>0.388494</td>
+      <td>0.428909</td>
+      <td>0.405853</td>
+      <td>0.419587</td>
+      <td>0.437670</td>
+      <td>0.435193</td>
+      <td>0.440099</td>
+      <td>0.432376</td>
+      <td>0.496598</td>
+      <td>0.487125</td>
+    </tr>
+    <tr>
+      <th>ACAd5_13</th>
+      <td>0.396818</td>
+      <td>0.378964</td>
+      <td>0.416866</td>
+      <td>0.407649</td>
+      <td>0.404479</td>
+      <td>0.390833</td>
+      <td>0.399343</td>
+      <td>0.460673</td>
+      <td>0.475524</td>
+      <td>0.454787</td>
+      <td>...</td>
+      <td>0.371024</td>
+      <td>0.411906</td>
+      <td>0.387836</td>
+      <td>0.398777</td>
+      <td>0.426981</td>
+      <td>0.425960</td>
+      <td>0.424657</td>
+      <td>0.425608</td>
+      <td>0.492338</td>
+      <td>0.495915</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>VISrl5_3</th>
+      <td>0.403946</td>
+      <td>0.392158</td>
+      <td>0.447694</td>
+      <td>0.412068</td>
+      <td>0.431390</td>
+      <td>0.391572</td>
+      <td>0.398629</td>
+      <td>0.458871</td>
+      <td>0.478694</td>
+      <td>0.423189</td>
+      <td>...</td>
+      <td>0.357283</td>
+      <td>0.430841</td>
+      <td>0.399325</td>
+      <td>0.415467</td>
+      <td>0.413560</td>
+      <td>0.410179</td>
+      <td>0.426174</td>
+      <td>0.418796</td>
+      <td>0.503235</td>
+      <td>0.475361</td>
+    </tr>
+    <tr>
+      <th>VISrl6a_1</th>
+      <td>0.353894</td>
+      <td>0.351150</td>
+      <td>0.377903</td>
+      <td>0.321932</td>
+      <td>0.336051</td>
+      <td>0.315114</td>
+      <td>0.315966</td>
+      <td>0.350315</td>
+      <td>0.362867</td>
+      <td>0.331669</td>
+      <td>...</td>
+      <td>0.279148</td>
+      <td>0.314711</td>
+      <td>0.289657</td>
+      <td>0.306511</td>
+      <td>0.303450</td>
+      <td>0.303453</td>
+      <td>0.311159</td>
+      <td>0.308828</td>
+      <td>0.377244</td>
+      <td>0.372180</td>
+    </tr>
+    <tr>
+      <th>VISrl6a_2</th>
+      <td>0.329470</td>
+      <td>0.328920</td>
+      <td>0.359324</td>
+      <td>0.318948</td>
+      <td>0.331033</td>
+      <td>0.303589</td>
+      <td>0.304252</td>
+      <td>0.347650</td>
+      <td>0.365771</td>
+      <td>0.318220</td>
+      <td>...</td>
+      <td>0.264400</td>
+      <td>0.316115</td>
+      <td>0.284581</td>
+      <td>0.302115</td>
+      <td>0.291393</td>
+      <td>0.287109</td>
+      <td>0.301932</td>
+      <td>0.298410</td>
+      <td>0.378667</td>
+      <td>0.372998</td>
+    </tr>
+    <tr>
+      <th>VISrl6a_3</th>
+      <td>0.350070</td>
+      <td>0.348513</td>
+      <td>0.380515</td>
+      <td>0.334510</td>
+      <td>0.347604</td>
+      <td>0.322965</td>
+      <td>0.320802</td>
+      <td>0.363974</td>
+      <td>0.382227</td>
+      <td>0.333347</td>
+      <td>...</td>
+      <td>0.267162</td>
+      <td>0.328005</td>
+      <td>0.294717</td>
+      <td>0.311189</td>
+      <td>0.304804</td>
+      <td>0.300980</td>
+      <td>0.316639</td>
+      <td>0.313798</td>
+      <td>0.396515</td>
+      <td>0.383178</td>
+    </tr>
+    <tr>
+      <th>VISrl6b_1</th>
+      <td>0.322910</td>
+      <td>0.323277</td>
+      <td>0.349623</td>
+      <td>0.307613</td>
+      <td>0.317701</td>
+      <td>0.302240</td>
+      <td>0.302237</td>
+      <td>0.339289</td>
+      <td>0.357366</td>
+      <td>0.312219</td>
+      <td>...</td>
+      <td>0.243223</td>
+      <td>0.289870</td>
+      <td>0.263871</td>
+      <td>0.276627</td>
+      <td>0.276174</td>
+      <td>0.275492</td>
+      <td>0.282320</td>
+      <td>0.282552</td>
+      <td>0.361067</td>
+      <td>0.364670</td>
+    </tr>
+  </tbody>
+</table>
+<p>743 rows × 124 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tempdf = pd.read_excel(&#39;./data/layer56_to_th_connection_strength.xlsx&#39;, index_col=0, sheet_name=None)
+Rbp4_L5 = tempdf[&#39;Sheet1&#39;]
+Ntsr1_Syt6_L6 = tempdf[&#39;Sheet2&#39;]
+
+Rbp4_L5 = Rbp4_L5.replace(&#39;TN&#39;, -10)
+Rbp4_L5.loc[&#39;SSs&#39;] = Rbp4_L5.loc[[&#39;SSs-1&#39;, &#39;SSs-2&#39;]].mean(axis=0)
+Rbp4_L5.loc[&#39;MOs&#39;] = Rbp4_L5.loc[[&#39;MOs-1&#39;, &#39;MOs-2&#39;]].mean(axis=0)
+Rbp4_L5 = Rbp4_L5.drop([&#39;SSs-1&#39;, &#39;SSs-2&#39;, &#39;MOs-1&#39;, &#39;MOs-2&#39;], axis=0)
+# Rbp4_L5 = Rbp4_L5.loc[:, col_list]
+Rbp4_L5 = Rbp4_L5.loc[ctx_regions]
+
+Ntsr1_Syt6_L6 = Ntsr1_Syt6_L6.replace(&#39;TN&#39;, -10)
+Ntsr1_Syt6_L6.loc[&#39;SSs&#39;] = Ntsr1_Syt6_L6.loc[[&#39;SSs-1&#39;, &#39;SSs-2&#39;]].mean(axis=0)
+Ntsr1_Syt6_L6.loc[&#39;MOs&#39;] = Ntsr1_Syt6_L6.loc[[&#39;MOs-1&#39;, &#39;MOs-2&#39;]].mean(axis=0)
+Ntsr1_Syt6_L6 = Ntsr1_Syt6_L6.drop([&#39;SSs-1&#39;, &#39;SSs-2&#39;, &#39;MOs-1&#39;, &#39;MOs-2&#39;], axis=0)
+# Ntsr1_Syt6_L6 = Ntsr1_Syt6_L6.loc[:, col_list]
+Ntsr1_Syt6_L6 = Ntsr1_Syt6_L6.loc[ctx_regions]
+
+Ntsr1_Syt6_L6.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(25, 44)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>connect_strength = pd.DataFrame(index=corr_df.index, columns=corr_df.columns, dtype=float)
+connraw = (Rbp4_L5 + Ntsr1_Syt6_L6)/2
+for ctx in tqdm(connraw.index):
+    for th in connraw.columns:
+        rows = connect_strength.index.str.startswith(ctx)
+        cols = connect_strength.columns.str.startswith(th)
+        connect_strength.loc[rows, cols] = connraw.loc[ctx, th]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 25/25 [00:00&lt;00:00, 52.47it/s]
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx_region_order = [&#39;ACAd&#39;, &#39;ACAv&#39;, &#39;PL&#39;, &#39;ILA&#39;, &#39;ORBl&#39;, &#39;ORBvl&#39;, &#39;AId&#39;, &#39;SSs&#39;, &#39;SSp-bfd&#39;, &#39;SSp-ll&#39;, &#39;SSp-ul&#39;, &#39;SSp-n&#39;, &#39;SSp-m&#39;, &#39;MOp&#39;, &#39;MOs&#39;, &#39;VISal&#39;, &#39;VISl&#39;, &#39;VISp&#39;, &#39;VISpor&#39;, &#39;VISrl&#39;, &#39;VISam&#39;, &#39;VISpm&#39;, &#39;RSPd&#39;, &#39;RSPv&#39;, &#39;AUDp&#39;]
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>tp = []
+tn = []
+for c in ctx_region_order:
+    tmp = pd.DataFrame()
+    tmp[&#39;conn&#39;] = connect_strength.loc[connect_strength.index.str.startswith(c)].values.flatten()
+    tmp[&#39;corr&#39;] = corr_df.loc[corr_df.index.str.startswith(c)].values.flatten()
+    tmp_p = tmp[(tmp[&#39;conn&#39;] &gt; -2)]
+    # top_indices = tmp[&#39;conn&#39;].nlargest(10).index
+    # tmp_p = tmp.loc[top_indices]
+    tmp_n = tmp[tmp[&#39;conn&#39;] == -10]
+    tp.append(tmp_p[&#39;corr&#39;].mean())
+    tn.append(tmp_n[&#39;corr&#39;].mean())
+values = tp
+values2 = tn
+feature = ctx_region_order
+
+N = len(values)
+# Set the angle of the radar diagram to cut a round surface in a flat separation
+angles=np.linspace(0, 2*np.pi, N, endpoint=False)
+# In order to close the radar map, the following steps need
+values=np.concatenate((values,[values[0]]))
+values2=np.concatenate((values2,[values2[0]]))
+angles=np.concatenate((angles,[angles[0]]))
+feature = np.concatenate((feature, [feature[0]]))
+fig=plt.figure(figsize=(6,6))
+ax = fig.add_subplot(111, polar=True)
+# Draw a line map
+ax.plot(angles, values, &#39;o-&#39;, markersize=2, linewidth=0.5, label = &#39;TP&#39;, color=&#39;#E56F5E&#39;)
+# Fill color
+ax.fill(angles, values, alpha=0.25, color=&#39;#F19685&#39;)
+# Draw the second folding drawing
+ax.plot(angles, values2, &#39;o-&#39;, markersize=2, linewidth=0.5, label = &#39;TN&#39;, color=&#39;#8d8d8d&#39;)
+ax.fill(angles, values2, alpha=0.25, color=&#39;#8d8d8d&#39;)
+# Add the tags of each feature
+# ax.set_thetagrids(angles * 180/np.pi, feature)
+ax.set_thetagrids(angles * 180/np.pi, feature)  # FRAC parameter setting label distance MAX ( *TP, *TN)+0.05 to depart the center
+ax.tick_params(axis=&#39;x&#39;, pad=6)  # Set the distance between the label and the axis
+# Set the range of radar chart
+# ax.set_ylim(min(*tp, *tn)-0.05, max(*tp, *tn)+0.05)
+ax.set_ylim(0.25, 0.45)
+# Add title
+# plt.title(f&#39;Layer5/6_CTX_in &amp; TH_in&#39;, fontweight=&#39;bold&#39;)
+# Add grid line
+# ax.grid(True)
+ax.grid(True, linewidth=0.25, alpha=0.7)
+
+# ax.set_rgrids([0.25, 0.3, 0.35, 0.4, 0.45], labels=[&#39;&#39;, &#39;0.3&#39;, &#39;&#39;, &#39;0.4&#39;, &#39;&#39;])
+# Set diagram
+plt.legend(loc=&#39;center left&#39;, bbox_to_anchor=(1, 1))
+
+plt.tight_layout()
+# plt.savefig(&#39;./l56_module_ave_exp_radar_plot_out.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[109]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx_module = {&#39;Prefrontal&#39;: [&#39;ACAd&#39;, &#39;ACAv&#39;, &#39;PL&#39;, &#39;ILA&#39;, &#39;ORBl&#39;, &#39;ORBvl&#39;], &#39;Lateral&#39;: [&#39;AId&#39;], &#39;Somatomotor&#39; :[&#39;SSs&#39;, &#39;SSp-bfd&#39;, &#39;SSp-ll&#39;, &#39;SSp-ul&#39;, &#39;SSp-n&#39;, &#39;SSp-m&#39;, &#39;MOp&#39;, &#39;MOs&#39;],
+              &#39;Visual&#39;: [&#39;VISal&#39;, &#39;VISl&#39;, &#39;VISp&#39;, &#39;VISpor&#39;, &#39;VISrl&#39;], &#39;Medial&#39;: [&#39;VISam&#39;, &#39;VISpm&#39;, &#39;RSPd&#39;, &#39;RSPv&#39;], &#39;Aud&#39;: [&#39;AUDp&#39;]}
+# Reset the index to ensure that the index is listed as a column
+df1_reset = connect_strength.reset_index()
+df2_reset = corr_df.reset_index()
+# Merge Dataframe
+merged_df = df1_reset.melt(id_vars=[&#39;index&#39;], var_name=&#39;th_region&#39;, value_name=&#39;conn&#39;)
+merged_df[&#39;corr&#39;] = df2_reset.melt(id_vars=[&#39;index&#39;], var_name=&#39;th_region&#39;, value_name=&#39;corr&#39;)[&#39;corr&#39;]
+# Huge naming
+merged_df.rename(columns={&#39;index&#39;: &#39;ctx_region&#39;}, inplace=True)
+
+merged_df[&#39;ctx_module&#39;] = 0
+for i, c in enumerate(ctx_module.keys()):
+    merged_df.loc[merged_df[&#39;ctx_region&#39;].str.startswith(tuple(ctx_module[c])), &#39;ctx_module&#39;] = c
+
+merged_df[&#39;tp_tn&#39;] = 0
+merged_df.loc[merged_df[&#39;conn&#39;] &gt; -2, &#39;tp_tn&#39;] = &#39;TP&#39;
+merged_df.loc[merged_df[&#39;conn&#39;] == -10, &#39;tp_tn&#39;] = &#39;TN&#39;
+merged_df = merged_df[merged_df[&#39;tp_tn&#39;] != 0]
+
+plt.figure(figsize=(10,5))
+order = [&#39;Prefrontal&#39;, &#39;Lateral&#39;, &#39;Somatomotor&#39;, &#39;Visual&#39;, &#39;Medial&#39;, &#39;Aud&#39;]
+merged_df[&#39;ctx_module&#39;] = pd.Categorical(merged_df[&#39;ctx_module&#39;], categories=order, ordered=True)
+custom_palette = {
+    &#39;TP&#39;: &#39;#6bad6b&#39;,
+    &#39;TN&#39;: &#39;#8d8d8d&#39;
+}
+# Custom label style
+custom_markers = {
+    &#39;TP&#39;: &#39;o&#39;,  # Circle label
+    &#39;TN&#39;: &#39;s&#39;   # Square label
+}
+sns.lineplot(data=merged_df, x=&quot;ctx_module&quot;, y=&quot;corr&quot;, hue=&quot;tp_tn&quot;, style=&quot;tp_tn&quot;, markers=custom_markers, dashes=False, palette=custom_palette)
+# sns.lineplot(data=merged_df, x=&quot;ctx_module&quot;, y=&quot;corr&quot;, hue=&quot;tp_tn&quot;, err_style=&quot;bars&quot;)
+# plt.savefig(&#39;./L56_Moudel_tp_tn_compare_line.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[109]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;AxesSubplot:xlabel=&#39;ctx_module&#39;, ylabel=&#39;corr&#39;&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/4_ctx_layer56_and_th_correlation_19_1.png" src="_images/4_ctx_layer56_and_th_correlation_19_1.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, quhaichao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1079 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gene exp plot &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SpaCon_results_reproduction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">gene exp plot</a></li>
+<li><a class="reference internal" href="#ctx-layer-maker-gene-in-cc">ctx layer maker gene in cc</a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpaCon_results_reproduction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">gene exp plot</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/6_ctx_cc_intracellular_extracellular_compare.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+import scanpy as sc
+import matplotlib.pyplot as plt
+import anndata as ad
+import numpy as np
+import warnings
+import seaborn as sns
+import matplotlib.colors as clr
+color_self = clr.LinearSegmentedColormap.from_list(&#39;pink_green&#39;, [&#39;#3AB370&#39;,&quot;#EAE7CC&quot;,&quot;#FD1593&quot;], N=256)
+
+import matplotlib as mpl
+mpl.rcParams[&#39;pdf.fonttype&#39;] = 42
+mpl.rcParams[&#39;ps.fonttype&#39;] = 42
+warnings.filterwarnings(&#39;ignore&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_in = sc.read_h5ad(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/adata_processed.h5ad&#39;)
+allen_region = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/allen_region.csv&#39;)
+adata_in.obs[&#39;region&#39;] = allen_region[&#39;region&#39;].values
+meta = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/cell_metadata_with_cluster_annotation.csv&#39;)
+meta = meta.set_index(&#39;cell_label&#39;)
+meta = meta.loc[adata_in.obs.index.to_list()]
+adata_in.obs[&#39;cell_type&#39;] = meta[&#39;class&#39;].to_list()
+
+adata_out = sc.read_h5ad(&#39;/mnt/Data18Td/Data/haichao/merfish_raw_data_zxw3/out_cell_adata/adata_out_cell_distance_q0.3/after_qc/out_cell_adata_qc.h5ad&#39;)
+# adata_out = sc.read_h5ad(&#39;/mnt/Data18Td/Data/haichao/merfish_raw_data_zxw3/out_cell_adata/adata_out_cell_distance_q0.3/after_qc/Zhuang-ABCA-3.001.h5ad&#39;)
+adata_out.obs[&#39;region&#39;] = adata_in.obs.loc[adata_out.obs_names][&#39;region&#39;].values
+adata_in.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+      <th>region</th>
+      <th>cell_type</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>198904341065180396762707397604803217407</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>49.206853</td>
+      <td>44.877634</td>
+      <td>12.168155</td>
+      <td>4.920685</td>
+      <td>4.487763</td>
+      <td>1.216815</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>252199681526991424029643077826220097990</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.973992</td>
+      <td>44.813761</td>
+      <td>12.179006</td>
+      <td>4.897399</td>
+      <td>4.481376</td>
+      <td>1.217901</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>277720971126854564514249564750701518375</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.791066</td>
+      <td>44.577722</td>
+      <td>12.192707</td>
+      <td>4.879107</td>
+      <td>4.457772</td>
+      <td>1.219271</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>31551867344111790264292067056219852271</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.830489</td>
+      <td>44.426120</td>
+      <td>12.195078</td>
+      <td>4.883049</td>
+      <td>4.442612</td>
+      <td>1.219508</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>131102494428104399865219008178262036485</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.308843</td>
+      <td>43.028156</td>
+      <td>12.267879</td>
+      <td>4.830884</td>
+      <td>4.302816</td>
+      <td>1.226788</td>
+      <td>SSs1</td>
+      <td>34 Immune</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>318102106429791409781741726367984532777</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.090716</td>
+      <td>69.334275</td>
+      <td>41.436743</td>
+      <td>13.109072</td>
+      <td>6.933427</td>
+      <td>4.143674</td>
+      <td>MDRNd</td>
+      <td>30 Astro-Epen</td>
+    </tr>
+    <tr>
+      <th>35262847161560382172299767067854387528</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.216032</td>
+      <td>69.494070</td>
+      <td>41.351034</td>
+      <td>13.121603</td>
+      <td>6.949407</td>
+      <td>4.135103</td>
+      <td>MDRNd</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>75415866509570969932943497000463821106</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.415152</td>
+      <td>70.764504</td>
+      <td>40.800403</td>
+      <td>13.141515</td>
+      <td>7.076450</td>
+      <td>4.080040</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+    <tr>
+      <th>12350978322417280063239916106423065862</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.646167</td>
+      <td>71.182557</td>
+      <td>40.595995</td>
+      <td>13.164617</td>
+      <td>7.118256</td>
+      <td>4.059599</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+    <tr>
+      <th>327554758863546024460748891922509519354</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.658892</td>
+      <td>71.414675</td>
+      <td>40.501356</td>
+      <td>13.165889</td>
+      <td>7.141468</td>
+      <td>4.050136</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+  </tbody>
+</table>
+<p>1566842 rows × 9 columns</p>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.pp.normalize_total(adata_in, target_sum=1e4)
+sc.pp.log1p(adata_in)
+sc.pp.normalize_total(adata_out, target_sum=1e4)
+sc.pp.log1p(adata_out)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_in.obs[&#39;ct&#39;] = adata_in.obs[&#39;cell_type&#39;]
+adata_in.obs.loc[adata_in.obs[&#39;cell_type&#39;].str.contains(&#39;Glut&#39;), &#39;ct&#39;] = &#39;Glut&#39;
+adata_in.obs.loc[adata_in.obs[&#39;cell_type&#39;].str.contains(&#39;GABA&#39;), &#39;ct&#39;] = &#39;GABA&#39;
+adata_in = adata_in[adata_in.obs[&#39;ct&#39;] != &#39;32 OEC&#39;]
+adata_in.obs[&#39;ct&#39;].unique()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([&#39;33 Vascular&#39;, &#39;34 Immune&#39;, &#39;31 OPC-Oligo&#39;, &#39;30 Astro-Epen&#39;,
+       &#39;GABA&#39;, &#39;Glut&#39;, &#39;21 MB Dopa&#39;, &#39;22 MB-HB Sero&#39;], dtype=object)
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx_43_regions = [&#39;FRP&#39;, &#39;MOp&#39;, &#39;MOs&#39;, &#39;SSp-n&#39;, &#39;SSp-bfd&#39;, &#39;SSp-ll&#39;, &#39;SSp-m&#39;, &#39;SSp-ul&#39;, &#39;SSp-tr&#39;, &#39;SSp-un&#39;, &#39;SSs&#39;, &#39;GU&#39;, &#39;VISC&#39;, &#39;AUDd&#39;, &#39;AUDp&#39;, &#39;AUDpo&#39;, &#39;AUDv&#39;, &#39;VISal&#39;, &#39;VISam&#39;, &#39;VISl&#39;, &#39;VISp&#39;, &#39;VISpl&#39;, &#39;VISpm&#39;, &#39;VISli&#39;, &#39;VISpor&#39;, &#39;ACAd&#39;, &#39;ACAv&#39;, &#39;PL&#39;, &#39;ILA&#39;, &#39;ORBl&#39;, &#39;ORBm&#39;, &#39;ORBvl&#39;, &#39;AId&#39;, &#39;AIp&#39;, &#39;AIv&#39;, &#39;RSPagl&#39;, &#39;RSPd&#39;, &#39;RSPv&#39;, &#39;VISa&#39;, &#39;VISrl&#39;, &#39;TEa&#39;, &#39;PERI&#39;, &#39;ECT&#39;]
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_cc_in = adata_in[(adata_in.obs[&#39;region&#39;].str.startswith(&#39;cc&#39;)) &amp; (~adata_in.obs[&#39;cell_type&#39;].str.contains(&#39;GABA|Glut&#39;))]
+adata_cc_in
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+View of AnnData object with n_obs × n_vars = 15599 × 1122
+    obs: &#39;brain_section_label&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;x_ccf&#39;, &#39;y_ccf&#39;, &#39;z_ccf&#39;, &#39;region&#39;, &#39;cell_type&#39;, &#39;ct&#39;
+    uns: &#39;log1p&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_ctx = adata_in[adata_in.obs[&#39;region&#39;].str.startswith(tuple(ctx_43_regions))]
+adata_ctx = adata_ctx[adata_ctx.obs[&#39;cell_type&#39;].str.contains(&#39;Glut&#39;)]
+adata_ctx
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+View of AnnData object with n_obs × n_vars = 148119 × 1122
+    obs: &#39;brain_section_label&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;x_ccf&#39;, &#39;y_ccf&#39;, &#39;z_ccf&#39;, &#39;region&#39;, &#39;cell_type&#39;, &#39;ct&#39;
+    uns: &#39;log1p&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_cc_out = adata_out[adata_out.obs[&#39;region&#39;].str.startswith(&#39;cc&#39;)]
+adata_cc_out
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+View of AnnData object with n_obs × n_vars = 14435 × 1147
+    obs: &#39;totalRNA&#39;, &#39;brain_section_label&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;n_genes_by_counts&#39;, &#39;total_counts&#39;, &#39;region&#39;
+    uns: &#39;log1p&#39;
+    obsm: &#39;spatial&#39;
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>common_cells = adata_cc_in.obs_names.intersection(adata_cc_out.obs_names)
+adata_cc_in = adata_cc_in[common_cells]
+adata_cc_out = adata_cc_out[common_cells]
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_cc_in.obs[&#39;cell_type&#39;].value_counts()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+31 OPC-Oligo     9402
+30 Astro-Epen    2340
+33 Vascular       894
+34 Immune         526
+Name: cell_type, dtype: int64
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_cc_in.obsm[&#39;spatial&#39;] = adata_cc_in.obs[[&#39;x&#39;, &#39;y&#39;]].values
+adata_cc_out.obsm[&#39;spatial&#39;] = adata_cc_out.obs[[&#39;x&#39;, &#39;y&#39;]].values
+adata_in.obsm[&#39;spatial&#39;] = adata_in.obs[[&#39;x&#39;, &#39;y&#39;]].values
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_ctx.obs[&#39;DEG&#39;] = &#39;ctx_glut_in&#39;
+adata_cc_out.obs[&#39;DEG&#39;] = &#39;cc_out&#39;
+adata_cc_in.obs[&#39;DEG&#39;] = &#39;cc_in&#39;
+adata_ctx_cc = ad.concat([adata_ctx, adata_cc_in, adata_cc_out])
+adata_ctx_cc.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>region</th>
+      <th>DEG</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>207252950882079766503645227815929952400</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>50.597984</td>
+      <td>41.393473</td>
+      <td>12.239274</td>
+      <td>SSs2/3</td>
+      <td>ctx_glut_in</td>
+    </tr>
+    <tr>
+      <th>311894855078226645952213910865897976013</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>50.420950</td>
+      <td>41.271525</td>
+      <td>12.251970</td>
+      <td>SSs1</td>
+      <td>ctx_glut_in</td>
+    </tr>
+    <tr>
+      <th>125208524519663791324346814779771999476</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>50.959183</td>
+      <td>43.276307</td>
+      <td>12.158869</td>
+      <td>SSs2/3</td>
+      <td>ctx_glut_in</td>
+    </tr>
+    <tr>
+      <th>12594778395225515056477813574460470379</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>49.836112</td>
+      <td>42.209685</td>
+      <td>12.238386</td>
+      <td>SSs1</td>
+      <td>ctx_glut_in</td>
+    </tr>
+    <tr>
+      <th>148621603142722639702356861951538418099</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>51.023440</td>
+      <td>42.722536</td>
+      <td>12.174236</td>
+      <td>SSs2/3</td>
+      <td>ctx_glut_in</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>79089257071572594359780469736093814949</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>74.951639</td>
+      <td>13.604024</td>
+      <td>38.481071</td>
+      <td>ccs</td>
+      <td>cc_out</td>
+    </tr>
+    <tr>
+      <th>92146094126984864052663841225116312773</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>75.154326</td>
+      <td>14.108468</td>
+      <td>38.486841</td>
+      <td>ccs</td>
+      <td>cc_out</td>
+    </tr>
+    <tr>
+      <th>93045082915409019668907757310610222929</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>73.220268</td>
+      <td>13.598299</td>
+      <td>38.481447</td>
+      <td>ccs</td>
+      <td>cc_out</td>
+    </tr>
+    <tr>
+      <th>95615023825791199971975610754292794950</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>74.127226</td>
+      <td>13.866381</td>
+      <td>38.486890</td>
+      <td>ccs</td>
+      <td>cc_out</td>
+    </tr>
+    <tr>
+      <th>204077232911649662213478306036479568155</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>75.364054</td>
+      <td>13.718454</td>
+      <td>38.480330</td>
+      <td>ccs</td>
+      <td>cc_out</td>
+    </tr>
+  </tbody>
+</table>
+<p>174443 rows × 6 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.tl.rank_genes_groups(adata_ctx_cc, &#39;DEG&#39;, groups=[&#39;ctx_glut_in&#39;], reference=&#39;cc_in&#39;, method=&#39;wilcoxon&#39;)
+a_vs_c = sc.get.rank_genes_groups_df(adata_ctx_cc, group=&#39;ctx_glut_in&#39;)
+
+sc.tl.rank_genes_groups(adata_ctx_cc, &#39;DEG&#39;, groups=[&#39;cc_out&#39;], reference=&#39;cc_in&#39;, method=&#39;wilcoxon&#39;)
+b_vs_c = sc.get.rank_genes_groups_df(adata_ctx_cc, group=&#39;cc_out&#39;)
+
+# Find out the gene of expressing closer to A in B
+similar_genes = []
+for gene in b_vs_c[&#39;names&#39;]:
+    if gene in a_vs_c[&#39;names&#39;].values:
+        a_logfc = a_vs_c[a_vs_c[&#39;names&#39;] == gene][&#39;logfoldchanges&#39;].values[0]
+        b_logfc = b_vs_c[b_vs_c[&#39;names&#39;] == gene][&#39;logfoldchanges&#39;].values[0]
+        # if np.sign(a_logfc) == np.sign(b_logfc) and abs(a_logfc - b_logfc) &lt; 0.4 and a_logfc&gt;2 and b_logfc&gt;2:
+        if np.sign(a_logfc) == np.sign(b_logfc) and a_logfc &gt; 2 and b_logfc &gt; 2:
+            similar_genes.append(gene)
+
+print(f&quot;similar_genes: {len(similar_genes)}&quot;)
+print(similar_genes)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+B中与A更相似的基因: 26
+[&#39;Slc17a7&#39;, &#39;Ppp1r1b&#39;, &#39;Stac2&#39;, &#39;Syt17&#39;, &#39;Ccnd2&#39;, &#39;Hs3st4&#39;, &#39;Sv2b&#39;, &#39;Fgf13&#39;, &#39;Caln1&#39;, &#39;Kcnh3&#39;, &#39;Neurod2&#39;, &#39;Pde1a&#39;, &#39;Nxph3&#39;, &#39;Vgf&#39;, &#39;Scn4b&#39;, &#39;Kcnj4&#39;, &#39;Bcl11b&#39;, &#39;Oprm1&#39;, &#39;Gpr88&#39;, &#39;Hrh3&#39;, &#39;Egr3&#39;, &#39;Doc2b&#39;, &#39;4930452B06Rik&#39;, &#39;Ankrd63&#39;, &#39;Actn2&#39;, &#39;Cckar&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>def plot_volcano(df, title, highlight_genes=None):
+    plt.figure(figsize=(10, 3))
+
+    # -log10(p-value)
+    df[&#39;log_pval&#39;] = -np.log10(df[&#39;pvals&#39;])
+
+    # Set point color
+    colors = np.where((df[&#39;logfoldchanges&#39;] &gt; 1)&amp;(df[&#39;log_pval&#39;] &gt; 3), &#39;#fa7f6f&#39;,
+                      np.where((df[&#39;logfoldchanges&#39;] &lt; -1)&amp;(df[&#39;log_pval&#39;] &gt; 3), &#39;#82b0d2&#39;, &#39;grey&#39;))
+
+    # Draw all points
+    plt.scatter(df[&#39;logfoldchanges&#39;], df[&#39;log_pval&#39;], c=colors, alpha=0.8)
+
+    # If you provide a list of highlighting genes, draw these genes
+    if highlight_genes:
+        highlight_df = df[df[&#39;names&#39;].isin(highlight_genes)]
+        plt.scatter(highlight_df[&#39;logfoldchanges&#39;], highlight_df[&#39;log_pval&#39;], color=&#39;red&#39;)
+
+        # Add tags to highlight points
+        for _, row in highlight_df.iterrows():
+            plt.annotate(row[&#39;names&#39;], (row[&#39;logfoldchanges&#39;], row[&#39;log_pval&#39;]))
+
+    plt.xlabel(&#39;Log2 Fold Change&#39;)
+    plt.ylabel(&#39;-Log10(p-value)&#39;)
+    # plt.title(title)
+
+    # Add threshold line
+    plt.axhline(y=-np.log10(0.005), color=&#39;black&#39;, linestyle=&#39;--&#39;)
+    plt.axvline(x=1, color=&#39;black&#39;, linestyle=&#39;--&#39;)
+    plt.axvline(x=-1, color=&#39;black&#39;, linestyle=&#39;--&#39;)
+
+    # plt.show()
+    plt.tight_layout()
+    # plt.savefig(&#39;./in_out_compare/cc_in_out_deg.pdf&#39;, format=&#39;pdf&#39;)
+
+# Use function
+plot_volcano(b_vs_c, &#39;B vs C Differential Expression&#39;, highlight_genes=None)
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/6_ctx_cc_intracellular_extracellular_compare_13_0.png" src="_images/6_ctx_cc_intracellular_extracellular_compare_13_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># adata_ctx = adata_in[adata_in.obs[&#39;region&#39;].str.startswith(tuple(ctx_43_regions))]
+adata_ctx = adata_in[(adata_in.obs[&#39;region&#39;].str.startswith(&#39;cc&#39;)) | (adata_in.obs[&#39;region&#39;].str.startswith(tuple(ctx_43_regions)))]
+# plt.figure(figsize=(10,6))
+sc.pl.heatmap(adata_ctx, b_vs_c[(b_vs_c[&#39;logfoldchanges&#39;] &gt;1)&amp;(b_vs_c[&#39;log_pval&#39;] &gt; 3)][&#39;names&#39;].tolist(),&#39;ct&#39;,var_group_rotation=True, figsize=(12, 8), show=False)
+# plt.savefig(&#39;./in_out_compare/down_gene_heatmap.png&#39;, dpi=500, bbox_inches=&#39;tight&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING: Gene labels are not shown when more than 50 genes are visualized. To show gene labels set `show_gene_labels=True`
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;heatmap_ax&#39;: &lt;AxesSubplot:&gt;, &#39;groupby_ax&#39;: &lt;AxesSubplot:ylabel=&#39;ct&#39;&gt;}
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/6_ctx_cc_intracellular_extracellular_compare_14_2.png" src="_images/6_ctx_cc_intracellular_extracellular_compare_14_2.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.pl.heatmap(adata_ctx, [&#39;Kit&#39;,&#39;Erbb4&#39;, &#39;Parm1&#39;, &#39;Sulf2&#39;, &#39;Sox2&#39;, &#39;Zfp536&#39;, &#39;Dscaml1&#39;],&#39;ct&#39;,var_group_rotation=True, show=False)
+plt.tight_layout()
+# plt.savefig(&#39;./in_out_compare/gaba_oligo_maker.png&#39;, dpi=500, bbox_inches=&#39;tight&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/6_ctx_cc_intracellular_extracellular_compare_15_0.png" src="_images/6_ctx_cc_intracellular_extracellular_compare_15_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>gene_exp = adata_ctx[:, b_vs_c[(b_vs_c[&#39;logfoldchanges&#39;] &lt;-1)&amp;(b_vs_c[&#39;log_pval&#39;] &gt; 3)][&#39;names&#39;].tolist()].to_df()
+gene_exp[&#39;celltype&#39;] = adata_ctx.obs[&#39;ct&#39;]
+gene_mean = gene_exp.groupby(&#39;celltype&#39;).mean()
+df_long = gene_mean.reset_index().melt(id_vars=&#39;celltype&#39;, var_name=&#39;Gene&#39;, value_name=&#39;Expression&#39;)
+plt.figure(figsize=(5, 7))
+sns.barplot(x=&#39;celltype&#39;, y=&#39;Expression&#39;, data=df_long)
+# sns.swarmplot(x=&#39;celltype&#39;, y=&#39;Expression&#39;, data=df_long)
+# plt.xlabel(&#39;Row Index&#39;)
+# plt.ylabel(&#39;Expression Level&#39;)
+# plt.title(&#39;Violin Plots for Each Row&#39;)
+plt.xticks(rotation=45)
+# plt.show()
+plt.tight_layout()
+# plt.legend()
+# plt.savefig(&#39;./in_out_compare/cc_in_out_deg_down_gene_in_ctx.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/6_ctx_cc_intracellular_extracellular_compare_16_0.png" src="_images/6_ctx_cc_intracellular_extracellular_compare_16_0.png" />
+</div>
+</div>
+<section id="gene-exp-plot">
+<h1>gene exp plot<a class="headerlink" href="#gene-exp-plot" title="Link to this heading"></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[120]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>gene = [&#39;Slc17a7&#39;, &#39;Fgf13&#39;, &#39;Calb1&#39;]
+df = pd.DataFrame(index=[&#39;in_cc&#39;, &#39;out&#39;], columns=gene, dtype=float)
+for g in gene:
+    # in_cell_ctx = adata_ctx[:, g].X.mean()
+    in_cell_cc = adata_cc_in[:, g].X.mean()
+    out_cell = adata_cc_out[:, g].X.mean()
+    all = in_cell_cc + out_cell
+    df.loc[&#39;in_cc&#39;, g] = in_cell_cc / all
+    # df.loc[&#39;in_ctx&#39;, g] = in_cell_ctx / all
+    df.loc[&#39;out&#39;, g] = out_cell / all
+
+# Set data
+categories = gene
+colors = [&#39;#eab883&#39;, &#39;#b7b7eb&#39;]
+data = df.values
+
+# Create a chart
+fig, ax = plt.subplots(figsize=(3, 6))
+
+# Draw a stack of stacks
+x = np.arange(len(categories))
+bottom = np.zeros(len(categories))
+width=0.6
+for i, row in enumerate(data):
+    ax.bar(x, row, bottom=bottom, color=colors[i], edgecolor=&#39;white&#39;,width=width)
+
+    # Add percentage tags above each part
+    # for j in range(len(categories)):
+    #     percent = row[j] * 100  # Convert the percentage to the percentage system
+    #     ax.text(x[j], bottom[j] + row[j] / 2, f&#39;{percent:.1f}%&#39;,
+    #             ha=&#39;center&#39;, va=&#39;center&#39;, color=&#39;black&#39;, fontsize=10, rotation=90)
+
+    bottom += row
+
+# Add full -coverage ribbon
+for j in range(len(categories) - 1):
+    left = x[j]+width/2
+    right = x[j+1]-width/2
+    left_data = data[:, j]
+    right_data = data[:, j+1]
+
+    left_cumsum = np.cumsum(left_data)
+    right_cumsum = np.cumsum(right_data)
+
+    # Add all ribbons from the bottom to the top
+    for i in range(len(colors)):
+        left_bottom = left_cumsum[i-1] if i &gt; 0 else 0
+        left_top = left_cumsum[i]
+        right_bottom = right_cumsum[i-1] if i &gt; 0 else 0
+        right_top = right_cumsum[i]
+
+        ax.fill([left, right, right, left],
+                [left_bottom, right_bottom, right_top, left_top],
+                color=colors[i], alpha=0.3)
+
+# Set chart style
+# ax.set_title(&#39;Full Coverage Ribbon Stacked Bar Chart&#39;)
+# ax.set_xlabel(&#39;Categories&#39;)
+ax.set_ylabel(&#39;Expression percentage&#39;)
+plt.xticks(x, rotation=45)
+ax.set_xticklabels(categories)
+ax.set_yticklabels([])
+ax.set_yticks([])
+
+# Remove the coordinate shaft border
+for spine in ax.spines.values():
+    spine.set_visible(False)
+
+# Display chart
+plt.tight_layout()
+# plt.savefig(&#39;./in_out_compare/in_out_exp.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/6_ctx_cc_intracellular_extracellular_compare_18_0.png" src="_images/6_ctx_cc_intracellular_extracellular_compare_18_0.png" />
+</div>
+</div>
+</section>
+<section id="ctx-layer-maker-gene-in-cc">
+<h1>ctx layer maker gene in cc<a class="headerlink" href="#ctx-layer-maker-gene-in-cc" title="Link to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[87]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># adata_ctx.obs[&#39;layer&#39;] = adata_ctx.obs[&#39;DEG&#39;].astype(str)
+adata_ctx = adata_in[adata_in.obs[&#39;region&#39;].str.startswith(tuple(ctx_43_regions))]
+adata_ctx = adata_ctx[adata_ctx.obs[&#39;cell_type&#39;].str.contains(&#39;Glut&#39;)]
+
+adata_ctx = adata_ctx[:,adata_ctx_cc.var_names]
+adata_ctx.obs[&#39;layer&#39;] = None
+adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.contains(&#39;1&#39;), &#39;layer&#39;] = &#39;L1&#39;
+adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.contains(&#39;2/3&#39;), &#39;layer&#39;] = &#39;L2/3&#39;
+adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.contains(&#39;4&#39;), &#39;layer&#39;] = &#39;L4&#39;
+adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.contains(&#39;5&#39;), &#39;layer&#39;] = &#39;L5&#39;
+adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.contains(&#39;6&#39;), &#39;layer&#39;] = &#39;L6&#39;
+# adata.obs.loc[adata.obs[&#39;region&#39;].isin([&#39;LP&#39;, &#39;LD&#39;]), &#39;layer&#39;] = &#39;th&#39;
+# adata.obs.loc[adata.obs[&#39;region&#39;].str.contains(&#39;VISp&#39;), &#39;layer&#39;] = &#39;VISp&#39;
+# adata_ctx_cc.uns[&#39;layer_colors&#39;] = [&quot;#FF420E&quot;, &quot;#FFBB00&quot;, &quot;#4CB5F5&quot;, &quot;#89DA59&quot;, &quot;#878787&quot;, &quot;#B037C4&quot;, &#39;#8C6D31&#39;]
+adata_ctx = adata_ctx[adata_ctx.obs[&#39;layer&#39;] != &#39;L1&#39;]
+# adata_ctx = adata_ctx[adata_ctx.obs[&#39;layer&#39;] is not None]
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[90]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.tl.rank_genes_groups(adata_ctx, &#39;layer&#39;, method=&#39;wilcoxon&#39;)
+
+sc.pl.rank_genes_groups_heatmap(adata_ctx, n_genes=8, show=False)
+plt.tight_layout()
+plt.savefig(&#39;./in_out_compare/ctx_maker.png&#39;, dpi=400, bbox_inches=&#39;tight&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING: dendrogram data not found (using key=dendrogram_UMAP). Running `sc.tl.dendrogram` with default parameters. For fine tuning it is recommended to run `sc.tl.dendrogram` independently.
+WARNING: You’re trying to run this on 1111 dimensions of `.X`, if you really want this, set `use_rep=&#39;X&#39;`.
+         Falling back to preprocessing with `sc.pp.pca` and default params.
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/6_ctx_cc_intracellular_extracellular_compare_21_1.png" src="_images/6_ctx_cc_intracellular_extracellular_compare_21_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[95]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span>l23 = [&#39;Calb1&#39;, &#39;Cux2&#39;, &#39;Lamp5&#39;, &#39;Gucy1a1&#39;, &#39;Syt17&#39;, &#39;Pdzrn3&#39;, &#39;Otof&#39;, &#39;Lhx2&#39;]
+l4 = [&#39;Rorb&#39;, &#39;Rspo1&#39;, &#39;Cnih3&#39;, &#39;Tshz1&#39;, &#39;Boc&#39;, &#39;A830036E02Rik&#39;, &#39;Kcnab3&#39;, &#39;Pamr1&#39;]
+l5 = [&#39;Sulf2&#39;, &#39;Fezf2&#39;, &#39;Tox&#39;, &#39;Cnih3&#39;, &#39;Etv1&#39;, &#39;Coro6&#39;, &#39;Hrh3&#39;, &#39;Fras1&#39;]
+l6 = [&#39;Grik3&#39;, &#39;Hs3st4&#39;, &#39;Hs3st2&#39;, &#39;Syt6&#39;, &#39;Rprm&#39;, &#39;Col6a1&#39;, &#39;Chrna4&#39;, &#39;Nxph3&#39;]
+sc.pl.heatmap(
+    adata_ctx,
+    var_names=l23 + l4 + l5 + l6,
+    groupby=&#39;layer&#39;,
+    # cmap=&#39;plasma&#39;,
+    swap_axes=False,
+    # dendrogram=True
+    show=False
+)
+# plt.savefig(&#39;./in_out_compare/ctx_maker.png&#39;, dpi=400, bbox_inches=&#39;tight&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/6_ctx_cc_intracellular_extracellular_compare_22_0.png" src="_images/6_ctx_cc_intracellular_extracellular_compare_22_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>out_exp_mean = []
+in_exp_mean = []
+for g, layer in zip([l23, l4, l5, l6], [&#39;23&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;]):
+        out_exp = adata_cc_out[:, g].to_df().mean()
+        in_exp = adata_cc_in[:, g].to_df().mean()
+        out_p = out_exp/(in_exp + out_exp)
+        in_p = in_exp/(in_exp + out_exp)
+        out_exp_mean.append(out_exp.values)
+        in_exp_mean.append(in_exp.values)
+
+        categories = in_exp.index
+        values1 = in_p.values
+        values2 = out_p.values
+
+        width = 0.6
+        fig, ax = plt.subplots(figsize=(8,5))
+
+        ax.bar(categories, values1, width, label=&#39;in&#39;, color=&#39;#6bad6b&#39;)
+        ax.bar(categories, values2, width, bottom=values1, label=&#39;out&#39;, color=&#39;#e56f5e&#39;)
+
+        ax.bar([len(categories)], [in_p.values.mean()], width=1, color=&#39;#6bad6b&#39;)
+        ax.bar([len(categories)], [out_p.values.mean()], width=1, bottom=in_p.values.mean(), color=&#39;#e56f5e&#39;)
+        ax.text(len(categories), in_p.values.mean()/2, f&#39;{in_p.values.mean():.2f}&#39;,
+                ha=&#39;center&#39;, va=&#39;center&#39;, color=&#39;black&#39;, fontweight=&#39;bold&#39;)
+        ax.text(len(categories), out_p.values.mean()/2+in_p.values.mean(), f&#39;{out_p.values.mean():.2f}&#39;,
+                ha=&#39;center&#39;, va=&#39;center&#39;, color=&#39;black&#39;, fontweight=&#39;bold&#39;)
+
+        ax.axhline(y=0.5, color=&#39;black&#39;, linestyle=&#39;--&#39;, linewidth=2, alpha=0.5)
+        ax.set_ylabel(&#39;Expression Proportion&#39;)
+        ax.set_xlabel(&#39;Gene&#39;)
+        all_categories = list(categories) + [&#39;average&#39;]
+        ax.set_xticks(range(len(all_categories)))
+        ax.set_xticklabels(all_categories, rotation=0)
+
+        ax.set_title(f&#39;Layer{layer}&#39;)
+        ax.legend( bbox_to_anchor=(1, 1), loc=&#39;upper left&#39;)
+        plt.show()
+        plt.close()
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[92]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>df = pd.DataFrame({
+    &#39;Layer2/3&#39;: in_exp_mean[0],
+    &#39;Layer4&#39;: in_exp_mean[1],
+    &#39;Layer5&#39;: in_exp_mean[2],
+    &#39;Layer6&#39;: in_exp_mean[3]
+})
+
+# Convert the data box to a long format
+df_long = df.melt(var_name=&#39;Group&#39;, value_name=&#39;Value&#39;)
+
+# Set graphic style and size
+# plt.figure(figsize=(12, 6))
+colors = [&#39;#9cd2ed&#39;, &#39;#a992c0&#39;, &#39;#ea9994&#39;, &#39;#f2c396&#39;]
+sns.barplot(x=&#39;Group&#39;, y=&#39;Value&#39;, data=df_long, palette=colors)
+sns.stripplot(x=&#39;Group&#39;, y=&#39;Value&#39;, data=df_long, color=&#39;black&#39;, alpha=0.5)
+
+# Set the title and label
+plt.title(&#39;ctx layer maker gene in cc intracellular&#39;, fontsize=16)
+plt.xlabel(&#39;Layer&#39;, fontsize=12)
+plt.ylabel(&#39;mean expression&#39;, fontsize=12)
+plt.ylim(0, 2.5)
+
+plt.savefig(&#39;./in_out_compare/layer_cc_in.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/6_ctx_cc_intracellular_extracellular_compare_24_0.png" src="_images/6_ctx_cc_intracellular_extracellular_compare_24_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[93]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>df = pd.DataFrame({
+    &#39;Layer2/3&#39;: out_exp_mean[0],
+    &#39;Layer4&#39;: out_exp_mean[1],
+    &#39;Layer5&#39;: out_exp_mean[2],
+    &#39;Layer6&#39;: out_exp_mean[3]
+})
+
+# Convert the data box to a long format
+df_long2 = df.melt(var_name=&#39;Group&#39;, value_name=&#39;Value&#39;)
+
+# Set graphic style and size
+# plt.figure(figsize=(4, 6))
+colors = [&#39;#9cd2ed&#39;, &#39;#a992c0&#39;, &#39;#ea9994&#39;, &#39;#f2c396&#39;]
+sns.barplot(x=&#39;Group&#39;, y=&#39;Value&#39;, data=df_long2, palette=colors)
+sns.stripplot(x=&#39;Group&#39;, y=&#39;Value&#39;, data=df_long2, color=&#39;black&#39;, alpha=0.5)
+
+# Set the title and label
+plt.title(&#39;ctx layer maker gene in cc extracellular&#39;, fontsize=16)
+plt.xlabel(&#39;Layer&#39;, fontsize=12)
+plt.ylabel(&#39;mean expression&#39;, fontsize=12)
+plt.ylim(0, 2.5)
+
+plt.savefig(&#39;./in_out_compare/layer_cc_out.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/6_ctx_cc_intracellular_extracellular_compare_25_0.png" src="_images/6_ctx_cc_intracellular_extracellular_compare_25_0.png" />
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, quhaichao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

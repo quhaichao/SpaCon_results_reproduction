@@ -1,0 +1,1401 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>subregion th ctx correlation &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SpaCon_results_reproduction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">subregion th ctx correlation</a><ul>
+<li><a class="reference internal" href="#connection">connection</a><ul>
+<li><a class="reference internal" href="#ctx2th-conn">ctx2th conn</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpaCon_results_reproduction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">subregion th ctx correlation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/3_ctx_th_connection_and_gene_correlation.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+import scanpy as sc
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import anndata as ad
+import numpy as np
+import warnings
+from scipy.stats import pearsonr
+import seaborn as sns
+from scipy.cluster.hierarchy import fcluster, linkage
+import matplotlib as mpl
+mpl.rcParams[&#39;pdf.fonttype&#39;] = 42
+mpl.rcParams[&#39;ps.fonttype&#39;] = 42
+
+warnings.filterwarnings(&#39;ignore&#39;)
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adj = np.load(&#39;/mnt/Data18Td/Data/haichao/mouse_connect_data/NT/zxw/mouse_3/zxw_not_symmetric_adj.npy&#39;, mmap_mode=&#39;r&#39;)
+print(adj.shape)
+
+adata = sc.read_h5ad(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/ST_NT_cluster/SpaCon_apply_zxw/data/mouse_3/adata_merge.h5ad&#39;)
+sc.pp.normalize_total(adata, target_sum=1e4)
+sc.pp.log1p(adata)
+allen_region = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/ST_NT_cluster/SpaCon_apply_zxw/data/mouse_3/allen_region.csv&#39;)
+adata.obs[&#39;region&#39;] = allen_region[&#39;region&#39;].to_list()
+adata.obs[&#39;spot_num&#39;] = [i for i in range(adata.n_obs)]
+adata
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(107909, 107909)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AnnData object with n_obs × n_vars = 107909 × 1122
+    obs: &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;section&#39;, &#39;NT_index&#39;, &#39;Cells_id&#39;, &#39;region&#39;, &#39;spot_num&#39;
+    uns: &#39;log1p&#39;
+</pre></div></div>
+</div>
+<section id="subregion-th-ctx-correlation">
+<h1>subregion th ctx correlation<a class="headerlink" href="#subregion-th-ctx-correlation" title="Link to this heading"></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>th_regions = [&#39;AD&#39;, &#39;AMd&#39;, &#39;AMv&#39;, &#39;AV&#39;, &#39;CL&#39;, &#39;CM&#39;, &#39;IAD&#39;, &#39;IAM&#39;, &#39;IGL&#39;, &#39;IMD&#39;, &#39;LD&#39;, &#39;LGv&#39;, &#39;LH&#39;, &#39;LP&#39;, &#39;MD&#39;, &#39;MGd&#39;, &#39;MGm&#39;, &#39;MGv&#39;, &#39;MH&#39;, &#39;PCN&#39;, &#39;PF&#39;, &#39;PIL&#39;, &#39;PO&#39;, &#39;POL&#39;,
+                &#39;PP&#39;, &#39;PR&#39;, &#39;PT&#39;, &#39;PVT&#39;, &#39;PoT&#39;, &#39;RE&#39;, &#39;RH&#39;, &#39;RT&#39;, &#39;SGN&#39;, &#39;SMT&#39;, &#39;SPA&#39;, &#39;SPFm&#39;, &#39;SPFp&#39;, &#39;VAL&#39;, &#39;VM&#39;, &#39;VPL&#39;, &#39;VPLpc&#39;, &#39;VPM&#39;, &#39;VPMpc&#39;, &#39;Xi&#39;]
+ctx_regions = [&#39;ACAd&#39;, &#39;ACAv&#39;, &#39;AId&#39;, &#39;AIp&#39;, &#39;AIv&#39;, &#39;AUDd&#39;, &#39;AUDp&#39;, &#39;AUDpo&#39;,
+                &#39;AUDv&#39;, &#39;ECT&#39;, &#39;FRP&#39;, &#39;GU&#39;, &#39;ILA&#39;, &#39;MOp&#39;, &#39;MOs&#39;, &#39;ORBl&#39;, &#39;ORBm&#39;,
+                &#39;ORBvl&#39;, &#39;PERI&#39;, &#39;PL&#39;, &#39;RSPagl&#39;, &#39;RSPd&#39;, &#39;RSPv&#39;, &#39;SSp-bfd&#39;,
+                &#39;SSp-ll&#39;, &#39;SSp-m&#39;, &#39;SSp-n&#39;, &#39;SSp-tr&#39;, &#39;SSp-ul&#39;, &#39;SSp-un&#39;, &#39;SSs&#39;,
+                &#39;TEa&#39;, &#39;VISC&#39;, &#39;VISa&#39;, &#39;VISal&#39;, &#39;VISam&#39;, &#39;VISl&#39;, &#39;VISli&#39;, &#39;VISp&#39;,
+                &#39;VISpl&#39;, &#39;VISpm&#39;, &#39;VISpor&#39;, &#39;VISrl&#39;]
+
+adata_ctx_th_area = adata[(adata.obs[&#39;region&#39;].str.startswith(tuple(ctx_regions))) | (adata.obs[&#39;region&#39;].isin(th_regions))]
+adata_ctx_th_area.obs[&#39;CT_spot_num&#39;] = [i for i in range(adata_ctx_th_area.n_obs)]
+adata_ctx_th_area.obs[&#39;ctx_or_th&#39;] = &#39;nan&#39;
+for c in ctx_regions:
+    adata_ctx_th_area.obs.loc[adata_ctx_th_area.obs[&#39;region&#39;].str.startswith(c), &#39;ctx_or_th&#39;] = &#39;ctx&#39;
+for c in th_regions:
+    adata_ctx_th_area.obs.loc[adata_ctx_th_area.obs[&#39;region&#39;]==c, &#39;ctx_or_th&#39;] = &#39;th&#39;
+adata_ctx_th_area.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>section</th>
+      <th>NT_index</th>
+      <th>Cells_id</th>
+      <th>region</th>
+      <th>spot_num</th>
+      <th>CT_spot_num</th>
+      <th>ctx_or_th</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2</th>
+      <td>19.113418</td>
+      <td>23.994053</td>
+      <td>46.894548</td>
+      <td>Zhuang-ABCA-3.005</td>
+      <td>2</td>
+      <td>188949490498702611647640449216501815503_304478...</td>
+      <td>FRP1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>ctx</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>18.921382</td>
+      <td>24.017347</td>
+      <td>49.257099</td>
+      <td>Zhuang-ABCA-3.004</td>
+      <td>4</td>
+      <td>123445075025856302518661678660778224944_131347...</td>
+      <td>FRP1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>ctx</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>19.079053</td>
+      <td>23.564575</td>
+      <td>51.258567</td>
+      <td>Zhuang-ABCA-3.003</td>
+      <td>6</td>
+      <td>319072152716142889780926524544977408256_106358...</td>
+      <td>FRP1</td>
+      <td>2</td>
+      <td>2</td>
+      <td>ctx</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>18.816739</td>
+      <td>25.041919</td>
+      <td>43.046671</td>
+      <td>Zhuang-ABCA-3.007</td>
+      <td>7</td>
+      <td>47102176527243727968506801819481818675_1792889...</td>
+      <td>FRP1</td>
+      <td>3</td>
+      <td>3</td>
+      <td>ctx</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>18.792692</td>
+      <td>25.077860</td>
+      <td>45.101231</td>
+      <td>Zhuang-ABCA-3.006</td>
+      <td>9</td>
+      <td>199428730039264634225478952930502449426_202483...</td>
+      <td>FRP1</td>
+      <td>4</td>
+      <td>4</td>
+      <td>ctx</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>148907</th>
+      <td>94.906133</td>
+      <td>15.937666</td>
+      <td>42.404653</td>
+      <td>Zhuang-ABCA-3.007</td>
+      <td>148907</td>
+      <td>106526352840576802488939912804342681931_107003...</td>
+      <td>RSPd1</td>
+      <td>75568</td>
+      <td>33095</td>
+      <td>ctx</td>
+    </tr>
+    <tr>
+      <th>148919</th>
+      <td>95.201531</td>
+      <td>17.993761</td>
+      <td>40.377543</td>
+      <td>Zhuang-ABCA-3.008</td>
+      <td>148919</td>
+      <td>133921573428284040813862276100319739380_145548...</td>
+      <td>RSPd1</td>
+      <td>75574</td>
+      <td>33096</td>
+      <td>ctx</td>
+    </tr>
+    <tr>
+      <th>148971</th>
+      <td>96.095220</td>
+      <td>15.844123</td>
+      <td>42.457680</td>
+      <td>Zhuang-ABCA-3.007</td>
+      <td>148971</td>
+      <td>149021058656557956290496348449572943108_174675...</td>
+      <td>RSPd1</td>
+      <td>75604</td>
+      <td>33097</td>
+      <td>ctx</td>
+    </tr>
+    <tr>
+      <th>148993</th>
+      <td>97.188915</td>
+      <td>11.409533</td>
+      <td>46.662115</td>
+      <td>Zhuang-ABCA-3.005</td>
+      <td>148993</td>
+      <td>107188929587695452503950023602364017291_167314...</td>
+      <td>RSPd1</td>
+      <td>75616</td>
+      <td>33098</td>
+      <td>ctx</td>
+    </tr>
+    <tr>
+      <th>193053</th>
+      <td>104.490816</td>
+      <td>24.420635</td>
+      <td>25.679869</td>
+      <td>Zhuang-ABCA-3.015</td>
+      <td>193053</td>
+      <td>43354620289828560228522986006306173486</td>
+      <td>VISpl1</td>
+      <td>99924</td>
+      <td>33099</td>
+      <td>ctx</td>
+    </tr>
+  </tbody>
+</table>
+<p>33100 rows × 10 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Generate ROIs
+
+mergecell_num = 20
+def cluster_region(df_region, num_points=mergecell_num):
+    # Perform hierarchical cluster
+    Z = linkage(df_region[[&#39;x&#39;, &#39;y&#39;, &#39;z&#39;]], method=&#39;ward&#39;)
+    # Divided into clusters according to the results of the cluster, each cluster has about NUM_POINTS individual points
+    cluster_labels = fcluster(Z, t=len(df_region) / num_points, criterion=&#39;maxclust&#39;)
+    return cluster_labels
+
+# Initialize a empty cluster label
+adata_ctx_th_area.obs[&#39;subregion&#39;] = 0
+
+# Perform clusters separately for each area
+for region in adata_ctx_th_area.obs[&#39;region&#39;].unique():
+    mask = adata_ctx_th_area.obs[&#39;region&#39;] == region
+    if adata_ctx_th_area[adata_ctx_th_area.obs[&#39;region&#39;] == region].shape[0] &lt; 15:
+        adata_ctx_th_area.obs.loc[mask, &#39;subregion&#39;] = adata_ctx_th_area.obs.loc[mask, &#39;region&#39;].apply(lambda x: x + &#39;_1&#39;)
+        continue
+
+    clu_list = cluster_region(adata_ctx_th_area.obs[mask])
+    cl_list = [f&#39;{region}_{i}&#39; for i in clu_list]
+    adata_ctx_th_area.obs.loc[mask, &#39;subregion&#39;] = cl_list
+
+adata_ctx_th_area.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>section</th>
+      <th>NT_index</th>
+      <th>Cells_id</th>
+      <th>region</th>
+      <th>spot_num</th>
+      <th>CT_spot_num</th>
+      <th>ctx_or_th</th>
+      <th>subregion</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2</th>
+      <td>19.113418</td>
+      <td>23.994053</td>
+      <td>46.894548</td>
+      <td>Zhuang-ABCA-3.005</td>
+      <td>2</td>
+      <td>188949490498702611647640449216501815503_304478...</td>
+      <td>FRP1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>ctx</td>
+      <td>FRP1_2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>18.921382</td>
+      <td>24.017347</td>
+      <td>49.257099</td>
+      <td>Zhuang-ABCA-3.004</td>
+      <td>4</td>
+      <td>123445075025856302518661678660778224944_131347...</td>
+      <td>FRP1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>ctx</td>
+      <td>FRP1_1</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>19.079053</td>
+      <td>23.564575</td>
+      <td>51.258567</td>
+      <td>Zhuang-ABCA-3.003</td>
+      <td>6</td>
+      <td>319072152716142889780926524544977408256_106358...</td>
+      <td>FRP1</td>
+      <td>2</td>
+      <td>2</td>
+      <td>ctx</td>
+      <td>FRP1_1</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>18.816739</td>
+      <td>25.041919</td>
+      <td>43.046671</td>
+      <td>Zhuang-ABCA-3.007</td>
+      <td>7</td>
+      <td>47102176527243727968506801819481818675_1792889...</td>
+      <td>FRP1</td>
+      <td>3</td>
+      <td>3</td>
+      <td>ctx</td>
+      <td>FRP1_2</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>18.792692</td>
+      <td>25.077860</td>
+      <td>45.101231</td>
+      <td>Zhuang-ABCA-3.006</td>
+      <td>9</td>
+      <td>199428730039264634225478952930502449426_202483...</td>
+      <td>FRP1</td>
+      <td>4</td>
+      <td>4</td>
+      <td>ctx</td>
+      <td>FRP1_2</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>148907</th>
+      <td>94.906133</td>
+      <td>15.937666</td>
+      <td>42.404653</td>
+      <td>Zhuang-ABCA-3.007</td>
+      <td>148907</td>
+      <td>106526352840576802488939912804342681931_107003...</td>
+      <td>RSPd1</td>
+      <td>75568</td>
+      <td>33095</td>
+      <td>ctx</td>
+      <td>RSPd1_3</td>
+    </tr>
+    <tr>
+      <th>148919</th>
+      <td>95.201531</td>
+      <td>17.993761</td>
+      <td>40.377543</td>
+      <td>Zhuang-ABCA-3.008</td>
+      <td>148919</td>
+      <td>133921573428284040813862276100319739380_145548...</td>
+      <td>RSPd1</td>
+      <td>75574</td>
+      <td>33096</td>
+      <td>ctx</td>
+      <td>RSPd1_3</td>
+    </tr>
+    <tr>
+      <th>148971</th>
+      <td>96.095220</td>
+      <td>15.844123</td>
+      <td>42.457680</td>
+      <td>Zhuang-ABCA-3.007</td>
+      <td>148971</td>
+      <td>149021058656557956290496348449572943108_174675...</td>
+      <td>RSPd1</td>
+      <td>75604</td>
+      <td>33097</td>
+      <td>ctx</td>
+      <td>RSPd1_3</td>
+    </tr>
+    <tr>
+      <th>148993</th>
+      <td>97.188915</td>
+      <td>11.409533</td>
+      <td>46.662115</td>
+      <td>Zhuang-ABCA-3.005</td>
+      <td>148993</td>
+      <td>107188929587695452503950023602364017291_167314...</td>
+      <td>RSPd1</td>
+      <td>75616</td>
+      <td>33098</td>
+      <td>ctx</td>
+      <td>RSPd1_2</td>
+    </tr>
+    <tr>
+      <th>193053</th>
+      <td>104.490816</td>
+      <td>24.420635</td>
+      <td>25.679869</td>
+      <td>Zhuang-ABCA-3.015</td>
+      <td>193053</td>
+      <td>43354620289828560228522986006306173486</td>
+      <td>VISpl1</td>
+      <td>99924</td>
+      <td>33099</td>
+      <td>ctx</td>
+      <td>VISpl1_2</td>
+    </tr>
+  </tbody>
+</table>
+<p>33100 rows × 11 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>regions = adata_ctx_th_area.obs[&#39;subregion&#39;].values
+gene_expression = adata_ctx_th_area.X.A
+
+# Create a DataFrame to integrate regional information and gene expression matrix together
+df = pd.DataFrame(gene_expression, columns=adata.var_names)
+df[&#39;subregion&#39;] = regions
+
+# Calculate the average gene expression by regional grouping and calculate the average gene
+region_mean_expression = df.groupby(&#39;subregion&#39;).mean()
+# Convert the result to the matrix format of the regional*gene
+region_gene_matrix = region_mean_expression.values
+region_gene_matrix.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1719, 1122)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>corr_all = np.corrcoef(region_gene_matrix)
+corr_all.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1719, 1719)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_th = adata_ctx_th_area[adata_ctx_th_area.obs[&#39;ctx_or_th&#39;] == &#39;th&#39;]
+th_subregions = adata_th.obs[&#39;subregion&#39;].unique()
+th_subregions.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(244,)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_ctx = adata_ctx_th_area[adata_ctx_th_area.obs[&#39;ctx_or_th&#39;] == &#39;ctx&#39;]
+ctx_subregions = adata_ctx.obs[&#39;subregion&#39;].unique()
+ctx_subregions.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1475,)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>region_labels = region_mean_expression.index
+ctx_indices = [i for i, label in enumerate(region_labels) if label in ctx_subregions]
+th_indices = [i for i, label in enumerate(region_labels) if label in th_subregions]
+corr = corr_all[np.ix_(ctx_indices, th_indices)]
+corr.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1475, 244)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx_regions_df = [region_labels[i] for i in ctx_indices]
+th_regions_df = [region_labels[i] for i in th_indices]
+corr_df = pd.DataFrame(corr, index=ctx_regions_df, columns=th_regions_df)
+corr_df
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>AD_1</th>
+      <th>AMd_1</th>
+      <th>AMd_2</th>
+      <th>AMv_1</th>
+      <th>AV_1</th>
+      <th>AV_2</th>
+      <th>AV_3</th>
+      <th>AV_4</th>
+      <th>AV_5</th>
+      <th>CL_1</th>
+      <th>...</th>
+      <th>VPM_23</th>
+      <th>VPM_3</th>
+      <th>VPM_4</th>
+      <th>VPM_5</th>
+      <th>VPM_6</th>
+      <th>VPM_7</th>
+      <th>VPM_8</th>
+      <th>VPM_9</th>
+      <th>VPMpc_1</th>
+      <th>VPMpc_2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>ACAd1_1</th>
+      <td>0.596044</td>
+      <td>0.629380</td>
+      <td>0.629344</td>
+      <td>0.640548</td>
+      <td>0.625990</td>
+      <td>0.616779</td>
+      <td>0.625027</td>
+      <td>0.579291</td>
+      <td>0.607824</td>
+      <td>0.661248</td>
+      <td>...</td>
+      <td>0.546631</td>
+      <td>0.580518</td>
+      <td>0.560330</td>
+      <td>0.552390</td>
+      <td>0.588024</td>
+      <td>0.567292</td>
+      <td>0.550110</td>
+      <td>0.595391</td>
+      <td>0.673908</td>
+      <td>0.651029</td>
+    </tr>
+    <tr>
+      <th>ACAd2/3_1</th>
+      <td>0.597459</td>
+      <td>0.627501</td>
+      <td>0.638063</td>
+      <td>0.645888</td>
+      <td>0.624184</td>
+      <td>0.613061</td>
+      <td>0.610360</td>
+      <td>0.584868</td>
+      <td>0.599027</td>
+      <td>0.632073</td>
+      <td>...</td>
+      <td>0.563330</td>
+      <td>0.591786</td>
+      <td>0.587295</td>
+      <td>0.583098</td>
+      <td>0.590525</td>
+      <td>0.565894</td>
+      <td>0.574953</td>
+      <td>0.613022</td>
+      <td>0.647487</td>
+      <td>0.650415</td>
+    </tr>
+    <tr>
+      <th>ACAd2/3_2</th>
+      <td>0.571027</td>
+      <td>0.595831</td>
+      <td>0.606491</td>
+      <td>0.613162</td>
+      <td>0.593237</td>
+      <td>0.584572</td>
+      <td>0.577454</td>
+      <td>0.553500</td>
+      <td>0.566546</td>
+      <td>0.593970</td>
+      <td>...</td>
+      <td>0.539473</td>
+      <td>0.565224</td>
+      <td>0.567445</td>
+      <td>0.557278</td>
+      <td>0.561655</td>
+      <td>0.535150</td>
+      <td>0.554062</td>
+      <td>0.588653</td>
+      <td>0.610546</td>
+      <td>0.617166</td>
+    </tr>
+    <tr>
+      <th>ACAd2/3_3</th>
+      <td>0.553607</td>
+      <td>0.575565</td>
+      <td>0.594226</td>
+      <td>0.598235</td>
+      <td>0.573342</td>
+      <td>0.568132</td>
+      <td>0.569627</td>
+      <td>0.543022</td>
+      <td>0.554639</td>
+      <td>0.581051</td>
+      <td>...</td>
+      <td>0.514714</td>
+      <td>0.539524</td>
+      <td>0.537075</td>
+      <td>0.534365</td>
+      <td>0.534878</td>
+      <td>0.514530</td>
+      <td>0.527182</td>
+      <td>0.561045</td>
+      <td>0.591705</td>
+      <td>0.611740</td>
+    </tr>
+    <tr>
+      <th>ACAd5_1</th>
+      <td>0.630058</td>
+      <td>0.641793</td>
+      <td>0.647781</td>
+      <td>0.654390</td>
+      <td>0.634837</td>
+      <td>0.628741</td>
+      <td>0.631047</td>
+      <td>0.606152</td>
+      <td>0.623477</td>
+      <td>0.657897</td>
+      <td>...</td>
+      <td>0.572636</td>
+      <td>0.597883</td>
+      <td>0.591053</td>
+      <td>0.575654</td>
+      <td>0.597200</td>
+      <td>0.584400</td>
+      <td>0.576911</td>
+      <td>0.614796</td>
+      <td>0.669636</td>
+      <td>0.661564</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>VISrl4_1</th>
+      <td>0.608806</td>
+      <td>0.629851</td>
+      <td>0.637136</td>
+      <td>0.650792</td>
+      <td>0.617430</td>
+      <td>0.627219</td>
+      <td>0.614035</td>
+      <td>0.611263</td>
+      <td>0.604888</td>
+      <td>0.627469</td>
+      <td>...</td>
+      <td>0.577205</td>
+      <td>0.623548</td>
+      <td>0.610158</td>
+      <td>0.606235</td>
+      <td>0.613583</td>
+      <td>0.559556</td>
+      <td>0.614110</td>
+      <td>0.639994</td>
+      <td>0.649961</td>
+      <td>0.646791</td>
+    </tr>
+    <tr>
+      <th>VISrl5_1</th>
+      <td>0.649082</td>
+      <td>0.647604</td>
+      <td>0.668424</td>
+      <td>0.675256</td>
+      <td>0.653244</td>
+      <td>0.647948</td>
+      <td>0.637781</td>
+      <td>0.631115</td>
+      <td>0.636032</td>
+      <td>0.648355</td>
+      <td>...</td>
+      <td>0.617031</td>
+      <td>0.645198</td>
+      <td>0.637634</td>
+      <td>0.624230</td>
+      <td>0.644994</td>
+      <td>0.610415</td>
+      <td>0.630391</td>
+      <td>0.650415</td>
+      <td>0.684320</td>
+      <td>0.669412</td>
+    </tr>
+    <tr>
+      <th>VISrl5_2</th>
+      <td>0.643372</td>
+      <td>0.636174</td>
+      <td>0.654321</td>
+      <td>0.670814</td>
+      <td>0.631363</td>
+      <td>0.641428</td>
+      <td>0.625480</td>
+      <td>0.634172</td>
+      <td>0.618452</td>
+      <td>0.648326</td>
+      <td>...</td>
+      <td>0.587593</td>
+      <td>0.635670</td>
+      <td>0.617376</td>
+      <td>0.604309</td>
+      <td>0.627833</td>
+      <td>0.580243</td>
+      <td>0.623062</td>
+      <td>0.645508</td>
+      <td>0.675442</td>
+      <td>0.656189</td>
+    </tr>
+    <tr>
+      <th>VISrl6a_1</th>
+      <td>0.587644</td>
+      <td>0.558709</td>
+      <td>0.591176</td>
+      <td>0.606841</td>
+      <td>0.577877</td>
+      <td>0.581434</td>
+      <td>0.567537</td>
+      <td>0.566168</td>
+      <td>0.559256</td>
+      <td>0.581017</td>
+      <td>...</td>
+      <td>0.536177</td>
+      <td>0.560639</td>
+      <td>0.547816</td>
+      <td>0.527045</td>
+      <td>0.555997</td>
+      <td>0.526904</td>
+      <td>0.540306</td>
+      <td>0.558628</td>
+      <td>0.609119</td>
+      <td>0.590757</td>
+    </tr>
+    <tr>
+      <th>VISrl6b_1</th>
+      <td>0.657098</td>
+      <td>0.647202</td>
+      <td>0.689478</td>
+      <td>0.700880</td>
+      <td>0.679191</td>
+      <td>0.673361</td>
+      <td>0.654070</td>
+      <td>0.618012</td>
+      <td>0.638369</td>
+      <td>0.687741</td>
+      <td>...</td>
+      <td>0.614595</td>
+      <td>0.632637</td>
+      <td>0.627957</td>
+      <td>0.580900</td>
+      <td>0.653153</td>
+      <td>0.615239</td>
+      <td>0.588846</td>
+      <td>0.612918</td>
+      <td>0.721750</td>
+      <td>0.671169</td>
+    </tr>
+  </tbody>
+</table>
+<p>1475 rows × 244 columns</p>
+</div></div>
+</div>
+<section id="connection">
+<h2>connection<a class="headerlink" href="#connection" title="Link to this heading"></a></h2>
+<section id="ctx2th-conn">
+<h3>ctx2th conn<a class="headerlink" href="#ctx2th-conn" title="Link to this heading"></a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx_ave_list = []
+for c in tqdm(ctx_regions_df):
+    adata_ctx_area = adata_ctx_th_area[adata_ctx_th_area.obs[&#39;subregion&#39;] == c]
+
+    # break
+    idx = adata_ctx_area.obs[&#39;spot_num&#39;].tolist()
+    temp = np.mean(adj[idx], axis=0)
+    ctx_ave_list.append(temp)
+    # break
+ctx2th_ave = np.vstack(ctx_ave_list)
+ctx2th_ave.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 1475/1475 [09:42&lt;00:00,  2.53it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1475, 107909)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>th_ave_list = []
+for th_region in tqdm(th_regions_df):
+    adata_th_area = adata_ctx_th_area[adata_ctx_th_area.obs[&#39;subregion&#39;] == th_region]
+    # break
+    idx = adata_th_area.obs[&#39;spot_num&#39;].tolist()
+    # break
+    temp = np.mean(ctx2th_ave[:, idx], axis=1)
+    th_ave_list.append(temp)
+
+ctx2th_ave = np.column_stack(th_ave_list)
+conn_df = pd.DataFrame(data=ctx2th_ave, index=ctx_regions_df, columns=th_regions_df, dtype=float)
+ctx2th_ave.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 244/244 [00:00&lt;00:00, 359.77it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1475, 244)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>corr = corr.flatten()
+conn = ctx2th_ave.flatten()
+plt.figure(figsize=(8, 6))
+ax = sns.scatterplot(conn, corr, s=30, alpha=0.5)
+
+plt.xlabel(&#39;Connection_strength&#39;, fontweight=&#39;bold&#39;)
+plt.ylabel(&#39;Correlation&#39;, fontweight=&#39;bold&#39;)
+plt.tight_layout()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_15_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_15_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>df = pd.DataFrame({&#39;Correlation&#39;: corr,
+                   &#39;Connection_strength&#39;: conn})
+# df = df[df[&#39;Connection_strength&#39;] &gt; 0.0005]
+min_corr = df[&#39;Connection_strength&#39;].min()
+max_corr = df[&#39;Connection_strength&#39;].max()
+bins = np.linspace(0, max_corr, 31)
+df[&#39;group&#39;] = pd.cut(df[&#39;Connection_strength&#39;], bins, include_lowest=False)
+
+result = df.groupby(&#39;group&#39;)[&#39;Correlation&#39;].median().reset_index()
+result[&#39;Connection_strength&#39;] = result[&#39;group&#39;].apply(lambda x: (x.left + x.right) / 2)
+result = result.dropna(subset=[&#39;Correlation&#39;])
+
+import scipy.stats as stats
+correlation, p_value = pearsonr(result[&#39;Connection_strength&#39;], result[&#39;Correlation&#39;])
+sns.regplot(data=result, x=&quot;Connection_strength&quot;, y=&quot;Correlation&quot;,
+            scatter_kws={&#39;s&#39;: 30, &#39;color&#39;: &#39;#2878B5&#39;, &#39;alpha&#39;: 1, &#39;marker&#39;: &#39;o&#39;},
+            line_kws={&#39;linewidth&#39;: 2, &#39;color&#39;: &#39;#D8383A&#39;, &#39;linestyle&#39;: &#39;-&#39;})
+slope, intercept, r_value, p_value, std_err = stats.linregress(result[&quot;Connection_strength&quot;], result[&quot;Correlation&quot;])
+print(f&quot;(slope): {slope}&quot;)
+# plt.text(0.95, 0.01, f&#39;Corr: {correlation:.2f}&#39;, ha=&#39;right&#39;, va=&#39;bottom&#39;, transform=plt.gca().transAxes)
+plt.title(f&#39;r = {correlation:.3f},    p = {p_value:.2e}&#39;, fontweight=&#39;bold&#39;)
+plt.xlabel(&#39;Connection_strength&#39;, fontweight=&#39;bold&#39;)
+plt.ylabel(&#39;Correlation&#39;, fontweight=&#39;bold&#39;)
+plt.savefig(&#39;./th_ctx_corr_conn_scatter_line.pdf&#39;, format=&#39;pdf&#39;)
+# plt.savefig(f&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/PaperFig/new_brief_comm_fig2/th_ctx_region_correlation/zxw3_all_40bins_merge{mergecell_num}cell.png&#39;, dpi=600)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+斜率 (slope): 15.42913379110221
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_16_1.png" src="_images/3_ctx_th_connection_and_gene_correlation_16_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from scipy.stats import gaussian_kde
+
+x = conn
+y = corr
+
+# Create a grid
+xi, yi = np.mgrid[x.min():x.max():100j, y.min():y.max():100j]
+
+# Calculate nuclear density estimation
+positions = np.vstack([xi.ravel(), yi.ravel()])
+values = np.vstack([x, y])
+kernel = gaussian_kde(values)
+z = np.reshape(kernel(positions).T, xi.shape)
+
+# Draw scattered dots and outlines
+fig, ax = plt.subplots()
+# ax.scatter(x, y, c=&#39;k&#39;, alpha=0.3)
+ax.contour(xi, yi, z, levels=100, cmap=&#39;viridis&#39;)
+
+plt.show()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_17_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_17_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>fig, ax = plt.subplots()
+
+contour_set = ax.contour(xi, yi, z, levels=10000, cmap=&#39;viridis&#39;)
+
+# Get the outermost contour (that is, the first outline)
+outermost_contour = contour_set.collections[1]
+
+# Extract the exterior outline path
+paths = outermost_contour.get_paths()
+outermost_path = paths[0]
+
+# Draw the outermost outline
+ax.plot(outermost_path.vertices[:, 0], outermost_path.vertices[:, 1], &#39;r-&#39;, linewidth=2)
+
+plt.show()
+
+# Get the coordinates of the outermost contour
+outermost_contour_coords = outermost_path.vertices
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Locator attempting to generate 8165 ticks ([0.0, ..., 32656.0]), which exceeds Locator.MAXTICKS (1000).
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_18_1.png" src="_images/3_ctx_th_connection_and_gene_correlation_18_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>x_data = outermost_path.vertices[:, 1]
+y_data = outermost_path.vertices[:, 0]
+
+# Select the order of polynomial (you can adjust to get better fitting)
+degree = 5
+
+# Use Numpy&#39;s polynomial fitting
+coeffs = np.polyfit(x_data, y_data, degree)
+poly = np.poly1d(coeffs)
+
+# Point to generate the fit curve
+x_fit = np.linspace(min(x_data), max(x_data), 100)
+y_fit = poly(x_fit)
+
+# Draw the original data point and fit curve
+plt.scatter(y_data, x_data, label=&#39;Data&#39;, s=3)
+plt.plot(y_fit, x_fit, &#39;r-&#39;, label=f&#39;Fitted Curve (degree {degree})&#39;)
+plt.legend()
+plt.xlabel(&#39;X&#39;)
+plt.ylabel(&#39;Y&#39;)
+plt.title(&#39;Polynomial Fit&#39;)
+plt.show()
+
+# Print polynomial coefficient
+print(&quot;Polynomial coefficient (from high -level to low -level):&quot;)
+for i, coeff in enumerate(coeffs):
+    print(f&quot;x^{degree-i}: {coeff:.4f}&quot;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_19_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_19_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+多项式系数（从高阶到低阶）:
+x^5: 12.8520
+x^4: -39.7188
+x^3: 48.3887
+x^2: -29.1442
+x^1: 8.7148
+x^0: -1.0373
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[97]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>plt.figure(figsize=(8, 6))
+ax = sns.scatterplot(conn, corr, s=30, alpha=0.5)
+ax.plot(y_fit, x_fit, &#39;r--&#39;, label=f&#39;Fitted Curve (degree {degree})&#39;, linewidth=2)
+plt.xlabel(&#39;Connection_strength&#39;, fontweight=&#39;bold&#39;)
+plt.ylabel(&#39;Correlation&#39;, fontweight=&#39;bold&#39;)
+plt.xlim(0, 0.005)
+ax.set_xticks([0.000, 0.001, 0.002, 0.003, 0.004, 0.005])  # Set the X -axis scale
+ax.set_yticks([0.2, 0.4, 0.6, 0.8])  # Set y -axial scale
+plt.tight_layout()
+# plt.savefig(&#39;./corr_conn_scatter.png&#39;, dpi=600)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_20_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_20_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from scipy.stats import skew, kurtosis, normaltest, jarque_bera
+# Polynomial coefficient (from high -level to low -level)
+coefficients = coeffs
+
+# Define the polynomial function
+poly_func = np.poly1d(coefficients)
+
+# Generate X value
+x = np.linspace(min(x_data), max(x_data), 1000)
+# Calculate the Y value of polynomial
+data = poly_func(x)
+
+# Calculation bias and peak degree
+skewness = skew(data)
+kurt = kurtosis(data) + 3  # Scipy&#39;s Kurtosis function returns the peak degree (Excess Kurtosis), you need to add 3 to get the peak degree
+
+print(f&quot;skewness: {skewness}&quot;)
+print(f&quot;kurt: {kurt}&quot;)
+
+# D&#39;Agostino&#39;s K-squared test
+k2_stat, k2_p_value = normaltest(data)
+print(f&quot;D&#39;Agostino&#39;s K-squared: {k2_stat}&quot;)
+print(f&quot;p: {k2_p_value}&quot;)
+
+
+# Jarque-Bera test
+jb_stat, jb_p_value = jarque_bera(data)
+print(f&quot;Jarque-Bera: {jb_stat}&quot;)
+print(f&quot;p: {jb_p_value}&quot;)
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>df = pd.DataFrame({&#39;Correlation&#39;: corr,
+                   &#39;Connection_strength&#39;: conn})
+
+min_corr = df[&#39;Connection_strength&#39;].min()
+max_corr = df[&#39;Connection_strength&#39;].max()
+bins = np.linspace(min_corr, max_corr, 10)
+df[&#39;group&#39;] = pd.cut(df[&#39;Connection_strength&#39;], bins, include_lowest=True)
+df[&#39;Connection_strength&#39;] = df[&#39;group&#39;].apply(lambda x: round(((x.left + x.right) / 2), 4))
+sns.violinplot(x=&#39;Connection_strength&#39;, y=&#39;Correlation&#39;, data=df)
+plt.xlabel(&#39;Connection_strength&#39;, fontweight=&#39;bold&#39;)
+plt.ylabel(&#39;Correlation&#39;, fontweight=&#39;bold&#39;)
+plt.tight_layout()
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/3_ctx_th_connection_and_gene_correlation_22_0.png" src="_images/3_ctx_th_connection_and_gene_correlation_22_0.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, quhaichao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,1102 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scanpy &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SpaCon_results_reproduction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">scanpy</a><ul>
+<li><a class="reference internal" href="#gene-fit">gene fit</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpaCon_results_reproduction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">scanpy</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/2_ctx_th_connection_and_th_gene_pc1.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import scanpy as sc
+import seaborn as sns
+from scipy.stats import pearsonr
+
+import warnings
+import matplotlib as mpl
+mpl.rcParams[&#39;pdf.fonttype&#39;] = 42
+mpl.rcParams[&#39;ps.fonttype&#39;] = 42
+warnings.filterwarnings(&#39;ignore&#39;)
+
+th_regions = [&#39;AD&#39;, &#39;AMd&#39;, &#39;AMv&#39;, &#39;AV&#39;, &#39;CL&#39;, &#39;CM&#39;, &#39;IAD&#39;, &#39;IAM&#39;, &#39;IGL&#39;, &#39;IMD&#39;, &#39;LD&#39;, &#39;LGv&#39;, &#39;LH&#39;, &#39;LP&#39;, &#39;MD&#39;, &#39;MGd&#39;, &#39;MGm&#39;, &#39;MGv&#39;, &#39;MH&#39;, &#39;PCN&#39;, &#39;PF&#39;, &#39;PIL&#39;, &#39;PO&#39;, &#39;POL&#39;,
+                &#39;PP&#39;, &#39;PR&#39;, &#39;PT&#39;, &#39;PVT&#39;, &#39;PoT&#39;, &#39;RE&#39;, &#39;RH&#39;, &#39;RT&#39;, &#39;SGN&#39;, &#39;SMT&#39;, &#39;SPA&#39;, &#39;SPFm&#39;, &#39;SPFp&#39;, &#39;VAL&#39;, &#39;VM&#39;, &#39;VPL&#39;, &#39;VPLpc&#39;, &#39;VPM&#39;, &#39;VPMpc&#39;, &#39;Xi&#39;]
+ctx_regions = [&#39;ACAd&#39;, &#39;ACAv&#39;, &#39;AId&#39;, &#39;AIp&#39;, &#39;AIv&#39;, &#39;AUDd&#39;, &#39;AUDp&#39;, &#39;AUDpo&#39;,
+                &#39;AUDv&#39;, &#39;ECT&#39;, &#39;FRP&#39;, &#39;GU&#39;, &#39;ILA&#39;, &#39;MOp&#39;, &#39;MOs&#39;, &#39;ORBl&#39;, &#39;ORBm&#39;,
+                &#39;ORBvl&#39;, &#39;PERI&#39;, &#39;PL&#39;, &#39;RSPagl&#39;, &#39;RSPd&#39;, &#39;RSPv&#39;, &#39;SSp-bfd&#39;,
+                &#39;SSp-ll&#39;, &#39;SSp-m&#39;, &#39;SSp-n&#39;, &#39;SSp-tr&#39;, &#39;SSp-ul&#39;, &#39;SSp-un&#39;, &#39;SSs&#39;,
+                &#39;TEa&#39;, &#39;VISC&#39;, &#39;VISa&#39;, &#39;VISal&#39;, &#39;VISam&#39;, &#39;VISl&#39;, &#39;VISli&#39;, &#39;VISp&#39;,
+                &#39;VISpl&#39;, &#39;VISpm&#39;, &#39;VISpor&#39;, &#39;VISrl&#39;]
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_sc = sc.read_h5ad(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/adata_processed.h5ad&#39;)
+allen_region = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/allen_region.csv&#39;)
+adata_sc.obs[&#39;region&#39;] = allen_region[&#39;region&#39;].values
+# add cell type
+meta = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/cell_metadata_with_cluster_annotation.csv&#39;)
+meta = meta.set_index(&#39;cell_label&#39;)
+meta = meta.loc[adata_sc.obs.index.to_list()]
+adata_sc.obs[&#39;cell_type&#39;] = meta[&#39;class&#39;].to_list()
+adata_sc.obs[&#39;cell_subtype&#39;] = meta[&#39;subclass&#39;].to_list()
+adata_sc.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+      <th>region</th>
+      <th>cell_type</th>
+      <th>cell_subtype</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>198904341065180396762707397604803217407</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>49.206853</td>
+      <td>44.877634</td>
+      <td>12.168155</td>
+      <td>4.920685</td>
+      <td>4.487763</td>
+      <td>1.216815</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+      <td>333 Endo NN</td>
+    </tr>
+    <tr>
+      <th>252199681526991424029643077826220097990</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.973992</td>
+      <td>44.813761</td>
+      <td>12.179006</td>
+      <td>4.897399</td>
+      <td>4.481376</td>
+      <td>1.217901</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+      <td>333 Endo NN</td>
+    </tr>
+    <tr>
+      <th>277720971126854564514249564750701518375</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.791066</td>
+      <td>44.577722</td>
+      <td>12.192707</td>
+      <td>4.879107</td>
+      <td>4.457772</td>
+      <td>1.219271</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+      <td>330 VLMC NN</td>
+    </tr>
+    <tr>
+      <th>31551867344111790264292067056219852271</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.830489</td>
+      <td>44.426120</td>
+      <td>12.195078</td>
+      <td>4.883049</td>
+      <td>4.442612</td>
+      <td>1.219508</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+      <td>329 ABC NN</td>
+    </tr>
+    <tr>
+      <th>131102494428104399865219008178262036485</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.308843</td>
+      <td>43.028156</td>
+      <td>12.267879</td>
+      <td>4.830884</td>
+      <td>4.302816</td>
+      <td>1.226788</td>
+      <td>SSs1</td>
+      <td>34 Immune</td>
+      <td>334 Microglia NN</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>318102106429791409781741726367984532777</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.090716</td>
+      <td>69.334275</td>
+      <td>41.436743</td>
+      <td>13.109072</td>
+      <td>6.933427</td>
+      <td>4.143674</td>
+      <td>MDRNd</td>
+      <td>30 Astro-Epen</td>
+      <td>318 Astro-NT NN</td>
+    </tr>
+    <tr>
+      <th>35262847161560382172299767067854387528</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.216032</td>
+      <td>69.494070</td>
+      <td>41.351034</td>
+      <td>13.121603</td>
+      <td>6.949407</td>
+      <td>4.135103</td>
+      <td>MDRNd</td>
+      <td>33 Vascular</td>
+      <td>333 Endo NN</td>
+    </tr>
+    <tr>
+      <th>75415866509570969932943497000463821106</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.415152</td>
+      <td>70.764504</td>
+      <td>40.800403</td>
+      <td>13.141515</td>
+      <td>7.076450</td>
+      <td>4.080040</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+      <td>257 SPVC Ccdc172 Glut</td>
+    </tr>
+    <tr>
+      <th>12350978322417280063239916106423065862</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.646167</td>
+      <td>71.182557</td>
+      <td>40.595995</td>
+      <td>13.164617</td>
+      <td>7.118256</td>
+      <td>4.059599</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+      <td>245 SPVI-SPVC Tlx3 Ebf3 Glut</td>
+    </tr>
+    <tr>
+      <th>327554758863546024460748891922509519354</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.658892</td>
+      <td>71.414675</td>
+      <td>40.501356</td>
+      <td>13.165889</td>
+      <td>7.141468</td>
+      <td>4.050136</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+      <td>245 SPVI-SPVC Tlx3 Ebf3 Glut</td>
+    </tr>
+  </tbody>
+</table>
+<p>1566842 rows × 10 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_sc_sel = adata_sc[adata_sc.obs[&#39;region&#39;].isin(th_regions)]
+
+# celltype
+adata_sc_sel = adata_sc_sel[adata_sc_sel.obs[&#39;cell_type&#39;].str.contains(&#39;Glut&#39;)]   #glut:11632, GABA:2144
+# adata_sc_sel = adata_sc_sel[~((adata_sc_sel.obs[&#39;cell_type&#39;].str.contains(&#39;Glut&#39;)) | (adata_sc_sel.obs[&#39;cell_type&#39;].str.contains(&#39;GABA&#39;)))]
+
+sc.pp.normalize_total(adata_sc_sel, target_sum=1e4)
+sc.pp.log1p(adata_sc_sel)
+adata_sc_sel.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+      <th>region</th>
+      <th>cell_type</th>
+      <th>cell_subtype</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>161688747436026654650176510540392211433</th>
+      <td>Zhuang-ABCA-3.010</td>
+      <td>87.458311</td>
+      <td>42.561713</td>
+      <td>36.003462</td>
+      <td>8.745831</td>
+      <td>4.256171</td>
+      <td>3.600346</td>
+      <td>PP</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+    </tr>
+    <tr>
+      <th>58181776695022611014193138668092143421</th>
+      <td>Zhuang-ABCA-3.010</td>
+      <td>87.428665</td>
+      <td>43.141638</td>
+      <td>36.074035</td>
+      <td>8.742867</td>
+      <td>4.314164</td>
+      <td>3.607403</td>
+      <td>PP</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+    </tr>
+    <tr>
+      <th>44943142248653779447832011085753663887</th>
+      <td>Zhuang-ABCA-3.010</td>
+      <td>88.399417</td>
+      <td>38.509451</td>
+      <td>35.499828</td>
+      <td>8.839942</td>
+      <td>3.850945</td>
+      <td>3.549983</td>
+      <td>PIL</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+    </tr>
+    <tr>
+      <th>116752430110288879397639873888117102751</th>
+      <td>Zhuang-ABCA-3.010</td>
+      <td>88.055718</td>
+      <td>34.977674</td>
+      <td>35.215769</td>
+      <td>8.805572</td>
+      <td>3.497767</td>
+      <td>3.521577</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+    </tr>
+    <tr>
+      <th>90801153563202361546995315846250718208</th>
+      <td>Zhuang-ABCA-3.010</td>
+      <td>88.419023</td>
+      <td>34.479228</td>
+      <td>35.184868</td>
+      <td>8.841902</td>
+      <td>3.447923</td>
+      <td>3.518487</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>137125155786416424728071422508382942054</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.480430</td>
+      <td>34.094203</td>
+      <td>37.248728</td>
+      <td>8.648043</td>
+      <td>3.409420</td>
+      <td>3.724873</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+    </tr>
+    <tr>
+      <th>186321231466624970722021094909324401885</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.443977</td>
+      <td>35.015822</td>
+      <td>37.291043</td>
+      <td>8.644398</td>
+      <td>3.501582</td>
+      <td>3.729104</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+    </tr>
+    <tr>
+      <th>262284519603134366801326445274337827961</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.388989</td>
+      <td>32.866518</td>
+      <td>37.212756</td>
+      <td>8.638899</td>
+      <td>3.286652</td>
+      <td>3.721276</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+    </tr>
+    <tr>
+      <th>33608739852097367198466784523454261485</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.904204</td>
+      <td>34.752896</td>
+      <td>37.268567</td>
+      <td>8.690420</td>
+      <td>3.475290</td>
+      <td>3.726857</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+    </tr>
+    <tr>
+      <th>303385550649730012456703013017610179856</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>88.389510</td>
+      <td>37.024369</td>
+      <td>37.400811</td>
+      <td>8.838951</td>
+      <td>3.702437</td>
+      <td>3.740081</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+    </tr>
+  </tbody>
+</table>
+<p>11632 rows × 10 columns</p>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.tl.pca(adata_sc_sel)
+adata_sc_sel.obs[&#39;pc1&#39;] = adata_sc_sel.obsm[&#39;X_pca&#39;][:, 0]
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx2th_connection_strength = pd.read_csv(&#39;../data/ctx2th_connection_strength_for_th_single_cell.csv&#39;)
+adata_sc_sel.obs[&#39;connection_strength&#39;] = ctx2th_connection_strength[&#39;connection_strength&#39;].values
+adata_sc_sel.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+      <th>region</th>
+      <th>cell_type</th>
+      <th>cell_subtype</th>
+      <th>pc1</th>
+      <th>connection_strength</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>161688747436026654650176510540392211433</th>
+      <td>Zhuang-ABCA-3.010</td>
+      <td>87.458311</td>
+      <td>42.561713</td>
+      <td>36.003462</td>
+      <td>8.745831</td>
+      <td>4.256171</td>
+      <td>3.600346</td>
+      <td>PP</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+      <td>-18.752752</td>
+      <td>0.000148</td>
+    </tr>
+    <tr>
+      <th>58181776695022611014193138668092143421</th>
+      <td>Zhuang-ABCA-3.010</td>
+      <td>87.428665</td>
+      <td>43.141638</td>
+      <td>36.074035</td>
+      <td>8.742867</td>
+      <td>4.314164</td>
+      <td>3.607403</td>
+      <td>PP</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+      <td>-17.124094</td>
+      <td>0.000148</td>
+    </tr>
+    <tr>
+      <th>44943142248653779447832011085753663887</th>
+      <td>Zhuang-ABCA-3.010</td>
+      <td>88.399417</td>
+      <td>38.509451</td>
+      <td>35.499828</td>
+      <td>8.839942</td>
+      <td>3.850945</td>
+      <td>3.549983</td>
+      <td>PIL</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+      <td>-13.156902</td>
+      <td>0.000147</td>
+    </tr>
+    <tr>
+      <th>116752430110288879397639873888117102751</th>
+      <td>Zhuang-ABCA-3.010</td>
+      <td>88.055718</td>
+      <td>34.977674</td>
+      <td>35.215769</td>
+      <td>8.805572</td>
+      <td>3.497767</td>
+      <td>3.521577</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+      <td>-15.346298</td>
+      <td>0.000100</td>
+    </tr>
+    <tr>
+      <th>90801153563202361546995315846250718208</th>
+      <td>Zhuang-ABCA-3.010</td>
+      <td>88.419023</td>
+      <td>34.479228</td>
+      <td>35.184868</td>
+      <td>8.841902</td>
+      <td>3.447923</td>
+      <td>3.518487</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+      <td>-16.317265</td>
+      <td>0.000118</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>137125155786416424728071422508382942054</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.480430</td>
+      <td>34.094203</td>
+      <td>37.248728</td>
+      <td>8.648043</td>
+      <td>3.409420</td>
+      <td>3.724873</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+      <td>-15.591858</td>
+      <td>0.000108</td>
+    </tr>
+    <tr>
+      <th>186321231466624970722021094909324401885</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.443977</td>
+      <td>35.015822</td>
+      <td>37.291043</td>
+      <td>8.644398</td>
+      <td>3.501582</td>
+      <td>3.729104</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+      <td>-19.282854</td>
+      <td>0.000072</td>
+    </tr>
+    <tr>
+      <th>262284519603134366801326445274337827961</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.388989</td>
+      <td>32.866518</td>
+      <td>37.212756</td>
+      <td>8.638899</td>
+      <td>3.286652</td>
+      <td>3.721276</td>
+      <td>SGN</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+      <td>-14.546726</td>
+      <td>0.000133</td>
+    </tr>
+    <tr>
+      <th>33608739852097367198466784523454261485</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>86.904204</td>
+      <td>34.752896</td>
+      <td>37.268567</td>
+      <td>8.690420</td>
+      <td>3.475290</td>
+      <td>3.726857</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+      <td>-17.966299</td>
+      <td>0.000075</td>
+    </tr>
+    <tr>
+      <th>303385550649730012456703013017610179856</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>88.389510</td>
+      <td>37.024369</td>
+      <td>37.400811</td>
+      <td>8.838951</td>
+      <td>3.702437</td>
+      <td>3.740081</td>
+      <td>POL</td>
+      <td>19 MB Glut</td>
+      <td>168 SPA-SPFm-SPFp-POL-PIL-PoT Sp9 Glut</td>
+      <td>-17.602646</td>
+      <td>0.000142</td>
+    </tr>
+  </tbody>
+</table>
+<p>11632 rows × 12 columns</p>
+</div></div>
+</div>
+<section id="scanpy">
+<h1>scanpy<a class="headerlink" href="#scanpy" title="Link to this heading"></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.pl.embedding(
+    adata_sc_sel,
+    basis=&quot;pca&quot;,
+    color=[&quot;connection_strength&quot;],
+    color_map=&quot;Spectral_r&quot;,
+    size=80,
+    alpha=0.8
+)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/2_ctx_th_connection_and_th_gene_pc1_6_0.png" src="_images/2_ctx_th_connection_and_th_gene_pc1_6_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>region_counts = adata_sc_sel.obs[&#39;region&#39;].value_counts()
+valid_labels = region_counts[region_counts &gt;= 5].index
+
+# 过滤原始 DataFrame
+adata_sc_sel = adata_sc_sel[adata_sc_sel.obs[&#39;region&#39;].isin(valid_labels)]
+adata_sc_sel.obs[&#39;region&#39;].astype(str)
+adata_sc_sel
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+View of AnnData object with n_obs × n_vars = 11632 × 1122
+    obs: &#39;brain_section_label&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;x_ccf&#39;, &#39;y_ccf&#39;, &#39;z_ccf&#39;, &#39;region&#39;, &#39;cell_type&#39;, &#39;cell_subtype&#39;, &#39;pc1&#39;, &#39;connection_strength&#39;
+    uns: &#39;log1p&#39;, &#39;pca&#39;
+    obsm: &#39;X_pca&#39;
+    varm: &#39;PCs&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>x = &#39;connection_strength&#39;
+y = &#39;pc1&#39;
+
+df = pd.DataFrame({x: adata_sc_sel.obs.groupby(&#39;region&#39;)[x].mean(),
+                   y: adata_sc_sel.obs.groupby(&#39;region&#39;)[y].mean()})
+
+plt.figure(figsize=(6,6))
+
+ax = sns.regplot(data=df, x=x, y=y, scatter=True,
+            scatter_kws={&#39;s&#39;: 50, &#39;color&#39;: &#39;#2878B5&#39;, &#39;alpha&#39;: 0.8, &#39;marker&#39;: &#39;o&#39;},
+            line_kws={&#39;linewidth&#39;: 2, &#39;color&#39;: &#39;#D8383A&#39;, &#39;linestyle&#39;: &#39;-&#39;})
+corr, p = pearsonr(df[x], df[y])
+plt.xticks([])
+plt.title(f&#39;r = {corr:.4},   p = {p:.5}&#39;, fontsize=15)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0.5, 1.0, &#39;r = 0.6237,   p = 1.0214e-05&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/2_ctx_th_connection_and_th_gene_pc1_8_1.png" src="_images/2_ctx_th_connection_and_th_gene_pc1_8_1.png" />
+</div>
+</div>
+<section id="gene-fit">
+<h2>gene fit<a class="headerlink" href="#gene-fit" title="Link to this heading"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import scvelo as scv
+adata_sc_sel.layers[&quot;spliced&quot;] = adata_sc_sel.X
+adata_sc_sel.layers[&quot;unspliced&quot;] = adata_sc_sel.X
+scv.tl.recover_dynamics(adata_sc_sel, n_jobs=100)
+scv.tl.velocity(adata_sc_sel, mode=&quot;dynamical&quot;)
+scv.tl.velocity_graph(adata_sc_sel, n_jobs=100)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+recovering dynamics (using 100/192 cores)
+WARNING: Unable to create progress bar. Consider installing `tqdm` as `pip install tqdm` and `ipywidgets` as `pip install ipywidgets`,
+or disable the progress bar using `show_progress_bar=False`.
+    finished (0:01:26) --&gt; added
+    &#39;fit_pars&#39;, fitted parameters for splicing dynamics (adata.var)
+computing neighbors
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/mnt/Data16Tc/home/haichao/anaconda3/envs/SpaCon_test1/lib/python3.10/site-packages/pandas/core/algorithms.py:522: DeprecationWarning: np.find_common_type is deprecated.  Please use `np.result_type` or `np.promote_types`.
+See https://numpy.org/devdocs/release/1.25.0-notes.html and the docs for more information.  (Deprecated NumPy 1.25)
+  common = np.find_common_type([values.dtype, comps_array.dtype], [])
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+    finished (0:00:25) --&gt; added
+    &#39;distances&#39; and &#39;connectivities&#39;, weighted adjacency matrices (adata.obsp)
+computing moments based on connectivities
+    finished (0:00:00) --&gt; added
+    &#39;Ms&#39; and &#39;Mu&#39;, moments of un/spliced abundances (adata.layers)
+computing velocities
+    finished (0:00:04) --&gt; added
+    &#39;velocity&#39;, velocity vectors for each individual cell (adata.layers)
+computing velocity graph (using 100/192 cores)
+    finished (0:00:06) --&gt; added
+    &#39;velocity_graph&#39;, sparse matrix with cosine correlations (adata.uns)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>top_genes = adata_sc_sel.var[&#39;fit_likelihood&#39;].sort_values(ascending=False).index[:200]
+cm = scv.pl.heatmap(adata_sc_sel, var_names=top_genes, sortby=&#39;connection_strength&#39;, col_color=None, color_map=&#39;RdBu_r&#39;, n_convolve=300, sort=True, show=False)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/2_ctx_th_connection_and_th_gene_pc1_11_0.png" src="_images/2_ctx_th_connection_and_th_gene_pc1_11_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># 参数设置
+group_size = 10
+window_size = 10
+
+# 分组计算函数
+def group_differences(matrix, group_size):
+    n_cells = matrix.shape[0]
+    n_groups = n_cells // group_size
+
+    # 初始化组间差异矩阵
+    diffs = np.zeros(n_groups-1)
+
+    for i in range(n_groups-1):
+        # 提取相邻两组细胞（边界处理：丢弃不能成组的尾部细胞）
+        group1 = matrix[i*group_size : (i+1)*group_size]
+        group2 = matrix[(i+1)*group_size : (i+2)*group_size]
+
+        # 计算组间差异（使用中位数降低异常值影响）
+        median_diff = np.median(group2, axis=0) - np.median(group1, axis=0)
+        diffs[i] = np.linalg.norm(median_diff)
+
+    return diffs
+
+# 执行分组差异计算
+smoothed_exp = cm.data2d.values
+cell_diffs = group_differences(smoothed_exp, group_size)
+
+# 滑动窗口平滑（自动适配组数）
+valid_window = min(window_size, len(cell_diffs))
+smoothed_diffs = np.convolve(cell_diffs,
+                            np.ones(valid_window)/valid_window,
+                            mode=&#39;same&#39;)  # 保持长度不变
+
+# 可视化设置
+plt.figure(figsize=(15, 5))
+x_positions = np.arange(len(cell_diffs)) * group_size + group_size/2  # 标注组中心位置
+
+plt.plot(x_positions, smoothed_diffs,
+        color=&#39;#7db400&#39;,
+        linewidth=2,
+        label=f&#39;Smoothed (window={valid_window})&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;matplotlib.lines.Line2D at 0x7f76babb9e10&gt;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/2_ctx_th_connection_and_th_gene_pc1_12_1.png" src="_images/2_ctx_th_connection_and_th_gene_pc1_12_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>group_size = 25
+window_size = 50
+
+# 分组计算函数
+def group_differences(matrix, group_size):
+    n_cells = matrix.shape[0]
+    n_groups = n_cells // group_size
+
+    # 初始化组间差异矩阵
+    diffs = np.zeros(n_groups-1)
+
+    for i in range(n_groups-1):
+        # 提取相邻两组细胞（边界处理：丢弃不能成组的尾部细胞）
+        group1 = matrix[i*group_size : (i+1)*group_size]
+        group2 = matrix[(i+1)*group_size : (i+2)*group_size]
+
+        # 计算组间差异（使用中位数降低异常值影响）
+        median_diff = np.median(group2, axis=0) - np.median(group1, axis=0)
+        diffs[i] = np.linalg.norm(median_diff)
+
+    return diffs
+
+# 执行分组差异计算
+smoothed_exp = cm.data2d.values.T
+cell_diffs = group_differences(smoothed_exp, group_size)
+
+# 滑动窗口平滑（自动适配组数）
+valid_window = min(window_size, len(cell_diffs))
+smoothed_diffs = np.convolve(cell_diffs,
+                            np.ones(valid_window)/valid_window,
+                            mode=&#39;same&#39;)  # 保持长度不变
+
+# 可视化设置
+plt.figure(figsize=(15, 5))
+x_positions = np.arange(len(cell_diffs)) * group_size + group_size/2  # 标注组中心位置
+
+plt.plot(x_positions, smoothed_diffs,
+        color=&#39;#b06651&#39;,
+        linewidth=2,
+        label=f&#39;Smoothed (window={valid_window})&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&lt;matplotlib.lines.Line2D at 0x7f76ba95d2d0&gt;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/2_ctx_th_connection_and_th_gene_pc1_13_1.png" src="_images/2_ctx_th_connection_and_th_gene_pc1_13_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, quhaichao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

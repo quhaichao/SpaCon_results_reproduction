@@ -1,0 +1,2326 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>conn data &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SpaCon_results_reproduction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">conn data</a><ul>
+<li><a class="reference internal" href="#cluster-cc">cluster cc</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gene-exp-data">gene exp data</a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpaCon_results_reproduction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">conn data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/10_ctx_cc_connection_and_correlation.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import pandas as pd
+import scanpy as sc
+from scipy.spatial import cKDTree
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import anndata as ad
+import numpy as np
+import os
+import warnings
+from scipy.stats import pearsonr
+import seaborn as sns
+import re
+from allensdk.core.mouse_connectivity_cache import MouseConnectivityCache
+import umap
+import matplotlib as mpl
+mpl.rcParams[&#39;pdf.fonttype&#39;] = 42
+mpl.rcParams[&#39;ps.fonttype&#39;] = 42
+
+warnings.filterwarnings(&#39;ignore&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/mnt/Data16Tc/home/haichao/anaconda3/envs/SpaCon_clone/lib/python3.8/site-packages/umap/distances.py:1063: NumbaDeprecationWarning: <span class="ansi-bold">The &#39;nopython&#39; keyword argument was not supplied to the &#39;numba.jit&#39; decorator. The implicit default value for this argument is currently False, but it will be changed to True in Numba 0.59.0. See https://numba.readthedocs.io/en/stable/reference/deprecation.html#deprecation-of-object-mode-fall-back-behaviour-when-using-jit for details.</span>
+  @numba.jit()
+/mnt/Data16Tc/home/haichao/anaconda3/envs/SpaCon_clone/lib/python3.8/site-packages/umap/distances.py:1071: NumbaDeprecationWarning: <span class="ansi-bold">The &#39;nopython&#39; keyword argument was not supplied to the &#39;numba.jit&#39; decorator. The implicit default value for this argument is currently False, but it will be changed to True in Numba 0.59.0. See https://numba.readthedocs.io/en/stable/reference/deprecation.html#deprecation-of-object-mode-fall-back-behaviour-when-using-jit for details.</span>
+  @numba.jit()
+/mnt/Data16Tc/home/haichao/anaconda3/envs/SpaCon_clone/lib/python3.8/site-packages/umap/distances.py:1086: NumbaDeprecationWarning: <span class="ansi-bold">The &#39;nopython&#39; keyword argument was not supplied to the &#39;numba.jit&#39; decorator. The implicit default value for this argument is currently False, but it will be changed to True in Numba 0.59.0. See https://numba.readthedocs.io/en/stable/reference/deprecation.html#deprecation-of-object-mode-fall-back-behaviour-when-using-jit for details.</span>
+  @numba.jit()
+/mnt/Data16Tc/home/haichao/anaconda3/envs/SpaCon_clone/lib/python3.8/site-packages/umap/umap_.py:660: NumbaDeprecationWarning: <span class="ansi-bold">The &#39;nopython&#39; keyword argument was not supplied to the &#39;numba.jit&#39; decorator. The implicit default value for this argument is currently False, but it will be changed to True in Numba 0.59.0. See https://numba.readthedocs.io/en/stable/reference/deprecation.html#deprecation-of-object-mode-fall-back-behaviour-when-using-jit for details.</span>
+  @numba.jit()
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx_43_regions = [&#39;FRP&#39;, &#39;MOp&#39;, &#39;MOs&#39;, &#39;SSp-n&#39;, &#39;SSp-bfd&#39;, &#39;SSp-ll&#39;, &#39;SSp-m&#39;, &#39;SSp-ul&#39;, &#39;SSp-tr&#39;, &#39;SSp-un&#39;, &#39;SSs&#39;, &#39;GU&#39;, &#39;VISC&#39;, &#39;AUDd&#39;, &#39;AUDp&#39;, &#39;AUDpo&#39;, &#39;AUDv&#39;, &#39;VISal&#39;, &#39;VISam&#39;, &#39;VISl&#39;, &#39;VISp&#39;, &#39;VISpl&#39;, &#39;VISpm&#39;, &#39;VISli&#39;, &#39;VISpor&#39;, &#39;ACAd&#39;, &#39;ACAv&#39;, &#39;PL&#39;, &#39;ILA&#39;, &#39;ORBl&#39;, &#39;ORBm&#39;, &#39;ORBvl&#39;, &#39;AId&#39;, &#39;AIp&#39;, &#39;AIv&#39;, &#39;RSPagl&#39;, &#39;RSPd&#39;, &#39;RSPv&#39;, &#39;VISa&#39;, &#39;VISrl&#39;, &#39;TEa&#39;, &#39;PERI&#39;, &#39;ECT&#39;]
+<br/></pre></div>
+</div>
+</div>
+<section id="conn-data">
+<h1>conn data<a class="headerlink" href="#conn-data" title="Link to this heading"></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>mcc = MouseConnectivityCache(resolution=100)
+structure_tree = mcc.get_structure_tree()
+annotation = mcc.get_annotation_volume()[0]
+cc_coor = []
+for x in tqdm(range(132)):
+    for y in range(80):
+        for z in range(59):
+            point = tuple((x,y,z))
+            point_id = annotation[point]
+            # print(point_id)
+            if point_id == 0:
+                continue
+            parent = structure_tree.ancestor_ids([point_id])[0][0]
+            parent_name = structure_tree.get_structures_by_id([parent])[0][&#39;acronym&#39;]
+            if parent_name.startswith(&#39;cc&#39;):
+                cc_coor.append([x,y,z])
+len(cc_coor)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+ 11%|█         | 14/132 [00:00&lt;00:01, 59.79it/s]100%|██████████| 132/132 [00:04&lt;00:00, 29.30it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2438
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># cc_coor = pd.read_csv(&#39;./cc_xyz_coor_100um.csv&#39;)
+file_path = &#39;/mnt/Data16Ta/feiyao/tracing_for_haichao/results/&#39;
+files = os.listdir(file_path)
+files = [i for i in files if &#39;npy&#39; in i]
+ctx2cc_conn_list = []
+idx = []
+for f in files:
+    ctx_region = f.split(&#39;-&#39;)[1]
+    if f.split(&#39;-&#39;)[2] != &#39;mean_mean&#39;:
+        ctx_region = f&quot;{f.split(&#39;-&#39;)[1]}-{f.split(&#39;-&#39;)[2]}&quot;
+    tmp = np.load(file_path + f)
+    conn_tmp = [tmp[x, y, z] for x, y, z in cc_coor]
+    ctx2cc_conn_list.append(conn_tmp)
+    idx.append(ctx_region)
+ctx2cc_conn = pd.DataFrame(data=ctx2cc_conn_list, index=idx, dtype=float)
+ctx2cc_conn = ctx2cc_conn.loc[:, (ctx2cc_conn != 0).any(axis=0)]
+ctx2cc_conn_raw = ctx2cc_conn.copy()
+ctx2cc_conn.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(43, 98)
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx2cc_conn = ctx2cc_conn.transpose()
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>coor = [cc_coor[i] for i in ctx2cc_conn_raw.columns]
+coor = np.array(coor)
+plt.figure(figsize=(8,4))
+plt.scatter(coor[:, 0], coor[:, 1], c=np.arange(coor.shape[0]), cmap=&#39;coolwarm&#39;)
+plt.gca().invert_yaxis()
+plt.colorbar()
+plt.savefig(&#39;./cc/cc_id_map.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/10_ctx_cc_connection_and_correlation_6_0.png" src="_images/10_ctx_cc_connection_and_correlation_6_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx2cc_conn.columns = range(ctx2cc_conn.shape[1])
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sns.clustermap(ctx2cc_conn, figsize=(10,10))
+# sns.heatmap(ctx2cc_conn)
+plt.savefig(&#39;./cc/cc_raw_heatmap.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/10_ctx_cc_connection_and_correlation_8_0.png" src="_images/10_ctx_cc_connection_and_correlation_8_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>columns_to_drop = [col for col in ctx2cc_conn.columns if (ctx2cc_conn[col] &lt; 0.001).all()]
+columns_to_drop
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;ECT&#39;,
+ &#39;SSp-un&#39;,
+ &#39;SSp-tr&#39;,
+ &#39;SSp-n&#39;,
+ &#39;AIv&#39;,
+ &#39;VISrl&#39;,
+ &#39;AIp&#39;,
+ &#39;PERI&#39;,
+ &#39;SSp-ul&#39;,
+ &#39;GU&#39;,
+ &#39;VISp&#39;,
+ &#39;MOs&#39;,
+ &#39;RSPagl&#39;,
+ &#39;MOp&#39;,
+ &#39;VISC&#39;,
+ &#39;SSs&#39;,
+ &#39;SSp-ll&#39;,
+ &#39;AId&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>rows_to_drop = ctx2cc_conn[(ctx2cc_conn &lt; 0.001).all(axis=1)].index
+len(rows_to_drop)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+67
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx2cc_conn.drop(columns=columns_to_drop, inplace=True)
+ctx2cc_conn.drop(index=rows_to_drop, inplace=True)
+# ctx2cc_conn
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import scipy.cluster.hierarchy as sch
+import numpy as np
+
+# Customized rows and columns level clustering
+# Here, use the Linkage function of Scipy to generate hierarchical clustering
+row_linkage = sch.linkage(ctx2cc_conn, method=&#39;single&#39;)
+col_linkage = sch.linkage(ctx2cc_conn.T, method=&#39;single&#39;)
+
+# Draw clustermap with custom cluster
+g = sns.clustermap(ctx2cc_conn, row_linkage=row_linkage, col_linkage=col_linkage)
+plt.setp(g.ax_heatmap.xaxis.get_majorticklabels(), rotation=90)
+plt.savefig(&#39;./cc/cc_sel_heatmap.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/10_ctx_cc_connection_and_correlation_12_0.png" src="_images/10_ctx_cc_connection_and_correlation_12_0.png" />
+</div>
+</div>
+<section id="cluster-cc">
+<h2>cluster cc<a class="headerlink" href="#cluster-cc" title="Link to this heading"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from scipy.cluster import hierarchy
+col_linkage = g.dendrogram_col.linkage
+col_clusters = hierarchy.fcluster(col_linkage, t=0.5, criterion=&#39;distance&#39;)
+reordered_cols = g.dendrogram_col.reordered_ind
+col_labels = np.array(ctx2cc_conn.columns)[reordered_cols]
+col_labels
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([&#39;RSPv&#39;, &#39;RSPd&#39;, &#39;VISpm&#39;, &#39;VISa&#39;, &#39;VISam&#39;, &#39;SSp-bfd&#39;, &#39;VISpor&#39;,
+       &#39;VISli&#39;, &#39;TEa&#39;, &#39;VISpl&#39;, &#39;VISl&#39;, &#39;AUDv&#39;, &#39;VISal&#39;, &#39;AUDpo&#39;, &#39;AUDp&#39;,
+       &#39;AUDd&#39;, &#39;FRP&#39;, &#39;ORBl&#39;, &#39;ORBvl&#39;, &#39;ORBm&#39;, &#39;PL&#39;, &#39;ILA&#39;, &#39;SSp-m&#39;,
+       &#39;ACAd&#39;, &#39;ACAv&#39;], dtype=object)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Use UMAP for 2D dimension reduction
+reducer = umap.UMAP(n_components=2, random_state=0)
+embedding = reducer.fit_transform(ctx2cc_conn)
+
+# Classification of UMAP results
+n_clusters=3
+
+from sklearn.mixture import GaussianMixture
+# Use GMM for clustering
+gmm = GaussianMixture(n_components=n_clusters, random_state=0)
+gmm.fit(embedding)
+clusters = gmm.predict(embedding)
+
+# Convert Embedding to DataFrame for easy operation
+embedding_df = pd.DataFrame(embedding, index=ctx2cc_conn.index, columns=[&#39;UMAP1&#39;, &#39;UMAP2&#39;])
+embedding_df[&#39;Cluster&#39;] = clusters
+
+# Get discrete color board
+# color_list = plt.cm.tab10(np.linspace(0, 1, n_clusters))
+color_list = [&#39;#1f77b4&#39;, &#39;#ff7f0e&#39;, &#39;#2ca02c&#39;, &#39;#d62728&#39;, &#39;#9467bd&#39;,&#39;#8c564b&#39;, &#39;#17becf&#39;, &#39;#e377c2&#39;]
+
+fig, ax = plt.subplots(figsize=(6, 5))
+from scipy.spatial import ConvexHull
+from shapely.geometry import Polygon
+# Draw a 2D UMAP diagram with clustering results
+for cluster in range(n_clusters):
+    subset = embedding_df[embedding_df[&#39;Cluster&#39;] == cluster]
+    points = subset[[&#39;UMAP1&#39;, &#39;UMAP2&#39;]].values
+
+    # Get color
+    color = color_list[cluster]
+
+    # Draw a scattered point map
+    ax.scatter(subset[&#39;UMAP1&#39;], subset[&#39;UMAP2&#39;], color=color, label=f&#39;cc{cluster+1}&#39;, s=50, alpha=1,
+                )
+
+    # Calculate and draw the expanded and smooth convex bag
+    if len(points) &gt; 2:  # Ne convex bags require at least 3 points
+        hull = ConvexHull(points)
+        hull_points = points[hull.vertices]
+
+        # Create polygon and expand
+        poly = Polygon(hull_points).buffer(0.2)
+        # Make the polygon smoother
+        smooth_poly = poly.buffer(0.2, resolution=16, join_style=1).buffer(-0.2, resolution=16, join_style=1)
+        # Get the coordinates of polygonal shape
+        x, y = smooth_poly.exterior.xy
+        # Draw a smooth polygon
+        ax.fill(x, y, alpha=0.3, fc=color, ec=color)
+
+plt.legend(loc=&#39;center left&#39;, bbox_to_anchor=(1, 0.5))
+plt.xticks([])
+plt.yticks([])
+plt.xlabel(&#39;UMAP1&#39;)
+plt.ylabel(&#39;UMAP2&#39;)
+plt.tight_layout()
+# plt.savefig(&#39;./cc/cc_conn_umap.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/10_ctx_cc_connection_and_correlation_15_0.png" src="_images/10_ctx_cc_connection_and_correlation_15_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>embedding_df[&#39;Cluster&#39;] = embedding_df[&#39;Cluster&#39;].astype(str)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cc_df_sel = pd.DataFrame(columns=[&#39;x&#39;, &#39;y&#39;, &#39;c&#39;])
+coor = [cc_coor[i] for i in embedding_df.index]
+coor = np.array(coor)
+cc_df_sel[[&#39;x&#39;, &#39;y&#39;]] = coor[:, :2]
+cc_df_sel[&#39;c&#39;] = embedding_df[&#39;Cluster&#39;].values
+cc_df_sel
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+      <th>c</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>43</td>
+      <td>35</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>43</td>
+      <td>36</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>43</td>
+      <td>37</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>43</td>
+      <td>38</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>44</td>
+      <td>36</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>44</td>
+      <td>37</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>50</td>
+      <td>30</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>51</td>
+      <td>29</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>52</td>
+      <td>29</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>53</td>
+      <td>26</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>53</td>
+      <td>28</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>54</td>
+      <td>26</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>55</td>
+      <td>25</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>68</td>
+      <td>18</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>69</td>
+      <td>18</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>70</td>
+      <td>17</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>70</td>
+      <td>18</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>71</td>
+      <td>17</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>71</td>
+      <td>18</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>72</td>
+      <td>17</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>72</td>
+      <td>18</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>73</td>
+      <td>16</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>73</td>
+      <td>17</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>73</td>
+      <td>18</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>74</td>
+      <td>16</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>74</td>
+      <td>17</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>74</td>
+      <td>18</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>75</td>
+      <td>16</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>75</td>
+      <td>17</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>75</td>
+      <td>18</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>76</td>
+      <td>17</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cc_df_all = pd.DataFrame(columns=[&#39;x&#39;, &#39;y&#39;])
+coor = [cc_coor[i] for i in ctx2cc_conn_raw.columns]
+coor = np.array(coor)
+cc_df_all[[&#39;x&#39;, &#39;y&#39;]] = coor[:, :2]
+# cc_df_tmp[&#39;c&#39;] = embedding_df[&#39;Cluster&#39;].values
+cc_df_all
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>43</td>
+      <td>33</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>43</td>
+      <td>34</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>43</td>
+      <td>35</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>43</td>
+      <td>36</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>43</td>
+      <td>37</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>93</th>
+      <td>74</td>
+      <td>18</td>
+    </tr>
+    <tr>
+      <th>94</th>
+      <td>75</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>75</td>
+      <td>17</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>75</td>
+      <td>18</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>76</td>
+      <td>17</td>
+    </tr>
+  </tbody>
+</table>
+<p>98 rows × 2 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cc_df_tmp = pd.merge(cc_df_all, cc_df_sel, on=[&#39;x&#39;, &#39;y&#39;], how=&#39;left&#39;)
+cc_df_tmp
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x</th>
+      <th>y</th>
+      <th>c</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>43</td>
+      <td>33</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>43</td>
+      <td>34</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>43</td>
+      <td>35</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>43</td>
+      <td>36</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>43</td>
+      <td>37</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>93</th>
+      <td>74</td>
+      <td>18</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>94</th>
+      <td>75</td>
+      <td>16</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>75</td>
+      <td>17</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>75</td>
+      <td>18</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>97</th>
+      <td>76</td>
+      <td>17</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>98 rows × 3 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>categories = cc_df_sel[&#39;c&#39;].unique()
+# Draw the scattered point for each category
+plt.scatter(cc_df_all[&#39;x&#39;], cc_df_all[&#39;y&#39;], color = &#39;#D3D3D3&#39;)
+cm = [&#39;#2ca02c&#39;, &#39;#2377b4&#39;, &#39;#ff7f0e&#39;]
+i=0
+for category in categories:
+    subset = cc_df_sel[cc_df_sel[&#39;c&#39;] == category]
+    plt.scatter(subset[&#39;x&#39;], subset[&#39;y&#39;], label=f&#39;cc{int(category)+1}&#39;, color=cm[i])
+    i=i+1
+plt.legend()
+# plt.savefig(&#39;./cc/cc.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.legend.Legend at 0x7fe944493fa0&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/10_ctx_cc_connection_and_correlation_20_1.png" src="_images/10_ctx_cc_connection_and_correlation_20_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>th_cluster_order = []
+num = []
+for i in range(3):
+    tmp = embedding_df[embedding_df[&#39;Cluster&#39;] == str(i)]
+    th_cluster_order = th_cluster_order + tmp.index.tolist()
+    num.append(len(tmp))
+    # print(tmp.index.tolist())
+th_cluster_order
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[776,
+ 838,
+ 905,
+ 947,
+ 962,
+ 1009,
+ 1058,
+ 1915,
+ 1975,
+ 2027,
+ 2035,
+ 2088,
+ 2095,
+ 2148,
+ 2155,
+ 2205,
+ 2214,
+ 2221,
+ 2267,
+ 2276,
+ 2283,
+ 2332,
+ 2341,
+ 2349,
+ 2405,
+ 181,
+ 189,
+ 196,
+ 203,
+ 291,
+ 297]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx2cc_conn = ctx2cc_conn.loc[th_cluster_order, col_labels]
+cluster_labels = [&#39;cc1&#39;]*num[0] + [&#39;cc2&#39;]*num[1] + [&#39;cc3&#39;]*num[2]
+
+ctx2cc_conn[&#39;cluster&#39;] = cluster_labels
+ctx2cc_conn_cluster_mean = ctx2cc_conn.groupby(&#39;cluster&#39;).mean()
+sns.clustermap(ctx2cc_conn_cluster_mean, figsize=(10, 3))
+# plt.savefig(&#39;./cc/ctx_cc_conn.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;seaborn.matrix.ClusterGrid at 0x7fe944454220&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/10_ctx_cc_connection_and_correlation_22_1.png" src="_images/10_ctx_cc_connection_and_correlation_22_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx2cc_conn_cluster_mean.to_csv(&#39;./data/ctx_cc_conn_filtered.csv&#39;)
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="gene-exp-data">
+<h1>gene exp data<a class="headerlink" href="#gene-exp-data" title="Link to this heading"></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_in = sc.read_h5ad(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/adata_processed.h5ad&#39;)
+allen_region = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/allen_region.csv&#39;)
+adata_in.obs[&#39;region&#39;] = allen_region[&#39;region&#39;].values
+meta = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/cell_metadata_with_cluster_annotation.csv&#39;)
+meta = meta.set_index(&#39;cell_label&#39;)
+meta = meta.loc[adata_in.obs.index.to_list()]
+adata_in.obs[&#39;cell_type&#39;] = meta[&#39;class&#39;].to_list()
+
+adata_out = sc.read_h5ad(&#39;/mnt/Data18Td/Data/haichao/merfish_raw_data_zxw3/out_cell_adata/adata_out_cell_distance_q0.3/after_qc/Zhuang-ABCA-3.001.h5ad&#39;)
+# adata_out = sc.read_h5ad(&#39;/mnt/Data18Td/Data/haichao/merfish_raw_data_zxw3/out_cell_adata/after_qc/Zhuang-ABCA-3.001.h5ad&#39;)
+adata_out.obs[&#39;region&#39;] = adata_in.obs.loc[adata_out.obs_names][&#39;region&#39;].values
+
+adata_in = adata_in[adata_in.obs[&#39;cell_type&#39;].str.contains(&#39;Glut&#39;)]
+adata_out.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>totalRNA</th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>n_genes_by_counts</th>
+      <th>total_counts</th>
+      <th>region</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>100008170567769574864159172860058606533</th>
+      <td>175</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>19.063883</td>
+      <td>33.423346</td>
+      <td>54.106801</td>
+      <td>100</td>
+      <td>175</td>
+      <td>MOB</td>
+    </tr>
+    <tr>
+      <th>100019036144713180485707288452329906643</th>
+      <td>373</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>44.290637</td>
+      <td>63.872748</td>
+      <td>53.902462</td>
+      <td>189</td>
+      <td>373</td>
+      <td>NDB</td>
+    </tr>
+    <tr>
+      <th>10002377904544842423531242460024745973</th>
+      <td>277</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>63.860525</td>
+      <td>7.998013</td>
+      <td>54.043841</td>
+      <td>126</td>
+      <td>277</td>
+      <td>RSPd2/3</td>
+    </tr>
+    <tr>
+      <th>100027648052649525810014127621472143070</th>
+      <td>435</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>113.480480</td>
+      <td>41.056674</td>
+      <td>54.349928</td>
+      <td>165</td>
+      <td>435</td>
+      <td>arb</td>
+    </tr>
+    <tr>
+      <th>100029875144524072265954931895494067096</th>
+      <td>60</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>11.572676</td>
+      <td>37.921554</td>
+      <td>54.370336</td>
+      <td>39</td>
+      <td>60</td>
+      <td>MOB</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>99961718914838042706216314325649765172</th>
+      <td>627</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>113.199100</td>
+      <td>23.661374</td>
+      <td>54.096322</td>
+      <td>157</td>
+      <td>627</td>
+      <td>CENT3</td>
+    </tr>
+    <tr>
+      <th>9996242280180655885872867452807576494</th>
+      <td>157</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>86.896566</td>
+      <td>18.326938</td>
+      <td>54.027272</td>
+      <td>100</td>
+      <td>157</td>
+      <td>SCop</td>
+    </tr>
+    <tr>
+      <th>999921392501518309214993564089572563</th>
+      <td>97</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>21.082878</td>
+      <td>31.635078</td>
+      <td>54.090905</td>
+      <td>67</td>
+      <td>97</td>
+      <td>ORBm1</td>
+    </tr>
+    <tr>
+      <th>99995909784199304193294645747252265238</th>
+      <td>154</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>111.605478</td>
+      <td>22.417974</td>
+      <td>54.070819</td>
+      <td>93</td>
+      <td>154</td>
+      <td>CENT3</td>
+    </tr>
+    <tr>
+      <th>99996568769251334694329666788053033728</th>
+      <td>200</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>112.945756</td>
+      <td>31.433985</td>
+      <td>54.093405</td>
+      <td>95</td>
+      <td>200</td>
+      <td>CENT3</td>
+    </tr>
+  </tbody>
+</table>
+<p>83602 rows × 8 columns</p>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>gene_com = list(set(adata_in.var_names) &amp; set(adata_out.var_names))
+adata_in = adata_in[:, gene_com]
+adata_out = adata_out[:, gene_com]
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_ctx = adata_in[adata_in.obs[&#39;region&#39;].str.startswith(tuple(ctx2cc_conn_cluster_mean.columns))]
+adata_ctx
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+View of AnnData object with n_obs × n_vars = 67823 × 1111
+    obs: &#39;brain_section_label&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;x_ccf&#39;, &#39;y_ccf&#39;, &#39;z_ccf&#39;, &#39;region&#39;, &#39;cell_type&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span>ctx1 = [&#39;SSp-m&#39;, &#39;ACAd&#39;, &#39;ACAv&#39;]
+ctx2=[&#39;RSPv&#39;,&#39;RSPd&#39;, &#39;VISpm&#39;, &#39;VISa&#39;, &#39;VISam&#39;, &#39;SSp-bfd&#39;, &#39;VISpor&#39;, &#39;VISli&#39;, &#39;TEa&#39;, &#39;VISpl&#39;, &#39;VISl&#39;, &#39;AUDv&#39;, &#39;VISal&#39;, &#39;AUDpo&#39;, &#39;AUDp&#39;, &#39;AUDd&#39;]
+ctx3 = [&#39;FRP&#39;, &#39;ORBl&#39;, &#39;ORBvl&#39;, &#39;ORBm&#39;, &#39;PL&#39;, &#39;ILA&#39;]
+adata_ctx.obs[&#39;cc_ctx&#39;] = None
+adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.startswith(tuple(ctx1)), &#39;cc_ctx&#39;] = &#39;ctx1&#39;
+adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.startswith(tuple(ctx2)), &#39;cc_ctx&#39;] = &#39;ctx2&#39;
+adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.startswith(tuple(ctx3)), &#39;cc_ctx&#39;] = &#39;ctx3&#39;
+# adata_ctx.obs.loc[adata_ctx.obs[&#39;region&#39;].str.startswith(tuple(ctx4[&#39;feature&#39;])), &#39;cc_ctx&#39;] = &#39;ctx4&#39;
+adata_ctx = adata_ctx[adata_ctx.obs[&#39;cc_ctx&#39;].notna()]
+
+def split_string(s):
+    parts = re.split(r&#39;(\d+)&#39;, s)
+    return parts[0] if parts else &#39;&#39;
+adata_ctx.obs[&#39;region_corr&#39;] = adata_ctx.obs[&#39;region&#39;].apply(split_string)
+adata_ctx.obs
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+      <th>region</th>
+      <th>cell_type</th>
+      <th>cc_ctx</th>
+      <th>region_corr</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>26411547786725657279968630020392489253</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>70.979368</td>
+      <td>44.436003</td>
+      <td>12.009219</td>
+      <td>7.097937</td>
+      <td>4.443600</td>
+      <td>1.200922</td>
+      <td>TEa5</td>
+      <td>02 NP-CT-L6b Glut</td>
+      <td>ctx2</td>
+      <td>TEa</td>
+    </tr>
+    <tr>
+      <th>51881204226374601340923791448380690325</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>71.048105</td>
+      <td>43.963880</td>
+      <td>11.994586</td>
+      <td>7.104811</td>
+      <td>4.396388</td>
+      <td>1.199459</td>
+      <td>TEa5</td>
+      <td>02 NP-CT-L6b Glut</td>
+      <td>ctx2</td>
+      <td>TEa</td>
+    </tr>
+    <tr>
+      <th>9451154036366067416684391406873704139</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>70.906348</td>
+      <td>44.496406</td>
+      <td>12.010524</td>
+      <td>7.090635</td>
+      <td>4.449641</td>
+      <td>1.201052</td>
+      <td>TEa5</td>
+      <td>01 IT-ET Glut</td>
+      <td>ctx2</td>
+      <td>TEa</td>
+    </tr>
+    <tr>
+      <th>171871543800699640490603639355149752394</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>71.407038</td>
+      <td>43.722307</td>
+      <td>11.991027</td>
+      <td>7.140704</td>
+      <td>4.372231</td>
+      <td>1.199103</td>
+      <td>TEa5</td>
+      <td>01 IT-ET Glut</td>
+      <td>ctx2</td>
+      <td>TEa</td>
+    </tr>
+    <tr>
+      <th>103032537075799430231760598323601697566</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>71.756868</td>
+      <td>42.845081</td>
+      <td>11.969093</td>
+      <td>7.175687</td>
+      <td>4.284508</td>
+      <td>1.196909</td>
+      <td>TEa5</td>
+      <td>01 IT-ET Glut</td>
+      <td>ctx2</td>
+      <td>TEa</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>76782871153522898745220481389975181375</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>99.188067</td>
+      <td>15.861129</td>
+      <td>38.190379</td>
+      <td>9.918807</td>
+      <td>1.586113</td>
+      <td>3.819038</td>
+      <td>RSPd2/3</td>
+      <td>01 IT-ET Glut</td>
+      <td>ctx2</td>
+      <td>RSPd</td>
+    </tr>
+    <tr>
+      <th>787969273575687407995158747342318857</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>99.457911</td>
+      <td>15.644515</td>
+      <td>38.208613</td>
+      <td>9.945791</td>
+      <td>1.564451</td>
+      <td>3.820861</td>
+      <td>RSPd2/3</td>
+      <td>01 IT-ET Glut</td>
+      <td>ctx2</td>
+      <td>RSPd</td>
+    </tr>
+    <tr>
+      <th>90320078306590901695895422976195202341</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>99.669320</td>
+      <td>15.954429</td>
+      <td>38.226878</td>
+      <td>9.966932</td>
+      <td>1.595443</td>
+      <td>3.822688</td>
+      <td>RSPd1</td>
+      <td>01 IT-ET Glut</td>
+      <td>ctx2</td>
+      <td>RSPd</td>
+    </tr>
+    <tr>
+      <th>94251932557658106169391763576538731088</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>99.532633</td>
+      <td>16.481350</td>
+      <td>38.226079</td>
+      <td>9.953263</td>
+      <td>1.648135</td>
+      <td>3.822608</td>
+      <td>RSPd1</td>
+      <td>01 IT-ET Glut</td>
+      <td>ctx2</td>
+      <td>RSPd</td>
+    </tr>
+    <tr>
+      <th>94737806914081356525582745432967518089</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>99.422280</td>
+      <td>16.628568</td>
+      <td>38.220187</td>
+      <td>9.942228</td>
+      <td>1.662857</td>
+      <td>3.822019</td>
+      <td>RSPd2/3</td>
+      <td>01 IT-ET Glut</td>
+      <td>ctx2</td>
+      <td>RSPd</td>
+    </tr>
+  </tbody>
+</table>
+<p>67823 rows × 11 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>regions = adata_ctx.obs[&#39;region_corr&#39;].values
+gene_expression = adata_ctx.X.A
+# Create a DataFrame, integrate regional information and gene expression matrix
+df = pd.DataFrame(gene_expression, columns=adata_ctx.var_names)
+df[&#39;region_corr&#39;] = regions
+#Colonally group and calculate the average gene expression
+ctx_region_mean_expression = df.groupby(&#39;region_corr&#39;).mean()
+# Convert the result to the matrix format of the area*gene
+ctx_region_gene_matrix = ctx_region_mean_expression.values
+ctx_region_gene_matrix.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(25, 1111)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_cc = adata_out[adata_out.obs[&#39;region&#39;].str.startswith(&#39;cc&#39;)]
+tmp = adata_cc.copy()
+idx = []
+coordinate = cc_df_tmp[[&#39;x&#39;, &#39;y&#39;]].values
+kdtree = cKDTree(coordinate)
+for coord in tqdm(adata_cc.obs[[&#39;x&#39;, &#39;y&#39;]].values):
+    # Query recent neighbor indexes
+    _, nearest_index = kdtree.query(coord)
+    idx.append(nearest_index)
+plt.figure(figsize=(9,5))
+### match the cc cluster
+adata_cc.obs[&#39;NT_index&#39;] = idx
+adata_cc.obs[&#39;cc&#39;] = cc_df_tmp.loc[adata_cc.obs[&#39;NT_index&#39;]][&#39;c&#39;].values
+adata_cc = adata_cc[adata_cc.obs[&#39;cc&#39;].notna()]
+adata_cc.obs[&#39;cc&#39;] = &#39;cc&#39;+((adata_cc.obs[&#39;cc&#39;]).astype(int)+1).astype(str)
+#### plot
+categories = adata_cc.obs[&#39;cc&#39;].unique()
+plt.scatter(adata_out.obs[&#39;x&#39;], adata_out.obs[&#39;y&#39;], s=1, c=&#39;#d3d3d3&#39;)
+plt.scatter(tmp.obs[&#39;x&#39;], tmp.obs[&#39;y&#39;], s=1, c=&#39;#8f8f8f&#39;)
+
+# Draw the scattered point for each category
+cm = [&#39;#ff7f0e&#39;, &#39;#2ca02c&#39;, &#39;#2377b4&#39;]
+# cm = [&#39;#6597b9&#39;, &#39;#6bad6b&#39;, &#39;#e9a161&#39;]
+i=0
+for category in categories:
+    subset = adata_cc[adata_cc.obs[&#39;cc&#39;] == category]
+    plt.scatter(subset.obs[&#39;x&#39;], subset.obs[&#39;y&#39;], label=category, s=3, c=cm[i])
+    # print(f&#39;cc_{int(category)}&#39;)
+    i=i+1
+plt.legend()
+plt.gca().invert_yaxis()
+# plt.savefig(&#39;cc_area.png&#39;, dpi=600)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+100%|██████████| 1187/1187 [00:00&lt;00:00, 32725.57it/s]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/10_ctx_cc_connection_and_correlation_30_1.png" src="_images/10_ctx_cc_connection_and_correlation_30_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_cc.obs[&#39;region_corr&#39;] = adata_cc.obs[&#39;cc&#39;]
+adata_cc.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>totalRNA</th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>n_genes_by_counts</th>
+      <th>total_counts</th>
+      <th>region</th>
+      <th>NT_index</th>
+      <th>cc</th>
+      <th>region_corr</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>100699349310225087355794400029769253599</th>
+      <td>289</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>67.394394</td>
+      <td>17.726380</td>
+      <td>54.104598</td>
+      <td>138</td>
+      <td>289</td>
+      <td>ccb</td>
+      <td>74</td>
+      <td>cc2</td>
+      <td>cc2</td>
+    </tr>
+    <tr>
+      <th>100902451446327482578212394659210886364</th>
+      <td>65</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>43.321564</td>
+      <td>36.220293</td>
+      <td>54.177884</td>
+      <td>47</td>
+      <td>65</td>
+      <td>ccg</td>
+      <td>3</td>
+      <td>cc3</td>
+      <td>cc3</td>
+    </tr>
+    <tr>
+      <th>101091759418520737635298400963209655403</th>
+      <td>282</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>70.727172</td>
+      <td>17.820763</td>
+      <td>54.078071</td>
+      <td>104</td>
+      <td>282</td>
+      <td>ccs</td>
+      <td>83</td>
+      <td>cc2</td>
+      <td>cc2</td>
+    </tr>
+    <tr>
+      <th>101177908791681271480760545204792047403</th>
+      <td>357</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>53.695160</td>
+      <td>26.428293</td>
+      <td>54.015113</td>
+      <td>124</td>
+      <td>357</td>
+      <td>ccb</td>
+      <td>43</td>
+      <td>cc1</td>
+      <td>cc1</td>
+    </tr>
+    <tr>
+      <th>101227086293358235805510357201736468429</th>
+      <td>239</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>41.673989</td>
+      <td>36.956672</td>
+      <td>54.114538</td>
+      <td>115</td>
+      <td>239</td>
+      <td>ccg</td>
+      <td>4</td>
+      <td>cc3</td>
+      <td>cc3</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>96560296481515876710645847659207426556</th>
+      <td>58</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>43.282826</td>
+      <td>35.133529</td>
+      <td>54.189423</td>
+      <td>39</td>
+      <td>58</td>
+      <td>ccg</td>
+      <td>2</td>
+      <td>cc3</td>
+      <td>cc3</td>
+    </tr>
+    <tr>
+      <th>96578052950946015015587401781979033053</th>
+      <td>101</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>72.815062</td>
+      <td>15.920409</td>
+      <td>54.055571</td>
+      <td>59</td>
+      <td>101</td>
+      <td>ccs</td>
+      <td>88</td>
+      <td>cc2</td>
+      <td>cc2</td>
+    </tr>
+    <tr>
+      <th>96728852215317096694357846973382843058</th>
+      <td>100</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>41.845540</td>
+      <td>34.861770</td>
+      <td>54.158130</td>
+      <td>69</td>
+      <td>100</td>
+      <td>ccg</td>
+      <td>2</td>
+      <td>cc3</td>
+      <td>cc3</td>
+    </tr>
+    <tr>
+      <th>97838821125536355149234993233022684525</th>
+      <td>133</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>70.380641</td>
+      <td>18.437770</td>
+      <td>54.082850</td>
+      <td>83</td>
+      <td>133</td>
+      <td>ccb</td>
+      <td>80</td>
+      <td>cc2</td>
+      <td>cc2</td>
+    </tr>
+    <tr>
+      <th>98228718176791721432106544380776578140</th>
+      <td>115</td>
+      <td>Zhuang-ABCA-3.001</td>
+      <td>42.396503</td>
+      <td>36.154184</td>
+      <td>54.151896</td>
+      <td>68</td>
+      <td>115</td>
+      <td>ccg</td>
+      <td>3</td>
+      <td>cc3</td>
+      <td>cc3</td>
+    </tr>
+  </tbody>
+</table>
+<p>498 rows × 11 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>adata_cc_ctx = ad.concat([adata_ctx, adata_cc])
+adata_cc_ctx
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AnnData object with n_obs × n_vars = 68321 × 1111
+    obs: &#39;brain_section_label&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;region&#39;, &#39;region_corr&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.pp.normalize_total(adata_cc_ctx, target_sum=1e4)
+sc.pp.log1p(adata_cc_ctx)
+adata_cc_ctx
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AnnData object with n_obs × n_vars = 68321 × 1111
+    obs: &#39;brain_section_label&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;region&#39;, &#39;region_corr&#39;
+    uns: &#39;log1p&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>regions = adata_cc_ctx.obs[&#39;region_corr&#39;].values
+gene_expression = adata_cc_ctx.X.A
+
+# Create a DataFrame to integrate regional information and gene expression matrix together
+df = pd.DataFrame(gene_expression, columns=adata_cc_ctx.var_names)
+df[&#39;region_corr&#39;] = regions
+
+# Calculate the average gene expression by regional grouping and calculate the average gene
+region_mean_expression = df.groupby(&#39;region_corr&#39;).mean()
+# Convert the result to the matrix format of the regional*gene
+region_gene_matrix = region_mean_expression.values
+region_gene_matrix.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(28, 1111)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>corr_all = np.corrcoef(region_gene_matrix)
+corr_all.shape
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(28, 28)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cc = [f&#39;cc{i+1}&#39; for i in range(n_clusters)]
+cc
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;cc1&#39;, &#39;cc2&#39;, &#39;cc3&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>cc_subregions = adata_cc_ctx[adata_cc_ctx.obs[&#39;region&#39;].str.startswith(&#39;cc&#39;)].obs[&#39;region_corr&#39;].unique()
+ctx_subregions = adata_cc_ctx[adata_cc_ctx.obs[&#39;region&#39;].str.startswith(tuple(ctx_43_regions))].obs[&#39;region_corr&#39;].unique()
+
+region_labels = region_mean_expression.index
+ctx_indices = [i for i, label in enumerate(region_labels) if label in ctx_subregions]
+cc_indices = [i for i, label in enumerate(region_labels) if label in cc_subregions]
+corr = corr_all[np.ix_(ctx_indices, cc_indices)]
+
+ctx_regions_df = [region_labels[i] for i in ctx_indices]
+cc_regions_df = [region_labels[i] for i in cc_indices]
+corr_df = pd.DataFrame(corr, index=ctx_regions_df, columns=cc_regions_df)
+corr_df.columns = cc
+corr_df
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>cc1</th>
+      <th>cc2</th>
+      <th>cc3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>ACAd</th>
+      <td>0.278914</td>
+      <td>0.262625</td>
+      <td>0.301169</td>
+    </tr>
+    <tr>
+      <th>ACAv</th>
+      <td>0.281494</td>
+      <td>0.265369</td>
+      <td>0.304893</td>
+    </tr>
+    <tr>
+      <th>AUDd</th>
+      <td>0.288976</td>
+      <td>0.261093</td>
+      <td>0.312110</td>
+    </tr>
+    <tr>
+      <th>AUDp</th>
+      <td>0.298039</td>
+      <td>0.275037</td>
+      <td>0.320481</td>
+    </tr>
+    <tr>
+      <th>AUDpo</th>
+      <td>0.289891</td>
+      <td>0.262205</td>
+      <td>0.313013</td>
+    </tr>
+    <tr>
+      <th>AUDv</th>
+      <td>0.298164</td>
+      <td>0.277583</td>
+      <td>0.321607</td>
+    </tr>
+    <tr>
+      <th>FRP</th>
+      <td>0.277721</td>
+      <td>0.246925</td>
+      <td>0.296658</td>
+    </tr>
+    <tr>
+      <th>ILA</th>
+      <td>0.247419</td>
+      <td>0.234853</td>
+      <td>0.275192</td>
+    </tr>
+    <tr>
+      <th>ORBl</th>
+      <td>0.289135</td>
+      <td>0.269547</td>
+      <td>0.309606</td>
+    </tr>
+    <tr>
+      <th>ORBm</th>
+      <td>0.269378</td>
+      <td>0.250819</td>
+      <td>0.295708</td>
+    </tr>
+    <tr>
+      <th>ORBvl</th>
+      <td>0.281068</td>
+      <td>0.254882</td>
+      <td>0.303450</td>
+    </tr>
+    <tr>
+      <th>PL</th>
+      <td>0.261306</td>
+      <td>0.244187</td>
+      <td>0.287497</td>
+    </tr>
+    <tr>
+      <th>RSPd</th>
+      <td>0.292823</td>
+      <td>0.274363</td>
+      <td>0.312567</td>
+    </tr>
+    <tr>
+      <th>RSPv</th>
+      <td>0.283483</td>
+      <td>0.282744</td>
+      <td>0.301130</td>
+    </tr>
+    <tr>
+      <th>SSp-bfd</th>
+      <td>0.298980</td>
+      <td>0.278068</td>
+      <td>0.317007</td>
+    </tr>
+    <tr>
+      <th>SSp-m</th>
+      <td>0.300344</td>
+      <td>0.277375</td>
+      <td>0.317821</td>
+    </tr>
+    <tr>
+      <th>TEa</th>
+      <td>0.286117</td>
+      <td>0.262562</td>
+      <td>0.312671</td>
+    </tr>
+    <tr>
+      <th>VISa</th>
+      <td>0.290089</td>
+      <td>0.264966</td>
+      <td>0.312611</td>
+    </tr>
+    <tr>
+      <th>VISal</th>
+      <td>0.288796</td>
+      <td>0.260408</td>
+      <td>0.309858</td>
+    </tr>
+    <tr>
+      <th>VISam</th>
+      <td>0.297986</td>
+      <td>0.274052</td>
+      <td>0.324184</td>
+    </tr>
+    <tr>
+      <th>VISl</th>
+      <td>0.291718</td>
+      <td>0.268541</td>
+      <td>0.318078</td>
+    </tr>
+    <tr>
+      <th>VISli</th>
+      <td>0.274898</td>
+      <td>0.244883</td>
+      <td>0.294951</td>
+    </tr>
+    <tr>
+      <th>VISpl</th>
+      <td>0.289472</td>
+      <td>0.265645</td>
+      <td>0.313973</td>
+    </tr>
+    <tr>
+      <th>VISpm</th>
+      <td>0.299108</td>
+      <td>0.274570</td>
+      <td>0.323666</td>
+    </tr>
+    <tr>
+      <th>VISpor</th>
+      <td>0.274229</td>
+      <td>0.245647</td>
+      <td>0.298697</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>ctx2cc_conn_cluster_mean = pd.read_csv(&#39;./data/ctx_cc_conn_filtered.csv&#39;)
+ctx2cc_conn_cluster_mean = ctx2cc_conn_cluster_mean.transpose()
+ctx2cc_conn_cluster_mean = ctx2cc_conn_cluster_mean.loc[corr_df.index]
+ctx2cc_conn_cluster_mean
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>cluster</th>
+      <th>cc1</th>
+      <th>cc2</th>
+      <th>cc3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>ACAd</th>
+      <td>0.000454</td>
+      <td>3.466430e-05</td>
+      <td>9.106244e-05</td>
+    </tr>
+    <tr>
+      <th>ACAv</th>
+      <td>0.000533</td>
+      <td>2.746207e-05</td>
+      <td>9.169748e-05</td>
+    </tr>
+    <tr>
+      <th>AUDd</th>
+      <td>0.000002</td>
+      <td>6.115146e-04</td>
+      <td>1.393698e-06</td>
+    </tr>
+    <tr>
+      <th>AUDp</th>
+      <td>0.000003</td>
+      <td>5.699260e-04</td>
+      <td>4.200837e-06</td>
+    </tr>
+    <tr>
+      <th>AUDpo</th>
+      <td>0.000003</td>
+      <td>5.697359e-04</td>
+      <td>4.588037e-06</td>
+    </tr>
+    <tr>
+      <th>AUDv</th>
+      <td>0.000007</td>
+      <td>4.365286e-04</td>
+      <td>8.039079e-06</td>
+    </tr>
+    <tr>
+      <th>FRP</th>
+      <td>0.000018</td>
+      <td>3.140131e-07</td>
+      <td>1.314226e-03</td>
+    </tr>
+    <tr>
+      <th>ILA</th>
+      <td>0.000013</td>
+      <td>1.089208e-06</td>
+      <td>7.981067e-04</td>
+    </tr>
+    <tr>
+      <th>ORBl</th>
+      <td>0.000029</td>
+      <td>6.969948e-07</td>
+      <td>1.154751e-03</td>
+    </tr>
+    <tr>
+      <th>ORBm</th>
+      <td>0.000014</td>
+      <td>8.764364e-07</td>
+      <td>1.038650e-03</td>
+    </tr>
+    <tr>
+      <th>ORBvl</th>
+      <td>0.000018</td>
+      <td>8.880653e-07</td>
+      <td>1.177964e-03</td>
+    </tr>
+    <tr>
+      <th>PL</th>
+      <td>0.000038</td>
+      <td>1.144148e-06</td>
+      <td>7.018622e-04</td>
+    </tr>
+    <tr>
+      <th>RSPd</th>
+      <td>0.000019</td>
+      <td>7.062989e-04</td>
+      <td>1.888608e-06</td>
+    </tr>
+    <tr>
+      <th>RSPv</th>
+      <td>0.000049</td>
+      <td>8.105875e-04</td>
+      <td>3.025978e-06</td>
+    </tr>
+    <tr>
+      <th>SSp-bfd</th>
+      <td>0.000019</td>
+      <td>4.317370e-04</td>
+      <td>3.731170e-07</td>
+    </tr>
+    <tr>
+      <th>SSp-m</th>
+      <td>0.000799</td>
+      <td>2.815791e-06</td>
+      <td>1.012444e-05</td>
+    </tr>
+    <tr>
+      <th>TEa</th>
+      <td>0.000010</td>
+      <td>3.333817e-04</td>
+      <td>1.138775e-05</td>
+    </tr>
+    <tr>
+      <th>VISa</th>
+      <td>0.000005</td>
+      <td>7.333210e-04</td>
+      <td>5.921385e-07</td>
+    </tr>
+    <tr>
+      <th>VISal</th>
+      <td>0.000003</td>
+      <td>4.756454e-04</td>
+      <td>1.858051e-06</td>
+    </tr>
+    <tr>
+      <th>VISam</th>
+      <td>0.000006</td>
+      <td>8.601038e-04</td>
+      <td>5.310773e-07</td>
+    </tr>
+    <tr>
+      <th>VISl</th>
+      <td>0.000002</td>
+      <td>3.263364e-04</td>
+      <td>6.685498e-06</td>
+    </tr>
+    <tr>
+      <th>VISli</th>
+      <td>0.000002</td>
+      <td>4.238643e-04</td>
+      <td>9.831281e-06</td>
+    </tr>
+    <tr>
+      <th>VISpl</th>
+      <td>0.000002</td>
+      <td>2.921813e-04</td>
+      <td>1.066889e-05</td>
+    </tr>
+    <tr>
+      <th>VISpm</th>
+      <td>0.000006</td>
+      <td>5.447638e-04</td>
+      <td>4.145406e-07</td>
+    </tr>
+    <tr>
+      <th>VISpor</th>
+      <td>0.000003</td>
+      <td>4.092621e-04</td>
+      <td>1.611255e-05</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>df1_long = corr_df.reset_index().melt(id_vars=&#39;index&#39;, var_name=&#39;cc&#39;, value_name=&#39;Correlation&#39;)
+df2_long = ctx2cc_conn_cluster_mean.reset_index().melt(id_vars=&#39;index&#39;, var_name=&#39;cc&#39;, value_name=&#39;Connection_strength&#39;)
+# Merge two long format dataframe
+df_merged = pd.merge(df1_long, df2_long, on=[&#39;index&#39;, &#39;cc&#39;])
+df_merged = df_merged[df_merged[&#39;Connection_strength&#39;] &gt; 0.0001]
+# Calculate the number of phase relationships and P value
+correlation, p_value = pearsonr(df_merged[&#39;Correlation&#39;], df_merged[&#39;Connection_strength&#39;])
+
+# Draw chart
+plt.figure(figsize=(4.5, 4))
+sns.regplot(data=df_merged, x=&#39;Connection_strength&#39;, y=&#39;Correlation&#39;,
+            scatter_kws={&#39;s&#39;: 30, &#39;alpha&#39;: 1},
+            line_kws={&#39;linewidth&#39;: 0.5, &#39;color&#39;: &#39;#D8383A&#39;, &#39;linestyle&#39;: &#39;-&#39;})
+
+# Set different colors according to CC1, CC2, CC3
+colors = [&#39;#2377b4&#39;, &#39;#ff7f0e&#39;, &#39;#2ca02c&#39;]
+
+for i, c in enumerate(cc):
+    subset = df_merged[df_merged[&#39;cc&#39;] == c]
+    plt.scatter(subset[&#39;Connection_strength&#39;], subset[&#39;Correlation&#39;], s=30, color=colors[i], label=c)
+
+plt.title(f&#39;r = {correlation:.3f}, p = {p_value:.2e}&#39;, fontweight=&#39;bold&#39;)
+plt.legend()
+
+plt.tight_layout()
+# plt.show()
+# plt.savefig(&#39;cc_ctx_corr.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/10_ctx_cc_connection_and_correlation_41_0.png" src="_images/10_ctx_cc_connection_and_correlation_41_0.png" />
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, quhaichao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,2002 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ctx to th connection cluster &mdash; SpaCon_results_reproduction 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SpaCon_results_reproduction
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">ctx to th connection cluster</a></li>
+<li><a class="reference internal" href="#gene-exp-umap">gene exp umap</a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SpaCon_results_reproduction</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">ctx to th connection cluster</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/1_ctx_th_connection_and_gene_exp_cluster.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>import numpy as np
+import umap
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.datasets import load_digits
+from sklearn.cluster import KMeans
+from matplotlib import cm
+import scanpy as sc
+import seaborn as sns
+import warnings
+import matplotlib as mpl
+mpl.rcParams[&#39;pdf.fonttype&#39;] = 42
+mpl.rcParams[&#39;ps.fonttype&#39;] = 42
+warnings.filterwarnings(&#39;ignore&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># load adata and cell type
+
+adata = sc.read_h5ad(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/adata_processed.h5ad&#39;)
+allen_region = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/allen_region.csv&#39;)
+adata.obs[&#39;region&#39;] = allen_region[&#39;region&#39;].values
+# add cell type
+meta = pd.read_csv(&#39;/mnt/Data16Tc/home/haichao/code/SpaCon/Data/N_20231213_zxw/mouse_3/cell_metadata_with_cluster_annotation.csv&#39;)
+meta = meta.set_index(&#39;cell_label&#39;)
+meta = meta.loc[adata.obs.index.to_list()]
+adata.obs[&#39;cell_type&#39;] = meta[&#39;class&#39;].to_list()
+adata.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+      <th>region</th>
+      <th>cell_type</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>198904341065180396762707397604803217407</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>49.206853</td>
+      <td>44.877634</td>
+      <td>12.168155</td>
+      <td>4.920685</td>
+      <td>4.487763</td>
+      <td>1.216815</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>252199681526991424029643077826220097990</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.973992</td>
+      <td>44.813761</td>
+      <td>12.179006</td>
+      <td>4.897399</td>
+      <td>4.481376</td>
+      <td>1.217901</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>277720971126854564514249564750701518375</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.791066</td>
+      <td>44.577722</td>
+      <td>12.192707</td>
+      <td>4.879107</td>
+      <td>4.457772</td>
+      <td>1.219271</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>31551867344111790264292067056219852271</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.830489</td>
+      <td>44.426120</td>
+      <td>12.195078</td>
+      <td>4.883049</td>
+      <td>4.442612</td>
+      <td>1.219508</td>
+      <td>SSs1</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>131102494428104399865219008178262036485</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>48.308843</td>
+      <td>43.028156</td>
+      <td>12.267879</td>
+      <td>4.830884</td>
+      <td>4.302816</td>
+      <td>1.226788</td>
+      <td>SSs1</td>
+      <td>34 Immune</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>318102106429791409781741726367984532777</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.090716</td>
+      <td>69.334275</td>
+      <td>41.436743</td>
+      <td>13.109072</td>
+      <td>6.933427</td>
+      <td>4.143674</td>
+      <td>MDRNd</td>
+      <td>30 Astro-Epen</td>
+    </tr>
+    <tr>
+      <th>35262847161560382172299767067854387528</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.216032</td>
+      <td>69.494070</td>
+      <td>41.351034</td>
+      <td>13.121603</td>
+      <td>6.949407</td>
+      <td>4.135103</td>
+      <td>MDRNd</td>
+      <td>33 Vascular</td>
+    </tr>
+    <tr>
+      <th>75415866509570969932943497000463821106</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.415152</td>
+      <td>70.764504</td>
+      <td>40.800403</td>
+      <td>13.141515</td>
+      <td>7.076450</td>
+      <td>4.080040</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+    <tr>
+      <th>12350978322417280063239916106423065862</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.646167</td>
+      <td>71.182557</td>
+      <td>40.595995</td>
+      <td>13.164617</td>
+      <td>7.118256</td>
+      <td>4.059599</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+    <tr>
+      <th>327554758863546024460748891922509519354</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.658892</td>
+      <td>71.414675</td>
+      <td>40.501356</td>
+      <td>13.165889</td>
+      <td>7.141468</td>
+      <td>4.050136</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+  </tbody>
+</table>
+<p>1566842 rows × 9 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Filtering glutamatergic excitatory neurons
+
+adata = adata[adata.obs[&#39;cell_type&#39;].str.contains(&#39;Glut&#39;)]
+# adata = adata[adata.obs[&#39;cell_type&#39;].str.contains(&#39;GABA&#39;)]
+
+adata.obs
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>brain_section_label</th>
+      <th>x</th>
+      <th>y</th>
+      <th>z</th>
+      <th>x_ccf</th>
+      <th>y_ccf</th>
+      <th>z_ccf</th>
+      <th>region</th>
+      <th>cell_type</th>
+    </tr>
+    <tr>
+      <th>cell_label</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>207252950882079766503645227815929952400</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>50.597984</td>
+      <td>41.393473</td>
+      <td>12.239274</td>
+      <td>5.059798</td>
+      <td>4.139347</td>
+      <td>1.223927</td>
+      <td>SSs2/3</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>311894855078226645952213910865897976013</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>50.420950</td>
+      <td>41.271525</td>
+      <td>12.251970</td>
+      <td>5.042095</td>
+      <td>4.127152</td>
+      <td>1.225197</td>
+      <td>SSs1</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>125208524519663791324346814779771999476</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>50.959183</td>
+      <td>43.276307</td>
+      <td>12.158869</td>
+      <td>5.095918</td>
+      <td>4.327631</td>
+      <td>1.215887</td>
+      <td>SSs2/3</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>12594778395225515056477813574460470379</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>49.836112</td>
+      <td>42.209685</td>
+      <td>12.238386</td>
+      <td>4.983611</td>
+      <td>4.220968</td>
+      <td>1.223839</td>
+      <td>SSs1</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>148621603142722639702356861951538418099</th>
+      <td>Zhuang-ABCA-3.023</td>
+      <td>51.023440</td>
+      <td>42.722536</td>
+      <td>12.174236</td>
+      <td>5.102344</td>
+      <td>4.272254</td>
+      <td>1.217424</td>
+      <td>SSs2/3</td>
+      <td>01 IT-ET Glut</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>235686740179650165428728286428984964004</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.552253</td>
+      <td>69.048948</td>
+      <td>41.463859</td>
+      <td>13.155225</td>
+      <td>6.904895</td>
+      <td>4.146386</td>
+      <td>MDRNd</td>
+      <td>24 MY Glut</td>
+    </tr>
+    <tr>
+      <th>286400092677302831060643120351923719874</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.640659</td>
+      <td>70.151099</td>
+      <td>41.013819</td>
+      <td>13.164066</td>
+      <td>7.015110</td>
+      <td>4.101382</td>
+      <td>rust</td>
+      <td>24 MY Glut</td>
+    </tr>
+    <tr>
+      <th>75415866509570969932943497000463821106</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.415152</td>
+      <td>70.764504</td>
+      <td>40.800403</td>
+      <td>13.141515</td>
+      <td>7.076450</td>
+      <td>4.080040</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+    <tr>
+      <th>12350978322417280063239916106423065862</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.646167</td>
+      <td>71.182557</td>
+      <td>40.595995</td>
+      <td>13.164617</td>
+      <td>7.118256</td>
+      <td>4.059599</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+    <tr>
+      <th>327554758863546024460748891922509519354</th>
+      <td>Zhuang-ABCA-3.009</td>
+      <td>131.658892</td>
+      <td>71.414675</td>
+      <td>40.501356</td>
+      <td>13.165889</td>
+      <td>7.141468</td>
+      <td>4.050136</td>
+      <td>sctd</td>
+      <td>24 MY Glut</td>
+    </tr>
+  </tbody>
+</table>
+<p>530094 rows × 9 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>th_regions = [&#39;AD&#39;, &#39;AMd&#39;, &#39;AMv&#39;, &#39;AV&#39;, &#39;CL&#39;, &#39;CM&#39;, &#39;IAD&#39;, &#39;IAM&#39;, &#39;IGL&#39;, &#39;IMD&#39;, &#39;LD&#39;, &#39;LGv&#39;, &#39;LH&#39;, &#39;LP&#39;, &#39;MD&#39;, &#39;MGd&#39;, &#39;MGm&#39;, &#39;MGv&#39;, &#39;MH&#39;, &#39;PCN&#39;, &#39;PF&#39;, &#39;PIL&#39;, &#39;PO&#39;, &#39;POL&#39;,
+                &#39;PP&#39;, &#39;PR&#39;, &#39;PT&#39;, &#39;PVT&#39;, &#39;PoT&#39;, &#39;RE&#39;, &#39;RH&#39;, &#39;RT&#39;, &#39;SGN&#39;, &#39;SMT&#39;, &#39;SPA&#39;, &#39;SPFm&#39;, &#39;SPFp&#39;, &#39;VAL&#39;, &#39;VM&#39;, &#39;VPL&#39;, &#39;VPLpc&#39;, &#39;VPM&#39;, &#39;VPMpc&#39;, &#39;Xi&#39;]
+ctx_regions = [&#39;ACAd&#39;, &#39;ACAv&#39;, &#39;AId&#39;, &#39;AIp&#39;, &#39;AIv&#39;, &#39;AUDd&#39;, &#39;AUDp&#39;, &#39;AUDpo&#39;,
+                &#39;AUDv&#39;, &#39;ECT&#39;, &#39;FRP&#39;, &#39;GU&#39;, &#39;ILA&#39;, &#39;MOp&#39;, &#39;MOs&#39;, &#39;ORBl&#39;, &#39;ORBm&#39;,
+                &#39;ORBvl&#39;, &#39;PERI&#39;, &#39;PL&#39;, &#39;RSPagl&#39;, &#39;RSPd&#39;, &#39;RSPv&#39;, &#39;SSp-bfd&#39;,
+                &#39;SSp-ll&#39;, &#39;SSp-m&#39;, &#39;SSp-n&#39;, &#39;SSp-tr&#39;, &#39;SSp-ul&#39;, &#39;SSp-un&#39;, &#39;SSs&#39;,
+                &#39;TEa&#39;, &#39;VISC&#39;, &#39;VISa&#39;, &#39;VISal&#39;, &#39;VISam&#39;, &#39;VISl&#39;, &#39;VISli&#39;, &#39;VISp&#39;,
+                &#39;VISpl&#39;, &#39;VISpm&#39;, &#39;VISpor&#39;, &#39;VISrl&#39;]
+
+# Filtering thalamic nuclei
+adata_sc_sel = adata[adata.obs[&#39;region&#39;].isin(th_regions)]
+sc.pp.normalize_total(adata_sc_sel, target_sum=1e4)
+sc.pp.log1p(adata_sc_sel)
+adata_sc_sel
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+AnnData object with n_obs × n_vars = 11632 × 1122
+    obs: &#39;brain_section_label&#39;, &#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;x_ccf&#39;, &#39;y_ccf&#39;, &#39;z_ccf&#39;, &#39;region&#39;, &#39;cell_type&#39;
+    uns: &#39;log1p&#39;
+</pre></div></div>
+</div>
+<section id="ctx-to-th-connection-cluster">
+<h1>ctx to th connection cluster<a class="headerlink" href="#ctx-to-th-connection-cluster" title="Link to this heading"></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>conn = pd.read_csv(&#39;../data/ctx2th_ave_connection_strength.csv&#39;, index_col=0)
+conn = conn.transpose()
+conn
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>ACAd</th>
+      <th>ACAv</th>
+      <th>AId</th>
+      <th>AIp</th>
+      <th>AIv</th>
+      <th>AUDd</th>
+      <th>AUDp</th>
+      <th>AUDpo</th>
+      <th>AUDv</th>
+      <th>ECT</th>
+      <th>...</th>
+      <th>VISa</th>
+      <th>VISal</th>
+      <th>VISam</th>
+      <th>VISl</th>
+      <th>VISli</th>
+      <th>VISp</th>
+      <th>VISpl</th>
+      <th>VISpm</th>
+      <th>VISpor</th>
+      <th>VISrl</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>AD</th>
+      <td>0.000152</td>
+      <td>0.000192</td>
+      <td>7.619523e-06</td>
+      <td>0.000010</td>
+      <td>5.887578e-06</td>
+      <td>8.007340e-06</td>
+      <td>1.649951e-05</td>
+      <td>3.103780e-05</td>
+      <td>0.000015</td>
+      <td>0.000025</td>
+      <td>...</td>
+      <td>0.000170</td>
+      <td>2.369635e-05</td>
+      <td>0.000322</td>
+      <td>4.295822e-05</td>
+      <td>5.189147e-05</td>
+      <td>7.696756e-05</td>
+      <td>3.874516e-05</td>
+      <td>0.000292</td>
+      <td>7.026182e-05</td>
+      <td>2.951606e-05</td>
+    </tr>
+    <tr>
+      <th>AMd</th>
+      <td>0.000664</td>
+      <td>0.000746</td>
+      <td>6.691810e-05</td>
+      <td>0.000014</td>
+      <td>4.837233e-05</td>
+      <td>5.128748e-06</td>
+      <td>7.461110e-06</td>
+      <td>1.335113e-05</td>
+      <td>0.000007</td>
+      <td>0.000012</td>
+      <td>...</td>
+      <td>0.000224</td>
+      <td>1.118673e-05</td>
+      <td>0.000421</td>
+      <td>1.502842e-05</td>
+      <td>1.854714e-05</td>
+      <td>7.710190e-05</td>
+      <td>1.683196e-05</td>
+      <td>0.000361</td>
+      <td>3.370710e-05</td>
+      <td>3.270745e-05</td>
+    </tr>
+    <tr>
+      <th>AMv</th>
+      <td>0.000771</td>
+      <td>0.000820</td>
+      <td>1.228778e-04</td>
+      <td>0.000021</td>
+      <td>8.823841e-05</td>
+      <td>9.028019e-06</td>
+      <td>1.033547e-05</td>
+      <td>1.672509e-05</td>
+      <td>0.000010</td>
+      <td>0.000018</td>
+      <td>...</td>
+      <td>0.000252</td>
+      <td>1.404998e-05</td>
+      <td>0.000445</td>
+      <td>1.600437e-05</td>
+      <td>2.015853e-05</td>
+      <td>7.672693e-05</td>
+      <td>1.626044e-05</td>
+      <td>0.000354</td>
+      <td>3.496936e-05</td>
+      <td>3.920881e-05</td>
+    </tr>
+    <tr>
+      <th>AV</th>
+      <td>0.000480</td>
+      <td>0.000474</td>
+      <td>1.013730e-05</td>
+      <td>0.000001</td>
+      <td>5.824439e-06</td>
+      <td>1.495290e-05</td>
+      <td>1.333239e-05</td>
+      <td>2.317443e-05</td>
+      <td>0.000005</td>
+      <td>0.000005</td>
+      <td>...</td>
+      <td>0.000264</td>
+      <td>2.638206e-05</td>
+      <td>0.000499</td>
+      <td>2.391140e-05</td>
+      <td>2.765813e-05</td>
+      <td>9.161290e-05</td>
+      <td>2.125825e-05</td>
+      <td>0.000429</td>
+      <td>3.275231e-05</td>
+      <td>4.204660e-05</td>
+    </tr>
+    <tr>
+      <th>CL</th>
+      <td>0.000601</td>
+      <td>0.000533</td>
+      <td>9.876311e-05</td>
+      <td>0.000044</td>
+      <td>5.617855e-05</td>
+      <td>4.381585e-05</td>
+      <td>2.893944e-05</td>
+      <td>4.043519e-05</td>
+      <td>0.000030</td>
+      <td>0.000046</td>
+      <td>...</td>
+      <td>0.000267</td>
+      <td>4.858192e-05</td>
+      <td>0.000373</td>
+      <td>3.168155e-05</td>
+      <td>3.748191e-05</td>
+      <td>5.555781e-05</td>
+      <td>1.795354e-05</td>
+      <td>0.000216</td>
+      <td>3.810383e-05</td>
+      <td>7.053605e-05</td>
+    </tr>
+    <tr>
+      <th>CM</th>
+      <td>0.000154</td>
+      <td>0.000158</td>
+      <td>3.049474e-04</td>
+      <td>0.000152</td>
+      <td>3.050938e-04</td>
+      <td>4.447017e-06</td>
+      <td>2.623114e-06</td>
+      <td>1.758501e-06</td>
+      <td>0.000013</td>
+      <td>0.000038</td>
+      <td>...</td>
+      <td>0.000017</td>
+      <td>1.545642e-06</td>
+      <td>0.000026</td>
+      <td>1.236815e-06</td>
+      <td>1.604649e-06</td>
+      <td>4.150310e-06</td>
+      <td>1.266425e-06</td>
+      <td>0.000017</td>
+      <td>2.776284e-06</td>
+      <td>4.047243e-06</td>
+    </tr>
+    <tr>
+      <th>IAD</th>
+      <td>0.000534</td>
+      <td>0.000577</td>
+      <td>6.229742e-05</td>
+      <td>0.000018</td>
+      <td>4.651523e-05</td>
+      <td>3.388965e-06</td>
+      <td>5.776069e-06</td>
+      <td>9.366712e-06</td>
+      <td>0.000007</td>
+      <td>0.000013</td>
+      <td>...</td>
+      <td>0.000157</td>
+      <td>6.828661e-06</td>
+      <td>0.000258</td>
+      <td>1.073826e-05</td>
+      <td>1.372449e-05</td>
+      <td>3.977765e-05</td>
+      <td>9.783908e-06</td>
+      <td>0.000176</td>
+      <td>2.286415e-05</td>
+      <td>2.615695e-05</td>
+    </tr>
+    <tr>
+      <th>IAM</th>
+      <td>0.000407</td>
+      <td>0.000462</td>
+      <td>7.161324e-05</td>
+      <td>0.000025</td>
+      <td>5.872044e-05</td>
+      <td>4.505570e-06</td>
+      <td>6.958557e-06</td>
+      <td>1.079134e-05</td>
+      <td>0.000008</td>
+      <td>0.000015</td>
+      <td>...</td>
+      <td>0.000100</td>
+      <td>6.632828e-06</td>
+      <td>0.000161</td>
+      <td>8.867795e-06</td>
+      <td>1.213848e-05</td>
+      <td>2.539850e-05</td>
+      <td>7.891840e-06</td>
+      <td>0.000101</td>
+      <td>2.436560e-05</td>
+      <td>1.847467e-05</td>
+    </tr>
+    <tr>
+      <th>IGL</th>
+      <td>0.000056</td>
+      <td>0.000083</td>
+      <td>1.004325e-06</td>
+      <td>0.000002</td>
+      <td>9.865555e-07</td>
+      <td>4.479001e-04</td>
+      <td>4.958735e-04</td>
+      <td>7.268359e-04</td>
+      <td>0.000302</td>
+      <td>0.000173</td>
+      <td>...</td>
+      <td>0.000869</td>
+      <td>8.568048e-04</td>
+      <td>0.001036</td>
+      <td>8.799476e-04</td>
+      <td>9.301578e-04</td>
+      <td>8.452453e-04</td>
+      <td>7.478799e-04</td>
+      <td>0.001060</td>
+      <td>9.557927e-04</td>
+      <td>8.330460e-04</td>
+    </tr>
+    <tr>
+      <th>IMD</th>
+      <td>0.000075</td>
+      <td>0.000106</td>
+      <td>5.153220e-04</td>
+      <td>0.000309</td>
+      <td>6.609953e-04</td>
+      <td>2.648984e-06</td>
+      <td>1.873951e-06</td>
+      <td>5.663784e-07</td>
+      <td>0.000015</td>
+      <td>0.000056</td>
+      <td>...</td>
+      <td>0.000003</td>
+      <td>4.350422e-07</td>
+      <td>0.000004</td>
+      <td>1.966642e-07</td>
+      <td>2.633820e-07</td>
+      <td>5.282716e-07</td>
+      <td>1.343521e-07</td>
+      <td>0.000002</td>
+      <td>4.778532e-07</td>
+      <td>6.684651e-07</td>
+    </tr>
+    <tr>
+      <th>LD</th>
+      <td>0.000489</td>
+      <td>0.000518</td>
+      <td>4.249831e-06</td>
+      <td>0.000002</td>
+      <td>2.572958e-06</td>
+      <td>1.374043e-04</td>
+      <td>1.348493e-04</td>
+      <td>2.698632e-04</td>
+      <td>0.000055</td>
+      <td>0.000054</td>
+      <td>...</td>
+      <td>0.001306</td>
+      <td>4.566688e-04</td>
+      <td>0.002117</td>
+      <td>4.509734e-04</td>
+      <td>4.352127e-04</td>
+      <td>6.663605e-04</td>
+      <td>3.373972e-04</td>
+      <td>0.001797</td>
+      <td>3.810647e-04</td>
+      <td>5.688850e-04</td>
+    </tr>
+    <tr>
+      <th>LGv</th>
+      <td>0.000084</td>
+      <td>0.000107</td>
+      <td>4.184993e-07</td>
+      <td>0.000001</td>
+      <td>4.032791e-07</td>
+      <td>3.592279e-04</td>
+      <td>4.208136e-04</td>
+      <td>6.828435e-04</td>
+      <td>0.000240</td>
+      <td>0.000156</td>
+      <td>...</td>
+      <td>0.000836</td>
+      <td>8.694233e-04</td>
+      <td>0.000987</td>
+      <td>1.023182e-03</td>
+      <td>1.043101e-03</td>
+      <td>9.509905e-04</td>
+      <td>9.423530e-04</td>
+      <td>0.001049</td>
+      <td>1.052003e-03</td>
+      <td>8.329139e-04</td>
+    </tr>
+    <tr>
+      <th>LH</th>
+      <td>0.000102</td>
+      <td>0.000153</td>
+      <td>2.734611e-05</td>
+      <td>0.000013</td>
+      <td>2.699298e-05</td>
+      <td>3.924288e-06</td>
+      <td>5.615375e-06</td>
+      <td>6.320725e-06</td>
+      <td>0.000009</td>
+      <td>0.000017</td>
+      <td>...</td>
+      <td>0.000023</td>
+      <td>3.949801e-06</td>
+      <td>0.000037</td>
+      <td>4.087569e-06</td>
+      <td>5.569459e-06</td>
+      <td>7.428656e-06</td>
+      <td>3.175474e-06</td>
+      <td>0.000029</td>
+      <td>7.957854e-06</td>
+      <td>3.783382e-06</td>
+    </tr>
+    <tr>
+      <th>LP</th>
+      <td>0.000288</td>
+      <td>0.000296</td>
+      <td>6.197639e-06</td>
+      <td>0.000020</td>
+      <td>3.744213e-06</td>
+      <td>4.537852e-04</td>
+      <td>5.480817e-04</td>
+      <td>8.224930e-04</td>
+      <td>0.000377</td>
+      <td>0.000308</td>
+      <td>...</td>
+      <td>0.001147</td>
+      <td>8.127701e-04</td>
+      <td>0.001515</td>
+      <td>8.759366e-04</td>
+      <td>1.010362e-03</td>
+      <td>7.472354e-04</td>
+      <td>7.065590e-04</td>
+      <td>0.001195</td>
+      <td>1.220962e-03</td>
+      <td>7.001120e-04</td>
+    </tr>
+    <tr>
+      <th>MD</th>
+      <td>0.000269</td>
+      <td>0.000260</td>
+      <td>4.223403e-04</td>
+      <td>0.000122</td>
+      <td>4.409378e-04</td>
+      <td>3.972758e-06</td>
+      <td>2.444553e-06</td>
+      <td>1.862257e-06</td>
+      <td>0.000010</td>
+      <td>0.000028</td>
+      <td>...</td>
+      <td>0.000026</td>
+      <td>2.075441e-06</td>
+      <td>0.000035</td>
+      <td>9.125018e-07</td>
+      <td>1.194986e-06</td>
+      <td>3.742693e-06</td>
+      <td>5.212484e-07</td>
+      <td>0.000018</td>
+      <td>1.489977e-06</td>
+      <td>5.346532e-06</td>
+    </tr>
+    <tr>
+      <th>MGd</th>
+      <td>0.000006</td>
+      <td>0.000006</td>
+      <td>4.138417e-06</td>
+      <td>0.000018</td>
+      <td>5.092190e-06</td>
+      <td>1.370971e-03</td>
+      <td>2.030689e-03</td>
+      <td>1.555737e-03</td>
+      <td>0.002156</td>
+      <td>0.000981</td>
+      <td>...</td>
+      <td>0.000236</td>
+      <td>5.957695e-04</td>
+      <td>0.000107</td>
+      <td>3.715169e-04</td>
+      <td>5.884749e-04</td>
+      <td>1.483566e-04</td>
+      <td>1.423061e-04</td>
+      <td>0.000079</td>
+      <td>6.546437e-04</td>
+      <td>1.855289e-04</td>
+    </tr>
+    <tr>
+      <th>MGm</th>
+      <td>0.000098</td>
+      <td>0.000092</td>
+      <td>9.269953e-06</td>
+      <td>0.000106</td>
+      <td>8.027737e-06</td>
+      <td>6.044557e-04</td>
+      <td>6.525721e-04</td>
+      <td>5.064571e-04</td>
+      <td>0.000679</td>
+      <td>0.000324</td>
+      <td>...</td>
+      <td>0.000250</td>
+      <td>3.010070e-04</td>
+      <td>0.000216</td>
+      <td>1.563492e-04</td>
+      <td>2.241432e-04</td>
+      <td>7.875042e-05</td>
+      <td>6.039701e-05</td>
+      <td>0.000114</td>
+      <td>2.255879e-04</td>
+      <td>1.741915e-04</td>
+    </tr>
+    <tr>
+      <th>MGv</th>
+      <td>0.000014</td>
+      <td>0.000014</td>
+      <td>3.641458e-06</td>
+      <td>0.000035</td>
+      <td>4.308976e-06</td>
+      <td>1.386466e-03</td>
+      <td>1.792402e-03</td>
+      <td>1.285505e-03</td>
+      <td>0.001912</td>
+      <td>0.000785</td>
+      <td>...</td>
+      <td>0.000255</td>
+      <td>5.595335e-04</td>
+      <td>0.000142</td>
+      <td>3.047580e-04</td>
+      <td>4.719067e-04</td>
+      <td>1.228973e-04</td>
+      <td>1.120924e-04</td>
+      <td>0.000093</td>
+      <td>4.859480e-04</td>
+      <td>1.984513e-04</td>
+    </tr>
+    <tr>
+      <th>MH</th>
+      <td>0.000006</td>
+      <td>0.000020</td>
+      <td>1.140038e-06</td>
+      <td>0.000002</td>
+      <td>9.041835e-07</td>
+      <td>5.921155e-07</td>
+      <td>7.945028e-07</td>
+      <td>1.165024e-06</td>
+      <td>0.000001</td>
+      <td>0.000002</td>
+      <td>...</td>
+      <td>0.000002</td>
+      <td>1.007101e-06</td>
+      <td>0.000003</td>
+      <td>1.536386e-06</td>
+      <td>1.894867e-06</td>
+      <td>1.410430e-06</td>
+      <td>1.537721e-06</td>
+      <td>0.000003</td>
+      <td>2.361166e-06</td>
+      <td>6.432470e-07</td>
+    </tr>
+    <tr>
+      <th>PCN</th>
+      <td>0.000129</td>
+      <td>0.000077</td>
+      <td>4.909851e-04</td>
+      <td>0.000182</td>
+      <td>4.074414e-04</td>
+      <td>1.138335e-05</td>
+      <td>3.342644e-06</td>
+      <td>1.527520e-06</td>
+      <td>0.000018</td>
+      <td>0.000037</td>
+      <td>...</td>
+      <td>0.000015</td>
+      <td>2.878176e-06</td>
+      <td>0.000014</td>
+      <td>6.444761e-07</td>
+      <td>7.306620e-07</td>
+      <td>1.536464e-06</td>
+      <td>2.292821e-07</td>
+      <td>0.000006</td>
+      <td>3.976918e-07</td>
+      <td>7.208488e-06</td>
+    </tr>
+    <tr>
+      <th>PF</th>
+      <td>0.000332</td>
+      <td>0.000307</td>
+      <td>2.923657e-04</td>
+      <td>0.000222</td>
+      <td>2.497150e-04</td>
+      <td>8.224716e-05</td>
+      <td>3.574478e-05</td>
+      <td>3.965936e-05</td>
+      <td>0.000041</td>
+      <td>0.000063</td>
+      <td>...</td>
+      <td>0.000148</td>
+      <td>5.855558e-05</td>
+      <td>0.000159</td>
+      <td>1.465902e-05</td>
+      <td>1.827707e-05</td>
+      <td>1.723299e-05</td>
+      <td>2.593885e-06</td>
+      <td>0.000070</td>
+      <td>8.039294e-06</td>
+      <td>6.720717e-05</td>
+    </tr>
+    <tr>
+      <th>PIL</th>
+      <td>0.000094</td>
+      <td>0.000090</td>
+      <td>4.543945e-05</td>
+      <td>0.000174</td>
+      <td>4.551988e-05</td>
+      <td>6.713279e-04</td>
+      <td>6.391818e-04</td>
+      <td>4.925301e-04</td>
+      <td>0.000660</td>
+      <td>0.000453</td>
+      <td>...</td>
+      <td>0.000194</td>
+      <td>3.049723e-04</td>
+      <td>0.000140</td>
+      <td>1.502271e-04</td>
+      <td>2.205857e-04</td>
+      <td>6.166135e-05</td>
+      <td>6.529530e-05</td>
+      <td>0.000074</td>
+      <td>2.261566e-04</td>
+      <td>1.370516e-04</td>
+    </tr>
+    <tr>
+      <th>PO</th>
+      <td>0.000159</td>
+      <td>0.000102</td>
+      <td>2.125703e-04</td>
+      <td>0.000237</td>
+      <td>1.440922e-04</td>
+      <td>1.015075e-04</td>
+      <td>4.448542e-05</td>
+      <td>4.486687e-05</td>
+      <td>0.000073</td>
+      <td>0.000114</td>
+      <td>...</td>
+      <td>0.000182</td>
+      <td>6.995570e-05</td>
+      <td>0.000182</td>
+      <td>2.545733e-05</td>
+      <td>2.778704e-05</td>
+      <td>2.931024e-05</td>
+      <td>9.100669e-06</td>
+      <td>0.000082</td>
+      <td>1.714313e-05</td>
+      <td>1.009701e-04</td>
+    </tr>
+    <tr>
+      <th>POL</th>
+      <td>0.000194</td>
+      <td>0.000174</td>
+      <td>2.934526e-05</td>
+      <td>0.000058</td>
+      <td>1.894002e-05</td>
+      <td>4.916248e-04</td>
+      <td>4.057512e-04</td>
+      <td>3.905389e-04</td>
+      <td>0.000309</td>
+      <td>0.000135</td>
+      <td>...</td>
+      <td>0.000497</td>
+      <td>3.527876e-04</td>
+      <td>0.000546</td>
+      <td>1.614274e-04</td>
+      <td>2.023932e-04</td>
+      <td>1.266951e-04</td>
+      <td>5.954121e-05</td>
+      <td>0.000286</td>
+      <td>1.398459e-04</td>
+      <td>2.661806e-04</td>
+    </tr>
+    <tr>
+      <th>PP</th>
+      <td>0.000054</td>
+      <td>0.000058</td>
+      <td>6.608591e-06</td>
+      <td>0.000108</td>
+      <td>4.657731e-06</td>
+      <td>9.965551e-04</td>
+      <td>9.757414e-04</td>
+      <td>8.059254e-04</td>
+      <td>0.000908</td>
+      <td>0.000492</td>
+      <td>...</td>
+      <td>0.000285</td>
+      <td>5.198091e-04</td>
+      <td>0.000209</td>
+      <td>3.102234e-04</td>
+      <td>4.296206e-04</td>
+      <td>1.424547e-04</td>
+      <td>1.574262e-04</td>
+      <td>0.000143</td>
+      <td>4.595614e-04</td>
+      <td>2.347075e-04</td>
+    </tr>
+    <tr>
+      <th>PR</th>
+      <td>0.000345</td>
+      <td>0.000534</td>
+      <td>7.168793e-05</td>
+      <td>0.000089</td>
+      <td>6.519891e-05</td>
+      <td>2.437460e-05</td>
+      <td>2.362251e-05</td>
+      <td>2.556900e-05</td>
+      <td>0.000034</td>
+      <td>0.000074</td>
+      <td>...</td>
+      <td>0.000085</td>
+      <td>2.290209e-05</td>
+      <td>0.000139</td>
+      <td>1.397124e-05</td>
+      <td>1.765865e-05</td>
+      <td>2.640149e-05</td>
+      <td>8.851335e-06</td>
+      <td>0.000109</td>
+      <td>1.655532e-05</td>
+      <td>1.801183e-05</td>
+    </tr>
+    <tr>
+      <th>PT</th>
+      <td>0.000103</td>
+      <td>0.000234</td>
+      <td>3.647708e-05</td>
+      <td>0.000036</td>
+      <td>3.049506e-05</td>
+      <td>1.662613e-06</td>
+      <td>5.080007e-06</td>
+      <td>6.254634e-06</td>
+      <td>0.000010</td>
+      <td>0.000021</td>
+      <td>...</td>
+      <td>0.000015</td>
+      <td>2.578893e-06</td>
+      <td>0.000028</td>
+      <td>7.649383e-06</td>
+      <td>1.036695e-05</td>
+      <td>9.467975e-06</td>
+      <td>1.106287e-05</td>
+      <td>0.000027</td>
+      <td>2.015822e-05</td>
+      <td>2.790195e-06</td>
+    </tr>
+    <tr>
+      <th>PVT</th>
+      <td>0.000061</td>
+      <td>0.000162</td>
+      <td>5.087197e-05</td>
+      <td>0.000112</td>
+      <td>6.205588e-05</td>
+      <td>1.895285e-06</td>
+      <td>3.650877e-06</td>
+      <td>2.446327e-06</td>
+      <td>0.000015</td>
+      <td>0.000045</td>
+      <td>...</td>
+      <td>0.000004</td>
+      <td>1.210090e-06</td>
+      <td>0.000006</td>
+      <td>2.229057e-06</td>
+      <td>2.904354e-06</td>
+      <td>2.274457e-06</td>
+      <td>2.982967e-06</td>
+      <td>0.000006</td>
+      <td>5.376556e-06</td>
+      <td>8.233745e-07</td>
+    </tr>
+    <tr>
+      <th>PoT</th>
+      <td>0.000220</td>
+      <td>0.000198</td>
+      <td>9.930714e-05</td>
+      <td>0.000266</td>
+      <td>7.676983e-05</td>
+      <td>3.366202e-04</td>
+      <td>2.481721e-04</td>
+      <td>2.215150e-04</td>
+      <td>0.000242</td>
+      <td>0.000185</td>
+      <td>...</td>
+      <td>0.000292</td>
+      <td>2.077052e-04</td>
+      <td>0.000284</td>
+      <td>8.315387e-05</td>
+      <td>1.090200e-04</td>
+      <td>5.730652e-05</td>
+      <td>2.801180e-05</td>
+      <td>0.000132</td>
+      <td>8.839658e-05</td>
+      <td>1.790629e-04</td>
+    </tr>
+    <tr>
+      <th>RE</th>
+      <td>0.000245</td>
+      <td>0.000365</td>
+      <td>4.118779e-05</td>
+      <td>0.000057</td>
+      <td>3.650209e-05</td>
+      <td>1.109817e-05</td>
+      <td>1.062494e-05</td>
+      <td>1.076608e-05</td>
+      <td>0.000020</td>
+      <td>0.000046</td>
+      <td>...</td>
+      <td>0.000054</td>
+      <td>9.486939e-06</td>
+      <td>0.000083</td>
+      <td>8.174288e-06</td>
+      <td>1.020787e-05</td>
+      <td>1.535013e-05</td>
+      <td>8.586715e-06</td>
+      <td>0.000057</td>
+      <td>1.477839e-05</td>
+      <td>1.231446e-05</td>
+    </tr>
+    <tr>
+      <th>RH</th>
+      <td>0.000323</td>
+      <td>0.000355</td>
+      <td>2.290540e-04</td>
+      <td>0.000125</td>
+      <td>2.070770e-04</td>
+      <td>2.147445e-05</td>
+      <td>1.247322e-05</td>
+      <td>1.318052e-05</td>
+      <td>0.000023</td>
+      <td>0.000049</td>
+      <td>...</td>
+      <td>0.000100</td>
+      <td>1.685108e-05</td>
+      <td>0.000148</td>
+      <td>1.075674e-05</td>
+      <td>1.148609e-05</td>
+      <td>2.507019e-05</td>
+      <td>7.163141e-06</td>
+      <td>0.000095</td>
+      <td>1.037849e-05</td>
+      <td>3.002259e-05</td>
+    </tr>
+    <tr>
+      <th>RT</th>
+      <td>0.000336</td>
+      <td>0.000331</td>
+      <td>1.370683e-04</td>
+      <td>0.000062</td>
+      <td>1.068166e-04</td>
+      <td>1.396533e-04</td>
+      <td>1.346184e-04</td>
+      <td>1.466915e-04</td>
+      <td>0.000116</td>
+      <td>0.000064</td>
+      <td>...</td>
+      <td>0.000372</td>
+      <td>1.466425e-04</td>
+      <td>0.000505</td>
+      <td>1.194276e-04</td>
+      <td>1.311705e-04</td>
+      <td>1.431161e-04</td>
+      <td>8.363944e-05</td>
+      <td>0.000360</td>
+      <td>1.234873e-04</td>
+      <td>1.596459e-04</td>
+    </tr>
+    <tr>
+      <th>SGN</th>
+      <td>0.000039</td>
+      <td>0.000036</td>
+      <td>1.212349e-06</td>
+      <td>0.000033</td>
+      <td>1.155121e-06</td>
+      <td>9.708160e-04</td>
+      <td>1.204355e-03</td>
+      <td>1.076860e-03</td>
+      <td>0.001139</td>
+      <td>0.000585</td>
+      <td>...</td>
+      <td>0.000304</td>
+      <td>5.648817e-04</td>
+      <td>0.000210</td>
+      <td>3.721666e-04</td>
+      <td>5.458286e-04</td>
+      <td>1.624372e-04</td>
+      <td>1.747654e-04</td>
+      <td>0.000123</td>
+      <td>6.187994e-04</td>
+      <td>2.306022e-04</td>
+    </tr>
+    <tr>
+      <th>SMT</th>
+      <td>0.000335</td>
+      <td>0.000342</td>
+      <td>3.431704e-04</td>
+      <td>0.000112</td>
+      <td>2.872273e-04</td>
+      <td>3.548723e-05</td>
+      <td>1.959870e-05</td>
+      <td>2.244632e-05</td>
+      <td>0.000026</td>
+      <td>0.000053</td>
+      <td>...</td>
+      <td>0.000105</td>
+      <td>3.033701e-05</td>
+      <td>0.000129</td>
+      <td>1.441583e-05</td>
+      <td>1.556353e-05</td>
+      <td>2.082781e-05</td>
+      <td>6.530777e-06</td>
+      <td>0.000065</td>
+      <td>9.591299e-06</td>
+      <td>4.418818e-05</td>
+    </tr>
+    <tr>
+      <th>SPA</th>
+      <td>0.000244</td>
+      <td>0.000346</td>
+      <td>1.559442e-04</td>
+      <td>0.000151</td>
+      <td>1.908120e-04</td>
+      <td>9.964673e-06</td>
+      <td>1.132277e-05</td>
+      <td>8.209178e-06</td>
+      <td>0.000035</td>
+      <td>0.000097</td>
+      <td>...</td>
+      <td>0.000030</td>
+      <td>5.998488e-06</td>
+      <td>0.000049</td>
+      <td>2.923863e-06</td>
+      <td>4.163565e-06</td>
+      <td>6.604036e-06</td>
+      <td>1.184191e-06</td>
+      <td>0.000030</td>
+      <td>5.183471e-06</td>
+      <td>4.657965e-06</td>
+    </tr>
+    <tr>
+      <th>SPFm</th>
+      <td>0.000361</td>
+      <td>0.000506</td>
+      <td>5.206138e-05</td>
+      <td>0.000067</td>
+      <td>5.164480e-05</td>
+      <td>5.544868e-05</td>
+      <td>5.396699e-05</td>
+      <td>5.161003e-05</td>
+      <td>0.000065</td>
+      <td>0.000100</td>
+      <td>...</td>
+      <td>0.000111</td>
+      <td>3.910392e-05</td>
+      <td>0.000165</td>
+      <td>2.007481e-05</td>
+      <td>2.814081e-05</td>
+      <td>2.671656e-05</td>
+      <td>1.007117e-05</td>
+      <td>0.000108</td>
+      <td>2.540315e-05</td>
+      <td>2.555836e-05</td>
+    </tr>
+    <tr>
+      <th>SPFp</th>
+      <td>0.000483</td>
+      <td>0.000453</td>
+      <td>1.473219e-04</td>
+      <td>0.000241</td>
+      <td>1.269824e-04</td>
+      <td>2.484715e-04</td>
+      <td>1.489215e-04</td>
+      <td>1.349840e-04</td>
+      <td>0.000152</td>
+      <td>0.000152</td>
+      <td>...</td>
+      <td>0.000314</td>
+      <td>1.504822e-04</td>
+      <td>0.000300</td>
+      <td>4.003079e-05</td>
+      <td>5.483582e-05</td>
+      <td>3.108448e-05</td>
+      <td>8.224509e-06</td>
+      <td>0.000114</td>
+      <td>3.178376e-05</td>
+      <td>1.516782e-04</td>
+    </tr>
+    <tr>
+      <th>VAL</th>
+      <td>0.000425</td>
+      <td>0.000314</td>
+      <td>2.663332e-04</td>
+      <td>0.000050</td>
+      <td>1.547514e-04</td>
+      <td>5.536264e-05</td>
+      <td>2.768267e-05</td>
+      <td>3.713600e-05</td>
+      <td>0.000021</td>
+      <td>0.000015</td>
+      <td>...</td>
+      <td>0.000219</td>
+      <td>5.177339e-05</td>
+      <td>0.000277</td>
+      <td>2.376908e-05</td>
+      <td>2.641484e-05</td>
+      <td>3.945724e-05</td>
+      <td>9.022712e-06</td>
+      <td>0.000152</td>
+      <td>1.411106e-05</td>
+      <td>7.628709e-05</td>
+    </tr>
+    <tr>
+      <th>VM</th>
+      <td>0.000482</td>
+      <td>0.000435</td>
+      <td>3.047505e-04</td>
+      <td>0.000105</td>
+      <td>2.542895e-04</td>
+      <td>2.697555e-05</td>
+      <td>1.330547e-05</td>
+      <td>1.394733e-05</td>
+      <td>0.000019</td>
+      <td>0.000038</td>
+      <td>...</td>
+      <td>0.000106</td>
+      <td>1.836394e-05</td>
+      <td>0.000133</td>
+      <td>5.678558e-06</td>
+      <td>7.094294e-06</td>
+      <td>1.460424e-05</td>
+      <td>1.669783e-06</td>
+      <td>0.000065</td>
+      <td>4.296176e-06</td>
+      <td>3.128889e-05</td>
+    </tr>
+    <tr>
+      <th>VPL</th>
+      <td>0.000161</td>
+      <td>0.000133</td>
+      <td>5.194950e-05</td>
+      <td>0.000088</td>
+      <td>3.739928e-05</td>
+      <td>1.386123e-04</td>
+      <td>9.940196e-05</td>
+      <td>9.289303e-05</td>
+      <td>0.000102</td>
+      <td>0.000051</td>
+      <td>...</td>
+      <td>0.000329</td>
+      <td>9.927339e-05</td>
+      <td>0.000363</td>
+      <td>4.804453e-05</td>
+      <td>5.609559e-05</td>
+      <td>5.795776e-05</td>
+      <td>2.087232e-05</td>
+      <td>0.000183</td>
+      <td>4.221700e-05</td>
+      <td>1.329029e-04</td>
+    </tr>
+    <tr>
+      <th>VPLpc</th>
+      <td>0.000242</td>
+      <td>0.000241</td>
+      <td>4.872967e-04</td>
+      <td>0.001075</td>
+      <td>5.321095e-04</td>
+      <td>6.394511e-05</td>
+      <td>2.915340e-05</td>
+      <td>2.226937e-05</td>
+      <td>0.000078</td>
+      <td>0.000142</td>
+      <td>...</td>
+      <td>0.000113</td>
+      <td>2.905744e-05</td>
+      <td>0.000146</td>
+      <td>7.872736e-06</td>
+      <td>1.001747e-05</td>
+      <td>1.928587e-05</td>
+      <td>2.375961e-06</td>
+      <td>0.000083</td>
+      <td>7.822995e-06</td>
+      <td>4.249422e-05</td>
+    </tr>
+    <tr>
+      <th>VPM</th>
+      <td>0.000039</td>
+      <td>0.000025</td>
+      <td>1.681293e-04</td>
+      <td>0.000161</td>
+      <td>1.229011e-04</td>
+      <td>1.281432e-04</td>
+      <td>6.375379e-05</td>
+      <td>5.103292e-05</td>
+      <td>0.000089</td>
+      <td>0.000044</td>
+      <td>...</td>
+      <td>0.000084</td>
+      <td>6.541547e-05</td>
+      <td>0.000058</td>
+      <td>2.321276e-05</td>
+      <td>2.689635e-05</td>
+      <td>1.637556e-05</td>
+      <td>1.015162e-05</td>
+      <td>0.000029</td>
+      <td>1.910489e-05</td>
+      <td>7.831720e-05</td>
+    </tr>
+    <tr>
+      <th>VPMpc</th>
+      <td>0.000153</td>
+      <td>0.000159</td>
+      <td>6.775987e-04</td>
+      <td>0.000897</td>
+      <td>7.926928e-04</td>
+      <td>4.565133e-05</td>
+      <td>2.844526e-05</td>
+      <td>2.008600e-05</td>
+      <td>0.000082</td>
+      <td>0.000198</td>
+      <td>...</td>
+      <td>0.000040</td>
+      <td>1.883211e-05</td>
+      <td>0.000047</td>
+      <td>6.423367e-06</td>
+      <td>8.770814e-06</td>
+      <td>7.163959e-06</td>
+      <td>2.530284e-06</td>
+      <td>0.000026</td>
+      <td>7.503612e-06</td>
+      <td>1.933129e-05</td>
+    </tr>
+    <tr>
+      <th>Xi</th>
+      <td>0.000309</td>
+      <td>0.000434</td>
+      <td>4.451510e-05</td>
+      <td>0.000081</td>
+      <td>4.349116e-05</td>
+      <td>7.773328e-06</td>
+      <td>8.470673e-06</td>
+      <td>6.383956e-06</td>
+      <td>0.000022</td>
+      <td>0.000054</td>
+      <td>...</td>
+      <td>0.000031</td>
+      <td>5.004218e-06</td>
+      <td>0.000047</td>
+      <td>3.549756e-06</td>
+      <td>4.567458e-06</td>
+      <td>7.711804e-06</td>
+      <td>3.077690e-06</td>
+      <td>0.000030</td>
+      <td>6.779844e-06</td>
+      <td>6.532870e-06</td>
+    </tr>
+  </tbody>
+</table>
+<p>44 rows × 43 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>g = sns.clustermap(conn, figsize=(12,12))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_6_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_6_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>from scipy.cluster import hierarchy
+col_linkage = g.dendrogram_col.linkage
+col_clusters = hierarchy.fcluster(col_linkage, t=0.5, criterion=&#39;distance&#39;)
+reordered_cols = g.dendrogram_col.reordered_ind
+col_labels = np.array(conn.columns)[reordered_cols]
+col_labels
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([&#39;ECT&#39;, &#39;PERI&#39;, &#39;AUDp&#39;, &#39;AUDv&#39;, &#39;AUDd&#39;, &#39;AUDpo&#39;, &#39;TEa&#39;, &#39;VISal&#39;,
+       &#39;VISli&#39;, &#39;VISpor&#39;, &#39;VISl&#39;, &#39;VISpl&#39;, &#39;VISp&#39;, &#39;VISrl&#39;, &#39;VISam&#39;,
+       &#39;VISpm&#39;, &#39;VISa&#39;, &#39;RSPv&#39;, &#39;RSPagl&#39;, &#39;RSPd&#39;, &#39;AId&#39;, &#39;AIv&#39;, &#39;SSs&#39;,
+       &#39;GU&#39;, &#39;AIp&#39;, &#39;VISC&#39;, &#39;SSp-tr&#39;, &#39;SSp-m&#39;, &#39;SSp-n&#39;, &#39;MOp&#39;, &#39;SSp-bfd&#39;,
+       &#39;SSp-ll&#39;, &#39;SSp-ul&#39;, &#39;SSp-un&#39;, &#39;ILA&#39;, &#39;ORBm&#39;, &#39;PL&#39;, &#39;ORBl&#39;, &#39;ORBvl&#39;,
+       &#39;ACAd&#39;, &#39;ACAv&#39;, &#39;FRP&#39;, &#39;MOs&#39;], dtype=object)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Use UMAP for 2D dimension reduction
+reducer = umap.UMAP(n_components=2, random_state=43)
+embedding = reducer.fit_transform(conn)
+
+# Classification of UMAP results
+n_clusters=8
+kmeans = KMeans(n_clusters=n_clusters, random_state=44)
+clusters = kmeans.fit_predict(embedding)
+
+# Convert Embedding to DataFrame for easy operation
+embedding_df = pd.DataFrame(embedding, index=conn.index, columns=[&#39;UMAP1&#39;, &#39;UMAP2&#39;])
+embedding_df[&#39;Cluster&#39;] = clusters
+
+color_list = [&#39;#1f77b4&#39;, &#39;#ff7f0e&#39;, &#39;#2ca02c&#39;, &#39;#d62728&#39;, &#39;#9467bd&#39;,&#39;#8c564b&#39;, &#39;#17becf&#39;, &#39;#e377c2&#39;]
+
+fig, ax = plt.subplots(figsize=(8, 7))
+from scipy.spatial import ConvexHull
+from shapely.geometry import Polygon
+# Draw a 2D UMAP diagram with clustering results
+for cluster in range(n_clusters):
+    subset = embedding_df[embedding_df[&#39;Cluster&#39;] == cluster]
+    points = subset[[&#39;UMAP1&#39;, &#39;UMAP2&#39;]].values
+
+    # Get color
+    color = color_list[cluster]
+
+    # Calculate and draw the expanded and smooth convex bag
+    if len(points) &gt; 2:  # Ne convex bags require at least 3 points
+        hull = ConvexHull(points)
+        hull_points = points[hull.vertices]
+
+        # Create polygon and expand
+        poly = Polygon(hull_points).buffer(0.3)
+        # Make the polygon smoother
+        smooth_poly = poly.buffer(0.2, resolution=16, join_style=1).buffer(-0.2, resolution=16, join_style=1)
+        # Get the coordinates of polygonal shape
+        x, y = smooth_poly.exterior.xy
+        # Draw a smooth polygon
+        ax.fill(x, y, alpha=0.3, fc=color, ec=color)
+
+# Add sample name names as labels, and set label color to the same color scattering color
+for sample in embedding_df.index:
+    cluster = embedding_df.loc[sample, &#39;Cluster&#39;]
+    x = embedding_df.loc[sample, &#39;UMAP1&#39;]
+    y = embedding_df.loc[sample, &#39;UMAP2&#39;]
+    plt.annotate(sample,
+                 (x, y),
+                 xytext=(0, 3),  # The text shifts 5 units in the Y direction
+                 textcoords=&#39;offset points&#39;,  # Specify unit with offset
+                 fontsize=15,
+                #  color=&#39;black&#39;,
+                 color=color_list[cluster],
+                 ha=&#39;center&#39;,  # Horizontal alignment
+                 va=&#39;bottom&#39;,  # Align in the bottom of the vertical direction (close to the offset point)
+                 alpha=0.7
+                 )
+plt.xticks([])
+plt.yticks([])
+plt.xlabel(&#39;UMAP1&#39;)
+plt.ylabel(&#39;UMAP2&#39;)
+plt.tight_layout()
+# plt.savefig(&#39;./conn_umap.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_8_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_8_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>embedding_df[&#39;Cluster&#39;] = embedding_df[&#39;Cluster&#39;].astype(str)
+th_cluster_order = []
+num = []
+for i in range(8):
+    tmp = embedding_df[embedding_df[&#39;Cluster&#39;] == str(i)]
+    th_cluster_order = th_cluster_order + tmp.index.tolist()
+    num.append(len(tmp))
+    print(tmp.index.tolist())
+th_cluster_order
+
+ctx_cluster_order = [&#39;ECT&#39;, &#39;PERI&#39;, &#39;AUDp&#39;, &#39;AUDv&#39;, &#39;AUDd&#39;, &#39;AUDpo&#39;, &#39;TEa&#39;, &#39;VISal&#39;,
+       &#39;VISli&#39;, &#39;VISpor&#39;, &#39;VISl&#39;, &#39;VISpl&#39;, &#39;VISp&#39;, &#39;VISrl&#39;, &#39;VISam&#39;,
+       &#39;VISpm&#39;, &#39;VISa&#39;, &#39;RSPv&#39;, &#39;RSPagl&#39;, &#39;RSPd&#39;, &#39;AId&#39;, &#39;AIv&#39;, &#39;SSs&#39;,
+       &#39;GU&#39;, &#39;AIp&#39;, &#39;VISC&#39;, &#39;SSp-tr&#39;, &#39;SSp-m&#39;, &#39;SSp-n&#39;, &#39;MOp&#39;, &#39;SSp-bfd&#39;,
+       &#39;SSp-ll&#39;, &#39;SSp-ul&#39;, &#39;SSp-un&#39;, &#39;ILA&#39;, &#39;ORBm&#39;, &#39;PL&#39;, &#39;ORBl&#39;, &#39;ORBvl&#39;,
+       &#39;ACAd&#39;, &#39;ACAv&#39;, &#39;FRP&#39;, &#39;MOs&#39;]
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;PCN&#39;, &#39;PF&#39;, &#39;VPLpc&#39;, &#39;VPMpc&#39;]
+[&#39;AD&#39;, &#39;AMd&#39;, &#39;AMv&#39;, &#39;AV&#39;, &#39;IAD&#39;]
+[&#39;MGd&#39;, &#39;MGm&#39;, &#39;MGv&#39;, &#39;PIL&#39;, &#39;POL&#39;, &#39;PP&#39;, &#39;SGN&#39;]
+[&#39;IAM&#39;, &#39;LH&#39;, &#39;MH&#39;, &#39;PR&#39;, &#39;PT&#39;, &#39;PVT&#39;, &#39;RE&#39;, &#39;SPA&#39;, &#39;SPFm&#39;, &#39;Xi&#39;]
+[&#39;IGL&#39;, &#39;LD&#39;, &#39;LGv&#39;, &#39;LP&#39;]
+[&#39;CM&#39;, &#39;IMD&#39;, &#39;MD&#39;, &#39;RH&#39;, &#39;SMT&#39;, &#39;VM&#39;]
+[&#39;PO&#39;, &#39;PoT&#39;, &#39;SPFp&#39;, &#39;VPL&#39;, &#39;VPM&#39;]
+[&#39;CL&#39;, &#39;RT&#39;, &#39;VAL&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># Define color mapping
+cluster_labels = [&#39;TH0&#39;]*num[0] + [&#39;TH1&#39;]*num[1] + [&#39;TH2&#39;]*num[2] + [&#39;TH3&#39;]*num[3] + [&#39;TH4&#39;]*num[4] + [&#39;TH5&#39;]*num[5] + [&#39;TH6&#39;]*num[6] + [&#39;TH7&#39;]*num[7]
+
+color_list = [&#39;#1f77b4&#39;, &#39;#ff7f0e&#39;, &#39;#2ca02c&#39;, &#39;#d62728&#39;, &#39;#9467bd&#39;,&#39;#8c564b&#39;, &#39;#17becf&#39;, &#39;#e377c2&#39;]
+cluster_colors = {&#39;TH0&#39;: color_list[0], &#39;TH1&#39;: color_list[1], &#39;TH2&#39;: color_list[2],
+                  &#39;TH3&#39;: color_list[3], &#39;TH4&#39;: color_list[4], &#39;TH5&#39;: color_list[5], &#39;TH6&#39;: color_list[6], &#39;TH7&#39;: color_list[7]}
+# Create Label Color
+row_colors = pd.Series(cluster_labels).map(cluster_colors)
+
+fig, ax = plt.subplots(figsize=(12, 10))
+sns.heatmap(conn.loc[th_cluster_order, ctx_cluster_order], ax=ax, yticklabels=False)
+# Add cluster segmentation line
+prev_cluster = cluster_labels[0]
+for idx, label in enumerate(cluster_labels):
+    if label != prev_cluster:
+        ax.axhline(idx, color=&#39;white&#39;, linewidth=2)
+        prev_cluster = label
+
+# Add row label color
+idx = 0
+for id, label in zip(th_cluster_order, cluster_labels):
+    ax.text(-1.0, idx + 0.5, id, color=&#39;white&#39;, va=&#39;center&#39;, ha=&#39;right&#39;,fontweight=&#39;bold&#39;,
+            bbox=dict(facecolor=cluster_colors[label], edgecolor=&#39;none&#39;, boxstyle=&#39;round,pad=0.15&#39;))
+    idx += 1
+
+# plt.savefig(&#39;./Supp_fig/ctx2th_conn_ordered_by_umap.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_10_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_10_0.png" />
+</div>
+</div>
+</section>
+<section id="gene-exp-umap">
+<h1>gene exp umap<a class="headerlink" href="#gene-exp-umap" title="Link to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>value_to_label = dict(zip(embedding_df.index, embedding_df[&#39;Cluster&#39;]))
+adata_sc_sel.obs[&#39;all_Glut_Neurons&#39;] = adata_sc_sel.obs[&#39;region&#39;].map(value_to_label).astype(&#39;str&#39;)
+adata_sc_sel.obs[&#39;all_Glut_Neurons&#39;] = &#39;TH_&#39; + (adata_sc_sel.obs[&#39;all_Glut_Neurons&#39;].astype(int)+1).astype(str)
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>sc.tl.pca(adata_sc_sel)
+sc.pp.neighbors(adata_sc_sel)
+sc.tl.umap(adata_sc_sel, n_components=2)
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span># sc.pl.umap(adata_sc_sel, color=&#39;all_Glut_Neurons&#39;, show=False,add_outline=True,legend_fontsize=12,legend_fontoutline=2, size=20)
+# Create color list
+# color_list = plt.cm.tab10(np.linspace(0, 1, n_clusters))
+color_list = [&#39;#1f77b4&#39;, &#39;#ff7f0e&#39;, &#39;#2ca02c&#39;, &#39;#d62728&#39;, &#39;#9467bd&#39;,&#39;#8c564b&#39;, &#39;#17becf&#39;, &#39;#e377c2&#39;]
+# Create a color dictionary
+unique_neurons = adata_sc_sel.obs[&#39;all_Glut_Neurons&#39;].unique()
+color_dict = dict(zip(sorted(unique_neurons), color_list))
+# Draw UMAP diagram
+sc.pl.umap(adata_sc_sel, color=&#39;all_Glut_Neurons&#39;, size=20, palette=color_dict, show=False)
+# sc.pl.umap(adata_sc_sel, color=&#39;all_Glut_Neurons&#39;, size=20)
+plt.tight_layout()
+# plt.savefig(&#39;th_gene_exp_umap.pdf&#39;, format=&#39;pdf&#39;)
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_14_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_14_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>for i in range(8):
+    sub = f&#39;TH_{i+1}&#39;
+    adata_sc_sel.obs[sub] = adata_sc_sel.obs[&#39;all_Glut_Neurons&#39;]
+    adata_sc_sel.obs.loc[adata_sc_sel.obs[&#39;all_Glut_Neurons&#39;] != sub, sub] = None
+    sc.pl.umap(adata_sc_sel, color=sub, palette=color_dict, show=False)
+    # plt.savefig(f&#39;./Supp_fig/th_gene_exp_umap_cluster{i+1}.pdf&#39;, format=&#39;pdf&#39;)
+    # plt.savefig(f&#39;./Supp_fig/th_gene_exp_umap_cluster{i+1}.png&#39;, dpi=400)
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_0.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_1.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_2.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_2.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_3.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_3.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_4.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_4.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_5.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_5.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_6.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_6.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/1_ctx_th_connection_and_gene_exp_cluster_15_7.png" src="_images/1_ctx_th_connection_and_gene_exp_cluster_15_7.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, quhaichao.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
